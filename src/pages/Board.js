@@ -13,6 +13,7 @@ import {
   setCursorForPosition,
   adjustElementCoordinates,
   resizeCoordinates,
+  convertToSVGCoords,
 } from '../utils';
 
 const isAdjustmentRequired = type =>
@@ -28,8 +29,6 @@ const Board = () => {
   const [action, setAction] = useState('none');
   const [selectedElement, setSelectedElement] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
-
-  const [moveToViewBox, setMoveToViewBox] = useState(null);
 
   const svgRef = useRef(null);
 
@@ -55,10 +54,25 @@ const Board = () => {
         setAction('none');
         dispatch(selectTool('selection'));
       }
+
+      if (e.key === ' ') {
+        setAction('movingCanvas');
+      }
     };
+
+    const handleKeyup = e => {
+      if (e.key === ' ' || e.code === 'Space') {
+        console.log(e);
+        setAction('none');
+      }
+    };
+
     window.addEventListener('keydown', handleKeydown);
+    window.addEventListener('keyup', handleKeyup);
+
     return () => {
       window.removeEventListener('keydown', handleKeydown);
+      window.removeEventListener('keyup', handleKeyup);
     };
   });
 
@@ -111,13 +125,7 @@ const Board = () => {
   };
 
   const handleMouseDown = e => {
-    // TBA TBA TBA
-    // if (e.key === ' ' || e.code === 'Space') {
-    //   moveCanvas();
-    //   return;
-    // }
-
-    if (action === 'writing') return;
+    if (action === 'writing' || action === 'movingCanvas') return;
 
     const { clientX, clientY } = e;
     if (tool === 'eraser') {
@@ -167,6 +175,8 @@ const Board = () => {
       setAction(tool === 'text' ? 'writing' : 'drawing');
     }
   };
+
+  const [viewBoxCoords, setViewBoxCoords] = useState({ x: 0, y: 0 });
 
   const handleMouseMove = e => {
     const { clientX, clientY } = e;
@@ -243,10 +253,42 @@ const Board = () => {
         brushColor: roughElement.options.stroke,
         brushSize: roughElement.options.strokeWidth,
       });
+    } else if (action === 'movingCanvas') {
+      e.target.style.cursor = 'grab';
+      const clientSVGCoords = convertToSVGCoords(
+        {
+          x: e.clientX,
+          y: e.clientY,
+        },
+        svgRef.current
+      );
+
+      const newSVGCoords = convertToSVGCoords(
+        {
+          x: e.clientX + e.movementX,
+          y: e.clientY + e.movementY,
+        },
+        svgRef.current
+      );
+
+      const svgMovement = {
+        dx: newSVGCoords.x - clientSVGCoords.x,
+        dy: newSVGCoords.y - clientSVGCoords.y,
+      };
+
+      setViewBoxCoords({
+        x: viewBoxCoords.x - svgMovement.dx,
+        y: viewBoxCoords.y - svgMovement.dy,
+      });
     }
   };
 
   const handleMouseUp = e => {
+    if (action === 'movingCanvas') {
+      setAction('none');
+      return;
+    }
+
     const { clientX, clientY } = e;
 
     if (selectedElement) {
@@ -286,11 +328,11 @@ const Board = () => {
     if (tool !== 'pencil') dispatch(selectTool('selection'));
   };
 
-  // TBA TBA TBA
   // Resize Canvas
   const [SVGSizeRatio, setSVGSizeRatio] = useState(1);
+
   const resizeCanvas = deltaRatio => {
-    if (SVGSizeRatio < 0.5) {
+    if (SVGSizeRatio < 0.2) {
       deltaRatio > 0 && setSVGSizeRatio(SVGSizeRatio + deltaRatio);
     } else if (SVGSizeRatio > 2) {
       deltaRatio < 0 && setSVGSizeRatio(SVGSizeRatio + deltaRatio);
@@ -312,6 +354,7 @@ const Board = () => {
     elements,
     SVGSizeRatio,
     resizeCanvas,
+    viewBoxCoords,
   };
 
   const modalActions = (
@@ -332,6 +375,9 @@ const Board = () => {
         redo={redo}
         tool={tool}
         setModalOpen={setModalOpen}
+        SVGSizeRatio={SVGSizeRatio}
+        resizeCanvas={resizeCanvas}
+        setSVGSizeRatio={setSVGSizeRatio}
       />
       {modalOpen ? (
         <Modal

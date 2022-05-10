@@ -5,16 +5,7 @@ import { selectTool } from '../../redux/activeTool';
 import { drawElement } from '../../utils';
 import { TEXTAREA_LINE_HEIGHT } from '../../config';
 
-const convertToSVGCoord = ({ x, y }, svg) => {
-  const clientPoint = svg.createSVGPoint();
-  clientPoint.x = x;
-  clientPoint.y = y;
-  const CTM = svg.current.getScreenCTM();
-  const SVGPoint = clientPoint.matrixTransform(CTM.inverse());
-  return { x: SVGPoint.x, y: SVGPoint.y };
-};
-
-const SvgBoard = forwardRef((props, ref) => {
+const SvgBoard = forwardRef((props, svgRef) => {
   const {
     brushColor,
     action,
@@ -26,17 +17,30 @@ const SvgBoard = forwardRef((props, ref) => {
     handleMouseUp,
     updateElement,
     elements,
+    SVGSizeRatio,
+    resizeCanvas,
+    viewBoxCoords,
   } = props;
   const dispatch = useDispatch();
 
-  const [currentValue, setCurrentValue] = useState('');
+  const [currentTextareaValue, setCurrentTextareaValue] = useState('');
   const [SVGSize, setSVGSize] = useState({
-    width: 960,
-    height: 540,
+    width: window.innerWidth,
+    height: window.innerHeight,
   });
-  const [viewBoxOrigin, setViewBoxOrigin] = useState({ x: 0, y: 0 });
 
   const textareaRef = useRef(null);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setSVGSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [SVGSize]);
 
   useEffect(() => {
     const textarea = textareaRef.current;
@@ -52,7 +56,7 @@ const SvgBoard = forwardRef((props, ref) => {
     const textarea = textareaRef.current;
     if (!textarea) return;
     textarea.style.height = textarea.scrollHeight + 'px';
-  }, [currentValue]);
+  }, [currentTextareaValue]);
 
   const handleBlur = e => {
     if (!e.target.value && textareaRef.current) {
@@ -82,20 +86,29 @@ const SvgBoard = forwardRef((props, ref) => {
             left: selectedElement.x1,
             color: brushColor,
           }}
-          onChange={e => setCurrentValue(e.target.value)}
+          onChange={e => setCurrentTextareaValue(e.target.value)}
         />
       ) : null}
       <S.SVGCanvas
         width={window.innerWidth}
         height={window.innerHeight}
-        viewBox={`${viewBoxOrigin.x} ${viewBoxOrigin.y} ${
-          (1 / SVGSizeRatio) * SVGSize.width
-        } ${(1 / SVGSizeRatio) * SVGSize.height}`}
+        viewBox={`${viewBoxCoords.x} ${viewBoxCoords.y} ${
+          SVGSize.width / SVGSizeRatio
+        } ${SVGSize.height / SVGSizeRatio}`}
         preserveAspectRatio="xMidYMid meet"
-        ref={ref}
+        ref={svgRef}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
+        onWheel={e => {
+          if (e.ctrlKey) {
+            if (e.deltaY > 0) {
+              resizeCanvas(-0.01);
+            } else if (e.deltaY < 0) {
+              resizeCanvas(0.01);
+            }
+          }
+        }}
       >
         {elements &&
           elements.map(element => {

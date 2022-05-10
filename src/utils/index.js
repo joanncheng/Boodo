@@ -234,3 +234,12 @@ export const adjustElementCoordinates = element => {
     return { x1: minX, y1: minY, x2: maxX, y2: maxY };
   }
 };
+
+export const convertToSVGCoords = ({ x, y }, svg) => {
+  const clientPoint = svg.createSVGPoint();
+  clientPoint.x = x;
+  clientPoint.y = y;
+  const CTM = svg.getScreenCTM();
+  const SVGPoint = clientPoint.matrixTransform(CTM.inverse());
+  return { x: SVGPoint.x, y: SVGPoint.y };
+};

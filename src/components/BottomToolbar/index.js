@@ -2,6 +2,7 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import { selectTool } from '../../redux/activeTool';
 import Tooltip from '../ToolTip';
+import * as S from './BottomToolbar.styled';
 import ZoomOutIcon from '../../../public/images/icons/zoomOut.svg';
 import ZoomInIcon from '../../../public/images/icons/zoomIn.svg';
 import UndoIcon from '../../../public/images/icons/undo.svg';
@@ -11,9 +12,15 @@ import SaveFileIcon from '../../../public/images/icons/saveFile.svg';
 import CollaborationIcon from '../../../public/images/icons/collaboration.svg';
 import TrashCanIcon from '../../../public/images/icons/trashCan.svg';
 
-import * as S from './BottomToolbar.styled';
-
-const BottomToolbar = ({ undo, redo, tool, setModalOpen }) => {
+const BottomToolbar = ({
+  undo,
+  redo,
+  tool,
+  setModalOpen,
+  SVGSizeRatio,
+  setSVGSizeRatio,
+  resizeCanvas,
+}) => {
   const dispatch = useDispatch();
 
   const toggleEraser = () => {
@@ -24,20 +31,33 @@ const BottomToolbar = ({ undo, redo, tool, setModalOpen }) => {
     }
   };
 
+  const zoomOutCanvas = () => {
+    resizeCanvas(-0.1);
+  };
+
+  const zoomInCanvas = () => {
+    resizeCanvas(0.1);
+  };
+
   return (
     <S.BottomStack>
       <S.ToolContainer>
         <S.ToolTipWrapper>
           <Tooltip content="Reset zoom" position="top">
-            <S.ToolTypeButton title="Reset zoom">100 %</S.ToolTypeButton>
+            <S.ToolTypeButton
+              title="Reset zoom"
+              onClick={() => setSVGSizeRatio(1)}
+            >
+              {(SVGSizeRatio * 100).toFixed(0)} %
+            </S.ToolTypeButton>
           </Tooltip>
         </S.ToolTipWrapper>
-        <S.ToolTypeButton title="Zoom out">
+        <S.ToolTypeButton title="Zoom out" onClick={zoomOutCanvas}>
           <S.ToolIcon>
             <ZoomOutIcon />
           </S.ToolIcon>
         </S.ToolTypeButton>
-        <S.ToolTypeButton title="Zoom in">
+        <S.ToolTypeButton title="Zoom in" onClick={zoomInCanvas}>
           <S.ToolIcon>
             <ZoomInIcon />
           </S.ToolIcon>
