@@ -1,18 +1,10 @@
 import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
-import GlobalStyles from './components/GlobalStyles';
+import GlobalStyles, { theme } from './components/GlobalStyles';
 import Home from './pages/Home';
 import LoginForm from './pages/LoginForm';
-import Board from './components/Board';
-
-const theme = {
-  colors: {
-    primary: '#4b59f7',
-    secondary: '',
-    bgDark: '#010606',
-  },
-};
+import Board from './pages/Board';
 
 const App = () => {
   return (

@@ -1,9 +1,21 @@
 import styled, { createGlobalStyle } from 'styled-components';
 
-const GlobalStyles = createGlobalStyle`
+export const theme = {
+  colors: {
+    textLightest: '#f7f8fa',
+    textLight: '#a9b3c1',
+    text: '#58585D',
+    textDark: '#343a40',
+    textDarkest: '#161617',
+    primary: '#665df5',
+    primaryDark: '#544af4',
+    secondary: '#57e1a3',
+    bgDark: '#010606',
+    bgGrey: '#ced4da',
+  },
+};
 
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC&family=Itim&display=swap');
-  
+export default createGlobalStyle`
 
   @font-face {
     font-family: 'virgil';
@@ -19,13 +31,18 @@ const GlobalStyles = createGlobalStyle`
     font-family: 'Noto Sans TC', Arial, sans-serif;
   }
   
-  body{
-    overflow: hidden;
-  }
-  
   img {
     max-width: 100%;
   }
+  
+  tspan {
+    font-family: 'Virgil', 'Klee One', 'Noto Sans TC', Arial, sans-serif;
+    letter-spacing: 1.5px;
+    stroke-width: 0;
+    font-size: 24px;
+  }
+
+  
 `;
 
 export const Container = styled.div`
@@ -58,6 +75,8 @@ export const Button = styled.button`
     background: #fff;
     color: ${({ theme }) => theme.colors.primary};
   }
-`;
 
-export default GlobalStyles;
+  @media screen and (max-width: 768px) {
+    width: 100%;
+  }
+`;
