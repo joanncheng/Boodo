@@ -57,15 +57,77 @@ const getPositionWithinElement = (x, y, element) => {
     case 'pencil':
       const betweenAnyPoint = element.points.some((point, index) => {
         const nextPoint = element.points[index + 1];
-        if (!nextPoint) return false;
-        return (
-          checkOnLine(point.x, point.y, nextPoint.x, nextPoint.y, x, y, 5) !==
-          null
-        );
+        if (!nextPoint) {
+          return (
+            checkOnLine(point.x, point.y, point.x, point.y, x, y, 10) !== null
+          );
+        } else {
+          return (
+            checkOnLine(point.x, point.y, nextPoint.x, nextPoint.y, x, y, 5) !==
+            null
+          );
+        }
       });
       return betweenAnyPoint ? 'inside' : null;
     case 'text':
       return x >= x1 && x <= x2 && y >= y1 && y <= y2 ? 'inside' : null;
+    default:
+      throw new Error(`Type not recognized: ${type}`);
+  }
+};
+
+export const getElementAtPosition = (x, y, elements) => {
+  return elements
+    .map(element => {
+      if (element.type === 'text' && document.getElementById(element.id)) {
+        const { width, height } = document.getElementById(element.id).getBBox();
+        element.x2 = element.x1 + width;
+        element.y2 = element.y1 + height;
+      }
+      return {
+        ...element,
+        position: getPositionWithinElement(x, y, element),
+      };
+    })
+    .find(element => element.position !== null);
+};
+
+export const createSVGElement = (id, x1, y1, x2, y2, type, options) => {
+  let roughElement;
+  switch (type) {
+    case 'line':
+      roughElement = generator.line(x1, y1, x2, y2, {
+        roughness: 2,
+        stroke: options.brushColor,
+        strokeWidth: options.brushSize,
+      });
+      return { id, x1, y1, x2, y2, type, roughElement };
+    case 'rectangle':
+      roughElement = generator.rectangle(x1, y1, x2 - x1, y2 - y1, {
+        roughness: 2,
+        stroke: options.brushColor,
+        strokeWidth: options.brushSize,
+      });
+      return { id, x1, y1, x2, y2, type, roughElement };
+    case 'ellipse':
+      const width = x2 - x1;
+      const height = y2 - y1;
+      roughElement = generator.ellipse(
+        x1 + width / 2,
+        y1 + height / 2,
+        width,
+        height,
+        {
+          roughness: 0.5,
+          stroke: options.brushColor,
+          strokeWidth: options.brushSize,
+        }
+      );
+      return { id, x1, y1, x2, y2, type, roughElement };
+    case 'pencil':
+      return { id, type, options, points: [{ x: x1, y: y1 }] };
+    case 'text':
+      return { id, x1, y1, x2, y2, type, options, text: '' };
     default:
       throw new Error(`Type not recognized: ${type}`);
   }
@@ -128,63 +190,6 @@ export const drawElement = element => {
   }
 };
 
-export const getElementAtPosition = (x, y, elements) => {
-  return elements
-    .map(element => {
-      if (element.type === 'text' && document.getElementById(element.id)) {
-        const { width, height } = document.getElementById(element.id).getBBox();
-        element.x2 = element.x1 + width;
-        element.y2 = element.y1 + height;
-      }
-      return {
-        ...element,
-        position: getPositionWithinElement(x, y, element),
-      };
-    })
-    .find(element => element.position !== null);
-};
-
-export const createSVGElement = (id, x1, y1, x2, y2, type, options) => {
-  let roughElement;
-  switch (type) {
-    case 'line':
-      roughElement = generator.line(x1, y1, x2, y2, {
-        roughness: 2,
-        stroke: options.brushColor,
-        strokeWidth: options.brushSize,
-      });
-      return { id, x1, y1, x2, y2, type, roughElement };
-    case 'rectangle':
-      roughElement = generator.rectangle(x1, y1, x2 - x1, y2 - y1, {
-        roughness: 2,
-        stroke: options.brushColor,
-        strokeWidth: options.brushSize,
-      });
-      return { id, x1, y1, x2, y2, type, roughElement };
-    case 'ellipse':
-      const width = x2 - x1;
-      const height = y2 - y1;
-      roughElement = generator.ellipse(
-        x1 + width / 2,
-        y1 + height / 2,
-        width,
-        height,
-        {
-          roughness: 0.5,
-          stroke: options.brushColor,
-          strokeWidth: options.brushSize,
-        }
-      );
-      return { id, x1, y1, x2, y2, type, roughElement };
-    case 'pencil':
-      return { id, type, options, points: [{ x: x1, y: y1 }] };
-    case 'text':
-      return { id, x1, y1, x2, y2, type, options, text: '' };
-    default:
-      throw new Error(`Type not recognized: ${type}`);
-  }
-};
-
 export const setCursorForPosition = position => {
   switch (position) {
     case 'tl':
@@ -242,4 +247,13 @@ export const convertToSVGCoords = ({ x, y }, svg) => {
   const CTM = svg.getScreenCTM();
   const SVGPoint = clientPoint.matrixTransform(CTM.inverse());
   return { x: SVGPoint.x, y: SVGPoint.y };
+};
+
+export const convertToCanvasCoords = ({ x, y }, svg) => {
+  const SVGPoint = svg.createSVGPoint();
+  SVGPoint.x = x;
+  SVGPoint.y = y;
+  const CTM = svg.getScreenCTM();
+  const CanvasPoint = SVGPoint.matrixTransform(CTM);
+  return { x: CanvasPoint.x, y: CanvasPoint.y };
 };

@@ -2,12 +2,11 @@ import React, { forwardRef, useRef, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import * as S from './SvgBoard.styled';
 import { selectTool } from '../../redux/activeTool';
-import { drawElement } from '../../utils';
+import { drawElement, convertToCanvasCoords } from '../../utils';
 import { TEXTAREA_LINE_HEIGHT } from '../../config';
 
 const SvgBoard = forwardRef((props, svgRef) => {
   const {
-    brushColor,
     action,
     setAction,
     selectedElement,
@@ -20,14 +19,13 @@ const SvgBoard = forwardRef((props, svgRef) => {
     SVGSizeRatio,
     resizeCanvas,
     viewBoxCoords,
+    SVGSize,
+    setSVGSize,
   } = props;
+
   const dispatch = useDispatch();
 
   const [currentTextareaValue, setCurrentTextareaValue] = useState('');
-  const [SVGSize, setSVGSize] = useState({
-    width: window.innerWidth,
-    height: window.innerHeight,
-  });
 
   const textareaRef = useRef(null);
 
@@ -42,6 +40,13 @@ const SvgBoard = forwardRef((props, svgRef) => {
     return () => window.removeEventListener('resize', handleResize);
   }, [SVGSize]);
 
+  // Auto-height textarea
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+    textarea.style.height = textarea.scrollHeight + 'px';
+  }, [currentTextareaValue]);
+
   useEffect(() => {
     const textarea = textareaRef.current;
     if (action === 'writing') {
@@ -52,13 +57,7 @@ const SvgBoard = forwardRef((props, svgRef) => {
     }
   }, [action, selectedElement]);
 
-  useEffect(() => {
-    const textarea = textareaRef.current;
-    if (!textarea) return;
-    textarea.style.height = textarea.scrollHeight + 'px';
-  }, [currentTextareaValue]);
-
-  const handleBlur = e => {
+  const handleTextareaBlur = e => {
     if (!e.target.value && textareaRef.current) {
       textareaRef.current.focus();
       return;
@@ -74,21 +73,30 @@ const SvgBoard = forwardRef((props, svgRef) => {
     dispatch(selectTool('selection'));
   };
 
+  const renderTextarea = () => {
+    const x = selectedElement.x1;
+    const y = selectedElement.y1 - 5;
+
+    const clientPoint = convertToCanvasCoords({ x, y }, svgRef.current);
+
+    return (
+      <S.TextArea
+        ref={textareaRef}
+        onBlur={handleTextareaBlur}
+        style={{
+          position: 'fixed',
+          top: clientPoint.y,
+          left: clientPoint.x,
+          color: selectedElement.options.bru,
+        }}
+        onChange={e => setCurrentTextareaValue(e.target.value)}
+      />
+    );
+  };
+
   return (
     <>
-      {action === 'writing' ? (
-        <S.TextArea
-          ref={textareaRef}
-          onBlur={handleBlur}
-          style={{
-            position: 'fixed',
-            top: selectedElement.y1 - 5,
-            left: selectedElement.x1,
-            color: brushColor,
-          }}
-          onChange={e => setCurrentTextareaValue(e.target.value)}
-        />
-      ) : null}
+      {action === 'writing' && renderTextarea()}
       <S.SVGCanvas
         width={window.innerWidth}
         height={window.innerHeight}

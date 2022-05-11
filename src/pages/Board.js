@@ -16,12 +16,16 @@ import {
   convertToSVGCoords,
 } from '../utils';
 
+const ERASER_CURSOR =
+  "url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABmJLR0QA/wD/AP+gvaeTAAAArklEQVQ4jaXTPQ6BQRDG8R/u4OscDoRSlCqJSqehcR2NC2jkpZVI1A6AZleQfV82nmSSzcz+n9nJZPlTjR/utLFAE7vcBi3scQ8x+wfOMimDfzLpoKiAY/ShnoA3qGH15ZW9ss6HcIZ5SfcijPlUKySLFzjq0yR1xxrnVCFoWQXDADeMErVOGKsUjpoEk/FLLq7ziG4VnDLJhqOmweTsfSNJpT7TFidcMcQlp3u2Ht7nQaPZqVymAAAAAElFTkSuQmCC'), crosshair";
+
 const isAdjustmentRequired = type =>
   ['line', 'rectangle', 'ellipse'].includes(type);
 
 const Board = () => {
   const dispatch = useDispatch();
   const tool = useSelector(state => state.activeTool);
+
   const brushColor = useSelector(state => state.brushOptions.color);
   const brushSize = useSelector(state => state.brushOptions.size);
 
@@ -29,6 +33,11 @@ const Board = () => {
   const [action, setAction] = useState('none');
   const [selectedElement, setSelectedElement] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [viewBoxCoords, setViewBoxCoords] = useState({ x: 0, y: 0 });
+  const [SVGSize, setSVGSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
 
   const svgRef = useRef(null);
 
@@ -62,7 +71,6 @@ const Board = () => {
 
     const handleKeyup = e => {
       if (e.key === ' ' || e.code === 'Space') {
-        console.log(e);
         setAction('none');
       }
     };
@@ -121,15 +129,20 @@ const Board = () => {
 
   const resetElements = () => {
     setElements([]);
+    setSVGSizeRatio(1);
     setModalOpen(false);
   };
 
   const handleMouseDown = e => {
     if (action === 'writing' || action === 'movingCanvas') return;
 
-    const { clientX, clientY } = e;
+    const SVGPoint = convertToSVGCoords(
+      { x: e.clientX, y: e.clientY },
+      svgRef.current
+    );
+
     if (tool === 'eraser') {
-      const element = getElementAtPosition(clientX, clientY, elements);
+      const element = getElementAtPosition(SVGPoint.x, SVGPoint.y, elements);
       if (element) {
         setSelectedElement(element);
         setElements(prevState => prevState);
@@ -139,15 +152,15 @@ const Board = () => {
     }
 
     if (tool === 'selection') {
-      const element = getElementAtPosition(clientX, clientY, elements);
+      const element = getElementAtPosition(SVGPoint.x, SVGPoint.y, elements);
       if (element) {
         if (element.type === 'pencil') {
-          const xOffsets = element.points.map(point => clientX - point.x);
-          const yOffsets = element.points.map(point => clientY - point.y);
+          const xOffsets = element.points.map(point => SVGPoint.x - point.x);
+          const yOffsets = element.points.map(point => SVGPoint.y - point.y);
           setSelectedElement({ ...element, xOffsets, yOffsets });
         } else {
-          const offsetX = clientX - element.x1;
-          const offsetY = clientY - element.y1;
+          const offsetX = SVGPoint.x - element.x1;
+          const offsetY = SVGPoint.y - element.y1;
           setSelectedElement({ ...element, offsetX, offsetY });
         }
         setElements(prevState => prevState);
@@ -162,13 +175,14 @@ const Board = () => {
       const id = uuid();
       const element = createSVGElement(
         id,
-        clientX,
-        clientY,
-        clientX,
-        clientY,
+        SVGPoint.x,
+        SVGPoint.y,
+        SVGPoint.x,
+        SVGPoint.y,
         tool,
         { brushColor, brushSize }
       );
+
       setElements(prevState => [...prevState, element]);
       setSelectedElement(element);
 
@@ -176,38 +190,38 @@ const Board = () => {
     }
   };
 
-  const [viewBoxCoords, setViewBoxCoords] = useState({ x: 0, y: 0 });
-
   const handleMouseMove = e => {
-    const { clientX, clientY } = e;
+    const SVGPoint = convertToSVGCoords(
+      { x: e.clientX, y: e.clientY },
+      svgRef.current
+    );
 
     // Changing cursor style
-    if (tool === 'selection') {
-      const element = getElementAtPosition(clientX, clientY, elements);
-      e.target.style.cursor = element
-        ? setCursorForPosition(element.position)
-        : 'default';
-    } else if (tool === 'eraser') {
-      const element = getElementAtPosition(clientX, clientY, elements);
-      e.target.style.cursor = element
-        ? `url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAAXNSR0IArs4c6QAAANxJREFUOE9jZKAyYKSyeQzDw8BwBgYGDWjQ3GBgYFiJL5jweTmCm5t7qoqKCquxsTEvyJCzZ89+vnPnzu+vX79mMzAwrMBmMC4DI9TV1bvKyspkk5KSUPTNmzePoaur6/HNmzfLsBmK1UBubu63kyZNEkI3DGYyyNC8vLx3X79+FUZ3JTYDw/X19WdfuHAB7E1cwMDA4PPFixdT0cMUm4H1SUlJDXPnzsWbRJOTkxnmzZvXwMDA0IiskC4GUt3LDNSOFFCQUDfZQAOZqgkbOeKolvXIKtmGR/FFktcB1O1uFZ6gYH4AAAAASUVORK5CYII='),
-      crosshair`
-        : 'default';
+    if (tool === 'selection' || tool === 'eraser') {
+      const element = getElementAtPosition(SVGPoint.x, SVGPoint.y, elements);
+      if (element) {
+        e.target.style.cursor =
+          tool === 'selection'
+            ? setCursorForPosition(element.position)
+            : ERASER_CURSOR;
+      } else {
+        e.target.style.cursor = 'default';
+      }
     } else {
       e.target.style.cursor = 'crosshair';
     }
 
     if (action === 'drawing') {
       const { id, x1, y1 } = selectedElement;
-      updateElement(id, x1, y1, clientX, clientY, tool, {
+      updateElement(id, x1, y1, SVGPoint.x, SVGPoint.y, tool, {
         brushColor,
         brushSize,
       });
     } else if (action === 'moving') {
       if (selectedElement.type === 'pencil') {
         const newPoints = selectedElement.points.map((_, index) => ({
-          x: clientX - selectedElement.xOffsets[index],
-          y: clientY - selectedElement.yOffsets[index],
+          x: SVGPoint.x - selectedElement.xOffsets[index],
+          y: SVGPoint.y - selectedElement.yOffsets[index],
         }));
         const elementsCopy = [...elements];
         const index = elements.findIndex(el => el.id === selectedElement.id);
@@ -217,24 +231,29 @@ const Board = () => {
         };
         setElements(elementsCopy, true);
       } else if (selectedElement.type === 'text') {
-        const { id, x1, y1, x2, y2, type, offsetX, offsetY, color, text } =
+        const { id, x1, y1, x2, y2, type, offsetX, offsetY, options, text } =
           selectedElement;
         const width = x2 - x1;
         const height = y2 - y1;
-        const newX1 = clientX - offsetX;
-        const newY1 = clientY - offsetY;
-        updateElement(id, newX1, newY1, newX1 + width, newY1 + height, type, {
-          brushColor,
-          brushSize,
-          text,
-        });
+        const newX1 = SVGPoint.x - offsetX;
+        const newY1 = SVGPoint.y - offsetY;
+        options.text = text;
+        updateElement(
+          id,
+          newX1,
+          newY1,
+          newX1 + width,
+          newY1 + height,
+          type,
+          options
+        );
       } else {
         const { id, x1, y1, x2, y2, type, offsetX, offsetY, roughElement } =
           selectedElement;
         const width = x2 - x1;
         const height = y2 - y1;
-        const newX1 = clientX - offsetX;
-        const newY1 = clientY - offsetY;
+        const newX1 = SVGPoint.x - offsetX;
+        const newY1 = SVGPoint.y - offsetY;
         updateElement(id, newX1, newY1, newX1 + width, newY1 + height, type, {
           brushColor: roughElement.options.stroke,
           brushSize: roughElement.options.strokeWidth,
@@ -244,8 +263,8 @@ const Board = () => {
       const { id, type, roughElement, position, ...coordinates } =
         selectedElement;
       const { x1, y1, x2, y2 } = resizeCoordinates(
-        clientX,
-        clientY,
+        SVGPoint.x,
+        SVGPoint.y,
         position,
         coordinates
       );
@@ -254,16 +273,9 @@ const Board = () => {
         brushSize: roughElement.options.strokeWidth,
       });
     } else if (action === 'movingCanvas') {
-      e.target.style.cursor = 'grab';
-      const clientSVGCoords = convertToSVGCoords(
-        {
-          x: e.clientX,
-          y: e.clientY,
-        },
-        svgRef.current
-      );
+      e.target.style.cursor = 'grabbing';
 
-      const newSVGCoords = convertToSVGCoords(
+      const newSVGPoint = convertToSVGCoords(
         {
           x: e.clientX + e.movementX,
           y: e.clientY + e.movementY,
@@ -271,14 +283,14 @@ const Board = () => {
         svgRef.current
       );
 
-      const svgMovement = {
-        dx: newSVGCoords.x - clientSVGCoords.x,
-        dy: newSVGCoords.y - clientSVGCoords.y,
+      const delta = {
+        dx: SVGPoint.x - newSVGPoint.x,
+        dy: SVGPoint.y - newSVGPoint.y,
       };
 
       setViewBoxCoords({
-        x: viewBoxCoords.x - svgMovement.dx,
-        y: viewBoxCoords.y - svgMovement.dy,
+        x: viewBoxCoords.x + delta.dx,
+        y: viewBoxCoords.y + delta.dy,
       });
     }
   };
@@ -289,13 +301,16 @@ const Board = () => {
       return;
     }
 
-    const { clientX, clientY } = e;
+    const SVGPoint = convertToSVGCoords(
+      { x: e.clientX, y: e.clientY },
+      svgRef.current
+    );
 
     if (selectedElement) {
       if (
         selectedElement.type === 'text' &&
-        clientX - selectedElement.offsetX === selectedElement.x1 &&
-        clientY - selectedElement.offsetY === selectedElement.y1
+        SVGPoint.x - selectedElement.offsetX === selectedElement.x1 &&
+        SVGPoint.y - selectedElement.offsetY === selectedElement.y1
       ) {
         setAction('writing');
         return;
@@ -355,6 +370,8 @@ const Board = () => {
     SVGSizeRatio,
     resizeCanvas,
     viewBoxCoords,
+    SVGSize,
+    setSVGSize,
   };
 
   const modalActions = (
