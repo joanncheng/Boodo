@@ -34,8 +34,11 @@ module.exports = {
         use: ['style-loader', 'css-loader', 'sass-loader'],
       },
       {
-        test: /\.png|jpg|gif$/,
-        use: ['file-loader'],
+        test: /\.(jpe?g|png|gif)$/i,
+        loader: 'file-loader',
+        options: {
+          name: '/public/images/[name].[ext]',
+        },
       },
       {
         test: /\.woff2?(\?v=\d+\.\d+\.\d+)?$/,
