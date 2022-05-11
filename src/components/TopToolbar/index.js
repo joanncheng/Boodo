@@ -17,7 +17,6 @@ import OutsideClicker from '../OutsideClicker';
 
 const TopToolbar = ({ brushColor, brushSize, tool }) => {
   const dispatch = useDispatch();
-  console.log(brushColor);
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -117,6 +116,7 @@ const TopToolbar = ({ brushColor, brushSize, tool }) => {
         <S.ToolLabel title="Stroke">
           <S.ToolTypeColor
             type="color"
+            value={brushColor}
             name="editor-current-color"
             onChange={e => dispatch(selectColor(e.target.value))}
           />
