@@ -10,6 +10,8 @@ export const ActionsWrapper = styled.div`
   min-width: 70px;
   border-radius: 0.5rem;
   box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.12);
+  background-color: #fff;
+  z-index: 10;
 `;
 
 export const Fieldset = styled.fieldset`
