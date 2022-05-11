@@ -16,11 +16,10 @@ const SvgBoard = forwardRef((props, svgRef) => {
     handleMouseUp,
     updateElement,
     elements,
-    SVGSizeRatio,
+    viewBoxSizeRatio,
     resizeCanvas,
-    viewBoxCoords,
-    SVGSize,
-    setSVGSize,
+    viewBox,
+    setViewBox,
   } = props;
 
   const dispatch = useDispatch();
@@ -31,16 +30,17 @@ const SvgBoard = forwardRef((props, svgRef) => {
 
   useEffect(() => {
     const handleResize = () => {
-      setSVGSize({
+      setViewBox({
+        ...viewBox,
         width: window.innerWidth,
         height: window.innerHeight,
       });
     };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [SVGSize]);
+  }, [viewBox.width, viewBox.height]);
 
-  // Auto-height textarea
+  // Textarea height auto resize
   useEffect(() => {
     const textarea = textareaRef.current;
     if (!textarea) return;
@@ -100,9 +100,9 @@ const SvgBoard = forwardRef((props, svgRef) => {
       <S.SVGCanvas
         width={window.innerWidth}
         height={window.innerHeight}
-        viewBox={`${viewBoxCoords.x} ${viewBoxCoords.y} ${
-          SVGSize.width / SVGSizeRatio
-        } ${SVGSize.height / SVGSizeRatio}`}
+        viewBox={`${viewBox.x} ${viewBox.y} ${
+          viewBox.width / viewBoxSizeRatio
+        } ${viewBox.height / viewBoxSizeRatio}`}
         preserveAspectRatio="xMidYMid meet"
         ref={svgRef}
         onMouseDown={handleMouseDown}

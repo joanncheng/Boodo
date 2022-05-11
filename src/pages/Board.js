@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { v4 as uuid } from 'uuid';
 import useHistory from '../hooks/useHistory';
@@ -25,7 +25,6 @@ const isAdjustmentRequired = type =>
 const Board = () => {
   const dispatch = useDispatch();
   const tool = useSelector(state => state.activeTool);
-
   const brushColor = useSelector(state => state.brushOptions.color);
   const brushSize = useSelector(state => state.brushOptions.size);
 
@@ -33,10 +32,16 @@ const Board = () => {
   const [action, setAction] = useState('none');
   const [selectedElement, setSelectedElement] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const [viewBoxCoords, setViewBoxCoords] = useState({ x: 0, y: 0 });
-  const [SVGSize, setSVGSize] = useState({
+  const [viewBox, setViewBox] = useState({
+    x: 0,
+    y: 0,
     width: window.innerWidth,
     height: window.innerHeight,
+  });
+  const [viewBoxSizeRatio, setViewBoxSizeRatio] = useState(1);
+  const [centerPoint, setCenterPoint] = useState({
+    x: window.innerWidth / 2,
+    y: window.innerHeight / 2,
   });
 
   const svgRef = useRef(null);
@@ -129,7 +134,7 @@ const Board = () => {
 
   const resetElements = () => {
     setElements([]);
-    setSVGSizeRatio(1);
+    setViewBoxSizeRatio(1);
     setModalOpen(false);
   };
 
@@ -288,9 +293,10 @@ const Board = () => {
         dy: SVGPoint.y - newSVGPoint.y,
       };
 
-      setViewBoxCoords({
-        x: viewBoxCoords.x + delta.dx,
-        y: viewBoxCoords.y + delta.dy,
+      setViewBox({
+        ...viewBox,
+        x: viewBox.x + delta.dx,
+        y: viewBox.y + delta.dy,
       });
     }
   };
@@ -344,17 +350,43 @@ const Board = () => {
   };
 
   // Resize Canvas
-  const [SVGSizeRatio, setSVGSizeRatio] = useState(1);
-
   const resizeCanvas = deltaRatio => {
-    if (SVGSizeRatio < 0.2) {
-      deltaRatio > 0 && setSVGSizeRatio(SVGSizeRatio + deltaRatio);
-    } else if (SVGSizeRatio > 2) {
-      deltaRatio < 0 && setSVGSizeRatio(SVGSizeRatio + deltaRatio);
+    if (viewBoxSizeRatio < 0.2) {
+      deltaRatio > 0 && setViewBoxSizeRatio(viewBoxSizeRatio + deltaRatio);
+    } else if (viewBoxSizeRatio > 2) {
+      deltaRatio < 0 && setViewBoxSizeRatio(viewBoxSizeRatio + deltaRatio);
     } else {
-      setSVGSizeRatio(SVGSizeRatio + deltaRatio);
+      setViewBoxSizeRatio(viewBoxSizeRatio + deltaRatio);
     }
+    const newCenterPoint = convertToSVGCoords(
+      {
+        x: window.innerWidth / 2,
+        y: window.innerHeight / 2,
+      },
+      svgRef.current
+    );
+    setCenterPoint(newCenterPoint);
   };
+
+  // Move canvas back to center after resizeCanvas
+  useLayoutEffect(() => {
+    const newCenterPoint = convertToSVGCoords(
+      {
+        x: window.innerWidth / 2,
+        y: window.innerHeight / 2,
+      },
+      svgRef.current
+    );
+    const delta = {
+      dx: centerPoint.x - newCenterPoint.x,
+      dy: centerPoint.y - newCenterPoint.y,
+    };
+    setViewBox({
+      ...viewBox,
+      x: viewBox.x + delta.dx,
+      y: viewBox.y + delta.dy,
+    });
+  }, [viewBoxSizeRatio]);
 
   const svgBoardProps = {
     brushColor,
@@ -367,11 +399,10 @@ const Board = () => {
     handleMouseUp,
     updateElement,
     elements,
-    SVGSizeRatio,
+    viewBoxSizeRatio,
     resizeCanvas,
-    viewBoxCoords,
-    SVGSize,
-    setSVGSize,
+    viewBox,
+    setViewBox,
   };
 
   const modalActions = (
@@ -392,9 +423,9 @@ const Board = () => {
         redo={redo}
         tool={tool}
         setModalOpen={setModalOpen}
-        SVGSizeRatio={SVGSizeRatio}
         resizeCanvas={resizeCanvas}
-        setSVGSizeRatio={setSVGSizeRatio}
+        viewBoxSizeRatio={viewBoxSizeRatio}
+        setViewBoxSizeRatio={setViewBoxSizeRatio}
       />
       {modalOpen ? (
         <Modal

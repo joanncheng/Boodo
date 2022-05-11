@@ -17,8 +17,8 @@ const BottomToolbar = ({
   redo,
   tool,
   setModalOpen,
-  SVGSizeRatio,
-  setSVGSizeRatio,
+  viewBoxSizeRatio,
+  setViewBoxSizeRatio,
   resizeCanvas,
 }) => {
   const dispatch = useDispatch();
@@ -46,9 +46,9 @@ const BottomToolbar = ({
           <Tooltip content="Reset zoom" position="top">
             <S.ToolTypeButton
               title="Reset zoom"
-              onClick={() => setSVGSizeRatio(1)}
+              onClick={() => setViewBoxSizeRatio(1)}
             >
-              {(SVGSizeRatio * 100).toFixed(0)} %
+              {(viewBoxSizeRatio * 100).toFixed(0)} %
             </S.ToolTypeButton>
           </Tooltip>
         </S.ToolTipWrapper>
