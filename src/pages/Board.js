@@ -43,7 +43,7 @@ const Board = () => {
     x: window.innerWidth / 2,
     y: window.innerHeight / 2,
   });
-
+  const [spacePressing, setSpacePressing] = useState(false);
   const svgRef = useRef(null);
 
   // Keydown event
@@ -70,13 +70,13 @@ const Board = () => {
       }
 
       if (e.key === ' ') {
-        setAction('movingCanvas');
+        setSpacePressing(true);
       }
     };
 
     const handleKeyup = e => {
       if (e.key === ' ' || e.code === 'Space') {
-        setAction('none');
+        setSpacePressing(false);
       }
     };
 
@@ -139,7 +139,12 @@ const Board = () => {
   };
 
   const handleMouseDown = e => {
-    if (action === 'writing' || action === 'movingCanvas') return;
+    if (action === 'writing') return;
+
+    if (spacePressing) {
+      setAction('movingCanvas');
+      return;
+    }
 
     const SVGPoint = convertToSVGCoords(
       { x: e.clientX, y: e.clientY },
@@ -175,6 +180,7 @@ const Board = () => {
           : setAction('resizing');
       } else {
         setSelectedElement(null);
+        setAction('movingCanvas');
       }
     } else {
       const id = uuid();
