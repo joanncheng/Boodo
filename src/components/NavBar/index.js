@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { FaBars, FaTimes } from 'react-icons/fa';
+import React from 'react';
+import { FaBars } from 'react-icons/fa';
 import * as S from './Navbar.styled';
 import { Button as GSButton } from '../GlobalStyles';
 
@@ -8,9 +8,8 @@ const NavBar = ({ toggle }) => {
     <S.Nav>
       <S.NavbarContainer>
         <S.NavLogo to="/">
-          BO
+          Boodo
           <S.LogoIcon />
-          DO
         </S.NavLogo>
         <S.MobileIcon onClick={toggle}>
           <FaBars />

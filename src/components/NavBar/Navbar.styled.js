@@ -32,7 +32,7 @@ export const NavbarContainer = styled(Container)`
 `;
 
 export const NavLogo = styled(LinkR)`
-  font-family: 'Itim';
+  font-family: 'Virgil';
   color: #fff;
   justify-self: flex-start;
   cursor: pointer;
@@ -40,11 +40,19 @@ export const NavLogo = styled(LinkR)`
   font-size: 3rem;
   display: flex;
   align-items: center;
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.primary};
+  }
 `;
 
 export const LogoIcon = styled(IoIosBrush)`
   font-size: 1.5rem;
   margin: 0 2px;
+
+  ${NavLogo}:hover & {
+    color: #fff;
+  }
 `;
 
 export const MobileIcon = styled.div`
