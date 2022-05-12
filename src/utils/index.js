@@ -58,16 +58,10 @@ const getPositionWithinElement = (x, y, element) => {
     case 'pencil':
       const betweenAnyPoint = element.points.some((point, index) => {
         const nextPoint = element.points[index + 1];
-        if (!nextPoint) {
-          return (
-            checkOnLine(point.x, point.y, point.x, point.y, x, y, 10) !== null
-          );
-        } else {
-          return (
-            checkOnLine(point.x, point.y, nextPoint.x, nextPoint.y, x, y, 5) !==
-            null
-          );
-        }
+        return nextPoint
+          ? checkOnLine(point.x, point.y, nextPoint.x, nextPoint.y, x, y, 5) !==
+              null
+          : checkOnLine(point.x, point.y, point.x, point.y, x, y, 10) !== null;
       });
       return betweenAnyPoint ? 'inside' : null;
     case 'text':
@@ -102,14 +96,30 @@ export const createSVGElement = (id, x1, y1, x2, y2, type, options) => {
         stroke: options.brushColor,
         strokeWidth: options.brushSize,
       });
-      return { id, x1, y1, x2, y2, type, roughElement };
+      return {
+        id,
+        x1,
+        y1,
+        x2,
+        y2,
+        type,
+        options: { ...options, roughElement },
+      };
     case 'rectangle':
       roughElement = generator.rectangle(x1, y1, x2 - x1, y2 - y1, {
         roughness: 2,
         stroke: options.brushColor,
         strokeWidth: options.brushSize,
       });
-      return { id, x1, y1, x2, y2, type, roughElement };
+      return {
+        id,
+        x1,
+        y1,
+        x2,
+        y2,
+        type,
+        options: { ...options, roughElement },
+      };
     case 'ellipse':
       const width = x2 - x1;
       const height = y2 - y1;
@@ -124,11 +134,20 @@ export const createSVGElement = (id, x1, y1, x2, y2, type, options) => {
           strokeWidth: options.brushSize,
         }
       );
-      return { id, x1, y1, x2, y2, type, roughElement };
+      return {
+        id,
+        x1,
+        y1,
+        x2,
+        y2,
+        type,
+        options: { ...options, roughElement },
+      };
     case 'pencil':
       return { id, type, options, points: [{ x: x1, y: y1 }] };
     case 'text':
-      return { id, x1, y1, x2, y2, type, options, text: '' };
+      if (!options.text) options.text = '';
+      return { id, x1, y1, x2, y2, type, options };
     case 'image':
       const imgHeight = ((x2 - x1) * options.height) / options.width;
       return { id, x1, y1, x2, y2: y1 + imgHeight, type, options };
@@ -156,7 +175,7 @@ export const drawElement = element => {
     case 'line':
     case 'rectangle':
     case 'ellipse':
-      const [pathInfoObj] = generator.toPaths(element.roughElement);
+      const [pathInfoObj] = generator.toPaths(element.options.roughElement);
       return (
         <path
           key={element.id}
@@ -174,7 +193,7 @@ export const drawElement = element => {
         fill: element.options.brushColor,
         dominantBaseline: 'hanging',
       };
-      const text = element.text.split('\n');
+      const text = element.options.text.split('\n');
 
       return (
         <text key={element.id} namespace={namespace} {...attrObj}>
@@ -269,6 +288,6 @@ export const convertToCanvasCoords = ({ x, y }, svg) => {
   SVGPoint.x = x;
   SVGPoint.y = y;
   const CTM = svg.getScreenCTM();
-  const CanvasPoint = SVGPoint.matrixTransform(CTM);
-  return { x: CanvasPoint.x, y: CanvasPoint.y };
+  const canvasPoint = SVGPoint.matrixTransform(CTM);
+  return { x: canvasPoint.x, y: canvasPoint.y };
 };

@@ -120,11 +120,15 @@ const Board = () => {
         break;
       case 'text':
         if (!options.text || options.text === ' ') return;
-
-        elementsCopy[index] = {
-          ...createSVGElement(id, x1, y1, x2, y2, type, options),
-          text: options.text,
-        };
+        elementsCopy[index] = createSVGElement(
+          id,
+          x1,
+          y1,
+          x2,
+          y2,
+          type,
+          options
+        );
         break;
       default:
         throw new Error(`Type not recognized: ${type}`);
@@ -267,24 +271,7 @@ const Board = () => {
           points: newPoints,
         };
         setElements(elementsCopy, true);
-      } else if (selectedElement.type === 'text') {
-        const { id, x1, y1, x2, y2, type, offsetX, offsetY, options, text } =
-          selectedElement;
-        const width = x2 - x1;
-        const height = y2 - y1;
-        const newX1 = SVGPoint.x - offsetX;
-        const newY1 = SVGPoint.y - offsetY;
-        options.text = text;
-        updateElement(
-          id,
-          newX1,
-          newY1,
-          newX1 + width,
-          newY1 + height,
-          type,
-          options
-        );
-      } else if (selectedElement.type === 'image') {
+      } else {
         const { id, x1, y1, x2, y2, type, offsetX, offsetY, options } =
           selectedElement;
         const width = x2 - x1;
@@ -300,43 +287,16 @@ const Board = () => {
           type,
           options
         );
-      } else {
-        const { id, x1, y1, x2, y2, type, offsetX, offsetY, roughElement } =
-          selectedElement;
-        const width = x2 - x1;
-        const height = y2 - y1;
-        const newX1 = SVGPoint.x - offsetX;
-        const newY1 = SVGPoint.y - offsetY;
-        updateElement(id, newX1, newY1, newX1 + width, newY1 + height, type, {
-          brushColor: roughElement.options.stroke,
-          brushSize: roughElement.options.strokeWidth,
-        });
       }
     } else if (action === 'resizing') {
-      if (selectedElement.type === 'image') {
-        const { id, type, options, position, ...coordinates } = selectedElement;
-
-        const { x1, y1, x2, y2 } = resizeCoordinates(
-          SVGPoint.x,
-          SVGPoint.y,
-          position,
-          coordinates
-        );
-        updateElement(id, x1, y1, x2, y2, type, options);
-      } else {
-        const { id, type, roughElement, position, ...coordinates } =
-          selectedElement;
-        const { x1, y1, x2, y2 } = resizeCoordinates(
-          SVGPoint.x,
-          SVGPoint.y,
-          position,
-          coordinates
-        );
-        updateElement(id, x1, y1, x2, y2, type, {
-          brushColor: roughElement.options.stroke,
-          brushSize: roughElement.options.strokeWidth,
-        });
-      }
+      const { id, type, options, position, ...coordinates } = selectedElement;
+      const { x1, y1, x2, y2 } = resizeCoordinates(
+        SVGPoint.x,
+        SVGPoint.y,
+        position,
+        coordinates
+      );
+      updateElement(id, x1, y1, x2, y2, type, options);
     } else if (action === 'movingCanvas') {
       e.target.style.cursor = 'grabbing';
 
@@ -399,16 +359,13 @@ const Board = () => {
 
       const index = elements.findIndex(el => el.id === selectedElement.id);
 
-      const { id, type, roughElement } = selectedElement;
+      const { id, type, options } = selectedElement;
       if (
         (action === 'drawing' || action === 'resizing') &&
         isAdjustmentRequired(type)
       ) {
         const { x1, y1, x2, y2 } = adjustElementCoordinates(elements[index]);
-        updateElement(id, x1, y1, x2, y2, type, {
-          brushColor: roughElement.options.stroke,
-          brushSize: roughElement.options.strokeWidth,
-        });
+        updateElement(id, x1, y1, x2, y2, type, options);
       }
     }
     if (action === 'writing' || action === 'loading') return;

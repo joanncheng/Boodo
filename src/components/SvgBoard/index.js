@@ -51,7 +51,7 @@ const SvgBoard = forwardRef((props, svgRef) => {
     const textarea = textareaRef.current;
     if (action === 'writing') {
       textarea.focus();
-      textarea.value = selectedElement.text;
+      textarea.value = selectedElement.options.text;
       textarea.style.height =
         textarea.value.split('\n').length * TEXTAREA_LINE_HEIGHT + 'px';
     }
@@ -75,7 +75,7 @@ const SvgBoard = forwardRef((props, svgRef) => {
 
   const renderTextarea = () => {
     const x = selectedElement.x1;
-    const y = selectedElement.y1 - 5;
+    const y = selectedElement.y1 - 5; //FIXME:magic number
 
     const clientPoint = convertToCanvasCoords({ x, y }, svgRef.current);
 
