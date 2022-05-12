@@ -18,7 +18,7 @@ import {
   convertToSVGCoords,
 } from '../utils';
 import {
-  IMAGE_DEFAUTL_WIDTH,
+  IMAGE_DEFAULT_WIDTH,
   ERASER_CURSOR,
   ADD_IMAGE_CURSOR,
 } from '../config';
@@ -196,15 +196,15 @@ const Board = () => {
               id,
               SVGPoint.x,
               SVGPoint.y,
-              SVGPoint.x + IMAGE_DEFAUTL_WIDTH,
+              SVGPoint.x + IMAGE_DEFAULT_WIDTH,
               SVGPoint.y +
-                (imageData.height / imageData.width) * IMAGE_DEFAUTL_WIDTH,
+                (imageData.height / imageData.width) * IMAGE_DEFAULT_WIDTH,
               tool,
               {
                 url: imageData.url,
-                width: IMAGE_DEFAUTL_WIDTH,
+                width: IMAGE_DEFAULT_WIDTH,
                 height:
-                  (imageData.height / imageData.width) * IMAGE_DEFAUTL_WIDTH,
+                  (imageData.height / imageData.width) * IMAGE_DEFAULT_WIDTH,
               }
             )
           : createSVGElement(
