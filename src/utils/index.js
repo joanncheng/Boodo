@@ -43,6 +43,7 @@ const getPositionWithinElement = (x, y, element) => {
   switch (type) {
     case 'rectangle':
     case 'ellipse':
+    case 'image':
       const topLeft = getNearPoint(x, y, x1, y1, 'tl');
       const topRight = getNearPoint(x, y, x2, y1, 'tr');
       const bottomLeft = getNearPoint(x, y, x1, y2, 'bl');
@@ -128,6 +129,9 @@ export const createSVGElement = (id, x1, y1, x2, y2, type, options) => {
       return { id, type, options, points: [{ x: x1, y: y1 }] };
     case 'text':
       return { id, x1, y1, x2, y2, type, options, text: '' };
+    case 'image':
+      const imgHeight = ((x2 - x1) * options.height) / options.width;
+      return { id, x1, y1, x2, y2: y1 + imgHeight, type, options };
     default:
       throw new Error(`Type not recognized: ${type}`);
   }
@@ -184,6 +188,17 @@ export const drawElement = element => {
             </tspan>
           ))}
         </text>
+      );
+    case 'image':
+      return (
+        <image
+          key={element.id}
+          href={element.options.url}
+          x={element.x1}
+          y={element.y1}
+          width={element.x2 - element.x1}
+          height={element.y2 - element.y1}
+        />
       );
     default:
       throw new Error(`Type not recognized: ${element.type}`);

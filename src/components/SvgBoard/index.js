@@ -87,7 +87,7 @@ const SvgBoard = forwardRef((props, svgRef) => {
           position: 'fixed',
           top: clientPoint.y,
           left: clientPoint.x,
-          color: selectedElement.options.bru,
+          color: selectedElement.options.brushColor,
         }}
         onChange={e => setCurrentTextareaValue(e.target.value)}
       />

@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { storage } from '../firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { v4 as uuid } from 'uuid';
 import useHistory from '../hooks/useHistory';
 import { selectTool } from '../redux/activeTool';
@@ -15,9 +17,11 @@ import {
   resizeCoordinates,
   convertToSVGCoords,
 } from '../utils';
-
-const ERASER_CURSOR =
-  "url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABmJLR0QA/wD/AP+gvaeTAAAArklEQVQ4jaXTPQ6BQRDG8R/u4OscDoRSlCqJSqehcR2NC2jkpZVI1A6AZleQfV82nmSSzcz+n9nJZPlTjR/utLFAE7vcBi3scQ8x+wfOMimDfzLpoKiAY/ShnoA3qGH15ZW9ss6HcIZ5SfcijPlUKySLFzjq0yR1xxrnVCFoWQXDADeMErVOGKsUjpoEk/FLLq7ziG4VnDLJhqOmweTsfSNJpT7TFidcMcQlp3u2Ht7nQaPZqVymAAAAAElFTkSuQmCC'), crosshair";
+import {
+  IMAGE_DEFAUTL_WIDTH,
+  ERASER_CURSOR,
+  ADD_IMAGE_CURSOR,
+} from '../config';
 
 const isAdjustmentRequired = type =>
   ['line', 'rectangle', 'ellipse'].includes(type);
@@ -97,6 +101,7 @@ const Board = () => {
       case 'line':
       case 'rectangle':
       case 'ellipse':
+      case 'image':
         elementsCopy[index] = createSVGElement(
           id,
           x1,
@@ -139,7 +144,8 @@ const Board = () => {
   };
 
   const handleMouseDown = e => {
-    if (action === 'writing') return;
+    if (action === 'writing' || (tool === 'image' && action !== 'inserting'))
+      return;
 
     if (spacePressing) {
       setAction('movingCanvas');
@@ -184,20 +190,37 @@ const Board = () => {
       }
     } else {
       const id = uuid();
-      const element = createSVGElement(
-        id,
-        SVGPoint.x,
-        SVGPoint.y,
-        SVGPoint.x,
-        SVGPoint.y,
-        tool,
-        { brushColor, brushSize }
-      );
-
+      const element =
+        tool === 'image'
+          ? createSVGElement(
+              id,
+              SVGPoint.x,
+              SVGPoint.y,
+              SVGPoint.x + IMAGE_DEFAUTL_WIDTH,
+              SVGPoint.y +
+                (imageData.height / imageData.width) * IMAGE_DEFAUTL_WIDTH,
+              tool,
+              {
+                url: imageData.url,
+                width: IMAGE_DEFAUTL_WIDTH,
+                height:
+                  (imageData.height / imageData.width) * IMAGE_DEFAUTL_WIDTH,
+              }
+            )
+          : createSVGElement(
+              id,
+              SVGPoint.x,
+              SVGPoint.y,
+              SVGPoint.x,
+              SVGPoint.y,
+              tool,
+              { brushColor, brushSize }
+            );
       setElements(prevState => [...prevState, element]);
       setSelectedElement(element);
 
-      setAction(tool === 'text' ? 'writing' : 'drawing');
+      if (tool === 'image') return;
+      tool === 'text' ? setAction('writing') : setAction('drawing');
     }
   };
 
@@ -218,6 +241,9 @@ const Board = () => {
       } else {
         e.target.style.cursor = 'default';
       }
+    } else if (tool === 'image') {
+      e.target.style.cursor =
+        action === 'inserting' ? ADD_IMAGE_CURSOR : 'wait';
     } else {
       e.target.style.cursor = 'crosshair';
     }
@@ -258,6 +284,22 @@ const Board = () => {
           type,
           options
         );
+      } else if (selectedElement.type === 'image') {
+        const { id, x1, y1, x2, y2, type, offsetX, offsetY, options } =
+          selectedElement;
+        const width = x2 - x1;
+        const height = y2 - y1;
+        const newX1 = SVGPoint.x - offsetX;
+        const newY1 = SVGPoint.y - offsetY;
+        updateElement(
+          id,
+          newX1,
+          newY1,
+          newX1 + width,
+          newY1 + height,
+          type,
+          options
+        );
       } else {
         const { id, x1, y1, x2, y2, type, offsetX, offsetY, roughElement } =
           selectedElement;
@@ -271,18 +313,30 @@ const Board = () => {
         });
       }
     } else if (action === 'resizing') {
-      const { id, type, roughElement, position, ...coordinates } =
-        selectedElement;
-      const { x1, y1, x2, y2 } = resizeCoordinates(
-        SVGPoint.x,
-        SVGPoint.y,
-        position,
-        coordinates
-      );
-      updateElement(id, x1, y1, x2, y2, type, {
-        brushColor: roughElement.options.stroke,
-        brushSize: roughElement.options.strokeWidth,
-      });
+      if (selectedElement.type === 'image') {
+        const { id, type, options, position, ...coordinates } = selectedElement;
+
+        const { x1, y1, x2, y2 } = resizeCoordinates(
+          SVGPoint.x,
+          SVGPoint.y,
+          position,
+          coordinates
+        );
+        updateElement(id, x1, y1, x2, y2, type, options);
+      } else {
+        const { id, type, roughElement, position, ...coordinates } =
+          selectedElement;
+        const { x1, y1, x2, y2 } = resizeCoordinates(
+          SVGPoint.x,
+          SVGPoint.y,
+          position,
+          coordinates
+        );
+        updateElement(id, x1, y1, x2, y2, type, {
+          brushColor: roughElement.options.stroke,
+          brushSize: roughElement.options.strokeWidth,
+        });
+      }
     } else if (action === 'movingCanvas') {
       e.target.style.cursor = 'grabbing';
 
@@ -335,6 +389,14 @@ const Board = () => {
         return;
       }
 
+      if (action === 'inserting') {
+        setSelectedElement(null);
+        setAction('none');
+        setImageData(null);
+        dispatch(selectTool('selection'));
+        return;
+      }
+
       const index = elements.findIndex(el => el.id === selectedElement.id);
 
       const { id, type, roughElement } = selectedElement;
@@ -349,8 +411,7 @@ const Board = () => {
         });
       }
     }
-    if (action === 'writing') return;
-
+    if (action === 'writing' || action === 'loading') return;
     setAction('none');
     if (tool !== 'pencil') dispatch(selectTool('selection'));
   };
@@ -420,9 +481,46 @@ const Board = () => {
     </>
   );
 
+  // // Loading files from storage
+  // const imageUrlsRef = ref(storage, 'images/');
+  // useEffect(() => {
+  //   listAll(imageUrlsRef).then(res => {
+  //     res.items.forEach(item => {
+  //       getDownloadURL(item).then(url => {
+  //         setImageUrls(prev => [...prev, url]);
+  //       });
+  //     });
+  //   });
+  // }, []);
+
+  // Upload Image to firebase storage
+  const [imageUpload, setImageUpload] = useState(null);
+  const [imageData, setImageData] = useState(null);
+  useEffect(() => {
+    if (!imageUpload) return;
+    setAction('loading');
+
+    const imageRef = ref(storage, `images/${uuid()}_${imageUpload.name}`);
+    uploadBytes(imageRef, imageUpload).then(snapshot => {
+      getDownloadURL(snapshot.ref).then(url => {
+        const image = new Image();
+        image.src = url;
+        image.onload = () => {
+          setImageData({ url, width: image.width, height: image.height });
+          setAction('inserting');
+        };
+      });
+    });
+  }, [imageUpload]);
+
   return (
     <>
-      <TopToolbar brushColor={brushColor} brushSize={brushSize} tool={tool} />
+      <TopToolbar
+        brushColor={brushColor}
+        brushSize={brushSize}
+        tool={tool}
+        setImageUpload={setImageUpload}
+      />
       <SvgBoard ref={svgRef} {...svgBoardProps}></SvgBoard>
       <BottomToolbar
         undo={undo}

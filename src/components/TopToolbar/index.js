@@ -15,7 +15,7 @@ import AvatarIcon from '../../../public/images/icons/avatar.svg';
 import ShapeActions from '../ShapeActions';
 import OutsideClicker from '../OutsideClicker';
 
-const TopToolbar = ({ brushColor, brushSize, tool }) => {
+const TopToolbar = ({ brushColor, brushSize, tool, setImageUpload }) => {
   const dispatch = useDispatch();
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -103,11 +103,15 @@ const TopToolbar = ({ brushColor, brushSize, tool }) => {
           </S.ToolIcon>
         </S.ToolLabel>
         <S.ToolLabel title="Insert image">
-          <S.ToolTypeRadio
-            type="radio"
-            name="editor-current-shape"
-            onChange={() => dispatch(selectTool('insertImage'))}
-            checked={tool === 'insertImage' ? true : false}
+          <S.ToolTypeFile
+            type="file"
+            accept="image/*"
+            onChange={e => {
+              if (!e.target.files[0]) return;
+              setImageUpload(e.target.files[0]);
+              dispatch(selectTool('image'));
+            }}
+            active={tool === 'image' ? true : false}
           />
           <S.ToolIcon>
             <ImageIcon />

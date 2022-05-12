@@ -82,6 +82,26 @@ export const ToolTypeRadio = styled.input`
   }
 `;
 
+export const ToolTypeFile = styled.input`
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  outline: none;
+
+  & + ${ToolIcon} {
+    background-color: ${({ active }) =>
+      active ? ({ theme }) => theme.colors.primary : ''};
+    svg {
+      stroke: ${({ active }) => (active ? '#fff' : 'black')};
+      fill: ${({ active }) => (active ? '#fff' : 'black')};
+    }
+  }
+
+  &:focus-visible + ${ToolLabel} {
+    box-shadow: 0 0 0 2px #a5d8ff;
+  }
+`;
+
 export const ToolTypeColor = styled.input`
   position: absolute;
   opacity: 0;
