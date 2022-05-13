@@ -4,6 +4,7 @@ import * as S from './SvgBoard.styled';
 import { selectTool } from '../../redux/activeTool';
 import { drawElement, convertToCanvasCoords } from '../../utils';
 import { TEXTAREA_LINE_HEIGHT } from '../../config';
+import SelectorBox from '../SelectorBox';
 
 const SvgBoard = forwardRef((props, svgRef) => {
   const {
@@ -120,10 +121,17 @@ const SvgBoard = forwardRef((props, svgRef) => {
       >
         {elements &&
           elements.map(element => {
-            if (action === 'writing' && selectedElement.id === element.id)
+            if (action === 'writing' && element.id === selectedElement.id)
               return;
             return drawElement(element);
           })}
+        {selectedElement &&
+          elements.map(element =>
+            element.id === selectedElement.id &&
+            element.options.selectorDisplay ? (
+              <SelectorBox key={`selector-${element.id}`} element={element} />
+            ) : null
+          )}
       </S.SVGCanvas>
     </>
   );

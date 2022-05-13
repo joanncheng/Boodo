@@ -271,6 +271,8 @@ export const adjustElementCoordinates = element => {
     const minY = Math.min(y1, y2);
     const maxY = Math.max(y1, y2);
     return { x1: minX, y1: minY, x2: maxX, y2: maxY };
+  } else {
+    return { x1, y1, x2, y2 };
   }
 };
 

@@ -18,9 +18,11 @@ import {
   convertToSVGCoords,
 } from '../utils';
 import {
+  IMAGE_MIN_WIDTH,
   IMAGE_DEFAULT_WIDTH,
   ERASER_CURSOR,
   ADD_IMAGE_CURSOR,
+  LOADER_CURSOR,
 } from '../config';
 
 const isAdjustmentRequired = type =>
@@ -209,6 +211,7 @@ const Board = () => {
                 width: IMAGE_DEFAULT_WIDTH,
                 height:
                   (imageData.height / imageData.width) * IMAGE_DEFAULT_WIDTH,
+                selectorDisplay: false,
               }
             )
           : createSVGElement(
@@ -218,7 +221,7 @@ const Board = () => {
               SVGPoint.x,
               SVGPoint.y,
               tool,
-              { brushColor, brushSize }
+              { brushColor, brushSize, selectorDisplay: false }
             );
       setElements(prevState => [...prevState, element]);
       setSelectedElement(element);
@@ -247,17 +250,14 @@ const Board = () => {
       }
     } else if (tool === 'image') {
       e.target.style.cursor =
-        action === 'inserting' ? ADD_IMAGE_CURSOR : 'wait';
+        action === 'inserting' ? ADD_IMAGE_CURSOR : LOADER_CURSOR;
     } else {
       e.target.style.cursor = 'crosshair';
     }
 
     if (action === 'drawing') {
-      const { id, x1, y1 } = selectedElement;
-      updateElement(id, x1, y1, SVGPoint.x, SVGPoint.y, tool, {
-        brushColor,
-        brushSize,
-      });
+      const { id, x1, y1, options } = selectedElement;
+      updateElement(id, x1, y1, SVGPoint.x, SVGPoint.y, tool, options);
     } else if (action === 'moving') {
       if (selectedElement.type === 'pencil') {
         const newPoints = selectedElement.points.map((_, index) => ({
@@ -290,12 +290,14 @@ const Board = () => {
       }
     } else if (action === 'resizing') {
       const { id, type, options, position, ...coordinates } = selectedElement;
+
       const { x1, y1, x2, y2 } = resizeCoordinates(
         SVGPoint.x,
         SVGPoint.y,
         position,
         coordinates
       );
+      if (type === 'image' && x2 - x1 < IMAGE_MIN_WIDTH) return;
       updateElement(id, x1, y1, x2, y2, type, options);
     } else if (action === 'movingCanvas') {
       e.target.style.cursor = 'grabbing';
@@ -333,6 +335,10 @@ const Board = () => {
     );
 
     if (selectedElement) {
+      selectedElement.options = {
+        ...selectedElement.options,
+        selectorDisplay: true,
+      };
       if (
         selectedElement.type === 'text' &&
         SVGPoint.x - selectedElement.offsetX === selectedElement.x1 &&
