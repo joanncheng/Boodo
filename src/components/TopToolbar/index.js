@@ -14,11 +14,31 @@ import ImageIcon from '../../../public/images/icons/image.svg';
 import AvatarIcon from '../../../public/images/icons/avatar.svg';
 import ShapeActions from '../ShapeActions';
 import OutsideClicker from '../OutsideClicker';
+import { getResizedImageURL } from '../../utils';
 
 const TopToolbar = ({ brushColor, brushSize, tool, setImageUpload }) => {
   const dispatch = useDispatch();
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const handleImageUpload = e => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const img = new Image();
+    img.onload = function () {
+      const resizedImageURL = getResizedImageURL(img);
+      setImageUpload({
+        file,
+        width: img.width,
+        height: img.height,
+        originalImageURL: img.src,
+        resizedImageURL,
+      });
+      dispatch(selectTool('image'));
+    };
+    img.src = URL.createObjectURL(file);
+  };
 
   return (
     <S.TopStack>
@@ -106,11 +126,7 @@ const TopToolbar = ({ brushColor, brushSize, tool, setImageUpload }) => {
           <S.ToolTypeFile
             type="file"
             accept="image/*"
-            onChange={e => {
-              if (!e.target.files[0]) return;
-              setImageUpload(e.target.files[0]);
-              dispatch(selectTool('image'));
-            }}
+            onChange={handleImageUpload}
             active={tool === 'image' ? true : false}
           />
           <S.ToolIcon>

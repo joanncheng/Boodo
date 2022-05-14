@@ -149,8 +149,7 @@ export const createSVGElement = (id, x1, y1, x2, y2, type, options) => {
       if (!options.text) options.text = '';
       return { id, x1, y1, x2, y2, type, options };
     case 'image':
-      const imgHeight = ((x2 - x1) * options.height) / options.width;
-      return { id, x1, y1, x2, y2: y1 + imgHeight, type, options };
+      return { id, x1, y1, x2, y2, type, options };
     default:
       throw new Error(`Type not recognized: ${type}`);
   }
@@ -292,4 +291,29 @@ export const convertToCanvasCoords = ({ x, y }, svg) => {
   const CTM = svg.getScreenCTM();
   const canvasPoint = SVGPoint.matrixTransform(CTM);
   return { x: canvasPoint.x, y: canvasPoint.y };
+};
+
+export const getResizedImageURL = image => {
+  const canvas = document.createElement('canvas');
+  const MAX_WIDTH = 120;
+  const MAX_HEIGHT = 120;
+  const width = image.width;
+  const height = image.height;
+
+  let canvasWidth, canvasHeight;
+  if (width > height) {
+    if (width > MAX_WIDTH) {
+      canvasHeight = (height * MAX_WIDTH) / width;
+      canvasWidth = MAX_WIDTH;
+    }
+  } else {
+    if (height > MAX_HEIGHT) {
+      canvasWidth = (width * MAX_HEIGHT) / height;
+      canvasHeight = MAX_HEIGHT;
+    }
+  }
+  canvas.width = canvasWidth;
+  canvas.height = canvasHeight;
+  canvas.getContext('2d').drawImage(image, 0, 0, canvasWidth, canvasHeight);
+  return canvas.toDataURL('image/png', 0.5);
 };

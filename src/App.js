@@ -8,8 +8,8 @@ import Board from './pages/Board';
 
 const App = () => {
   return (
-    <ThemeProvider theme={theme}>
-      <>
+    <React.StrictMode>
+      <ThemeProvider theme={theme}>
         <BrowserRouter>
           <GlobalStyles />
           <Switch>
@@ -18,8 +18,8 @@ const App = () => {
             <Route path="/board" exact component={Board} />
           </Switch>
         </BrowserRouter>
-      </>
-    </ThemeProvider>
+      </ThemeProvider>
+    </React.StrictMode>
   );
 };
 

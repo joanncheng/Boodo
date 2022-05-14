@@ -22,7 +22,6 @@ import {
   IMAGE_DEFAULT_WIDTH,
   ERASER_CURSOR,
   ADD_IMAGE_CURSOR,
-  LOADER_CURSOR,
 } from '../config';
 
 const isAdjustmentRequired = type =>
@@ -38,6 +37,12 @@ const Board = () => {
   const [action, setAction] = useState('none');
   const [selectedElement, setSelectedElement] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
+
+  // Upload Image to firebase storage
+  const [imageUpload, setImageUpload] = useState(null);
+  const [uploadedImageData, setUploadedImageData] = useState(null);
+
+  // Resize canvas
   const [viewBox, setViewBox] = useState({
     x: 0,
     y: 0,
@@ -72,6 +77,7 @@ const Board = () => {
 
       if (e.key === 'Escape') {
         setAction('none');
+        setImageUpload(null);
         dispatch(selectTool('selection'));
       }
 
@@ -149,9 +155,22 @@ const Board = () => {
     setModalOpen(false);
   };
 
+  // Upload Image to firebase storage
+  const uploadImage = (file, elementId) => {
+    const imageRef = ref(storage, `images/${elementId}_${file.name}`);
+    uploadBytes(imageRef, file).then(snapshot => {
+      getDownloadURL(snapshot.ref).then(url => {
+        const image = new Image();
+        image.src = url;
+        image.onload = () => {
+          setUploadedImageData({ url, elementId });
+        };
+      });
+    });
+  };
+
   const handleMouseDown = e => {
-    if (action === 'writing' || (tool === 'image' && action !== 'inserting'))
-      return;
+    if (action === 'writing') return;
 
     if (spacePressing) {
       setAction('movingCanvas');
@@ -204,14 +223,11 @@ const Board = () => {
               SVGPoint.y,
               SVGPoint.x + IMAGE_DEFAULT_WIDTH,
               SVGPoint.y +
-                (imageData.height / imageData.width) * IMAGE_DEFAULT_WIDTH,
+                (imageUpload.height / imageUpload.width) * IMAGE_DEFAULT_WIDTH,
               tool,
               {
-                url: imageData.url,
-                width: IMAGE_DEFAULT_WIDTH,
-                height:
-                  (imageData.height / imageData.width) * IMAGE_DEFAULT_WIDTH,
-                selectorDisplay: false,
+                url: imageUpload.originalImageURL,
+                selectorDisplay: true,
               }
             )
           : createSVGElement(
@@ -226,7 +242,12 @@ const Board = () => {
       setElements(prevState => [...prevState, element]);
       setSelectedElement(element);
 
-      if (tool === 'image') return;
+      if (tool === 'image') {
+        uploadImage(imageUpload.file, id);
+        setImageUpload(null);
+        return;
+      }
+
       tool === 'text' ? setAction('writing') : setAction('drawing');
     }
   };
@@ -248,9 +269,8 @@ const Board = () => {
       } else {
         e.target.style.cursor = 'default';
       }
-    } else if (tool === 'image') {
-      e.target.style.cursor =
-        action === 'inserting' ? ADD_IMAGE_CURSOR : LOADER_CURSOR;
+    } else if (tool === 'image' && imageUpload) {
+      e.target.style.cursor = `url('${imageUpload.resizedImageURL}'), ${ADD_IMAGE_CURSOR}`;
     } else {
       e.target.style.cursor = 'crosshair';
     }
@@ -355,14 +375,6 @@ const Board = () => {
         return;
       }
 
-      if (action === 'inserting') {
-        setSelectedElement(null);
-        setAction('none');
-        setImageData(null);
-        dispatch(selectTool('selection'));
-        return;
-      }
-
       const index = elements.findIndex(el => el.id === selectedElement.id);
 
       const { id, type, options } = selectedElement;
@@ -374,6 +386,19 @@ const Board = () => {
         updateElement(id, x1, y1, x2, y2, type, options);
       }
     }
+
+    if (uploadedImageData) {
+      const { id, x1, y1, x2, y2, type, options } = elements.find(
+        el => el.id === uploadedImageData.elementId
+      );
+
+      updateElement(id, x1, y1, x2, y2, type, {
+        ...options,
+        url: uploadedImageData.url,
+      });
+      setUploadedImageData(null);
+    }
+
     if (action === 'writing' || action === 'loading') return;
     setAction('none');
     if (tool !== 'pencil') dispatch(selectTool('selection'));
@@ -455,26 +480,6 @@ const Board = () => {
   //     });
   //   });
   // }, []);
-
-  // Upload Image to firebase storage
-  const [imageUpload, setImageUpload] = useState(null);
-  const [imageData, setImageData] = useState(null);
-  useEffect(() => {
-    if (!imageUpload) return;
-    setAction('loading');
-
-    const imageRef = ref(storage, `images/${uuid()}_${imageUpload.name}`);
-    uploadBytes(imageRef, imageUpload).then(snapshot => {
-      getDownloadURL(snapshot.ref).then(url => {
-        const image = new Image();
-        image.src = url;
-        image.onload = () => {
-          setImageData({ url, width: image.width, height: image.height });
-          setAction('inserting');
-        };
-      });
-    });
-  }, [imageUpload]);
 
   return (
     <>
