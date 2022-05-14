@@ -318,7 +318,11 @@ const Board = () => {
         position,
         coordinates
       );
-      if (type === 'image' && x2 - x1 < IMAGE_MIN_WIDTH) return;
+      if (
+        type === 'image' &&
+        (x2 - x1 < IMAGE_MIN_WIDTH || y2 - y1 < IMAGE_MIN_WIDTH)
+      )
+        return;
       updateElement(id, x1, y1, x2, y2, type, options);
     } else if (action === 'movingCanvas') {
       e.target.style.cursor = 'grabbing';
