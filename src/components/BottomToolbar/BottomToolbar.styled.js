@@ -1,14 +1,23 @@
 import styled from 'styled-components';
 import { Link as LinkR } from 'react-router-dom';
 
-export const BottomStack = styled.div`
+export const BottomLeftStack = styled.div`
   position: fixed;
   bottom: 8px;
   left: 0;
-  width: 100%;
-  display: flex;
+  /* display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: center; */
+  padding: 0 15px;
+`;
+
+export const BottomRightStack = styled.div`
+  position: fixed;
+  bottom: 8px;
+  right: 0;
+  /* display: flex;
+  justify-content: space-between;
+  align-items: center; */
   padding: 0 15px;
 `;
 

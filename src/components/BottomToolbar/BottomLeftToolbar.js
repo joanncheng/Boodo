@@ -8,15 +8,11 @@ import ZoomInIcon from '../../../public/images/icons/zoomIn.svg';
 import UndoIcon from '../../../public/images/icons/undo.svg';
 import RedoIcon from '../../../public/images/icons/redo.svg';
 import EraserIcon from '../../../public/images/icons/eraser.svg';
-import SaveFileIcon from '../../../public/images/icons/saveFile.svg';
-import CollaborationIcon from '../../../public/images/icons/collaboration.svg';
-import TrashCanIcon from '../../../public/images/icons/trashCan.svg';
 
 const BottomToolbar = ({
   undo,
   redo,
   tool,
-  setModalOpen,
   viewBoxSizeRatio,
   setViewBoxSizeRatio,
   resizeCanvas,
@@ -40,7 +36,7 @@ const BottomToolbar = ({
   };
 
   return (
-    <S.BottomStack>
+    <S.BottomLeftStack>
       <S.ToolContainer>
         <S.ToolTipWrapper>
           <Tooltip content="Reset zoom" position="top">
@@ -82,28 +78,7 @@ const BottomToolbar = ({
           </S.ToolIcon>
         </S.ToolTypeButton>
       </S.ToolContainer>
-      <S.ToolContainer>
-        <S.ToolTypeButton title="Save as image">
-          <S.ToolIcon>
-            <SaveFileIcon />
-          </S.ToolIcon>
-        </S.ToolTypeButton>
-        <S.ToolTypeButton title="Live collaboration">
-          <S.ToolIcon>
-            <CollaborationIcon />
-          </S.ToolIcon>
-        </S.ToolTypeButton>
-        <S.ToolTypeButton
-          title="Reset the canvas"
-          onClick={() => setModalOpen(true)}
-        >
-          <S.ToolIcon>
-            <TrashCanIcon />
-          </S.ToolIcon>
-        </S.ToolTypeButton>
-        <S.LogoLink to="/">LOGO</S.LogoLink>
-      </S.ToolContainer>
-    </S.BottomStack>
+    </S.BottomLeftStack>
   );
 };
 

@@ -7,7 +7,8 @@ import useHistory from '../hooks/useHistory';
 import { selectTool } from '../redux/activeTool';
 import SvgBoard from '../components/SvgBoard';
 import TopToolbar from '../components/TopToolbar';
-import BottomToolbar from '../components/BottomToolbar';
+import BottomLeftToolbar from '../components/BottomToolbar/BottomLeftToolbar';
+import BottomRightToolbar from '../components/BottomToolbar/BottomRightToolbar';
 import Modal from '../components/Modal';
 import {
   getElementAtPosition,
@@ -490,15 +491,15 @@ const Board = () => {
         setImageUpload={setImageUpload}
       />
       <SvgBoard ref={svgRef} {...svgBoardProps}></SvgBoard>
-      <BottomToolbar
+      <BottomLeftToolbar
         undo={undo}
         redo={redo}
         tool={tool}
-        setModalOpen={setModalOpen}
         resizeCanvas={resizeCanvas}
         viewBoxSizeRatio={viewBoxSizeRatio}
         setViewBoxSizeRatio={setViewBoxSizeRatio}
       />
+      <BottomRightToolbar setModalOpen={setModalOpen} />
       {modalOpen ? (
         <Modal
           title="Clear Canvas"
