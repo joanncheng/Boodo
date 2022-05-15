@@ -11,7 +11,7 @@ const Modal = ({ onDismiss, title, content, modalActions }) => {
           <CrossIcon />
         </S.CloseIcon>
         <S.ModalHeader>{title}</S.ModalHeader>
-        <p>{content}</p>
+        <S.Content>{content}</S.Content>
         <S.ModalActions>{modalActions}</S.ModalActions>
       </S.ModalContainer>
     </S.ModalDimmer>,

@@ -12,6 +12,8 @@ export const theme = {
     secondary: '#57e1a3',
     bgDark: '#010606',
     bgGrey: '#ced4da',
+    red: '#fa5252',
+    redDark: '#e03131',
   },
 };
 
@@ -41,7 +43,6 @@ export default createGlobalStyle`
     stroke-width: 0;
     font-size: 24px;
   }
-
   
 `;
 

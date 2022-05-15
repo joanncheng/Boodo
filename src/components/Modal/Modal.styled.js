@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { Button } from '../GlobalStyles';
 
 export const ModalDimmer = styled.div`
   position: fixed;
@@ -21,7 +20,7 @@ export const ModalContainer = styled.div`
   justify-content: center;
   padding: 0 1rem 1rem 1rem;
   width: 60%;
-  max-width: 550px;
+  max-width: 500px;
   border-radius: 8px;
   color: ${({ theme }) => theme.colors.textDark};
   background-color: #fff;
@@ -47,6 +46,10 @@ export const ModalHeader = styled.h2`
   font-size: 1.2rem;
   font-weight: 700;
   text-transform: capitalize;
+`;
+
+export const Content = styled.p`
+  text-align: center;
 `;
 
 export const CloseIcon = styled.div`
@@ -76,7 +79,7 @@ export const CloseIcon = styled.div`
 export const ModalActions = styled.div`
   display: flex;
   gap: 1rem;
-  justify-self: end;
+  justify-self: center;
 
   button {
     background-color: '#e9ecef';
@@ -93,12 +96,34 @@ export const ModalActions = styled.div`
     }
   }
 
-  .redBtn {
-    background-color: #fa5252;
+  .buttons {
+    display: flex;
+    gap: 1.5rem;
+  }
+
+  .primaryBtn {
+    background-color: ${({ theme }) => theme.colors.primary};
     color: #fff;
 
     &:hover {
-      background-color: #e03131;
+      background-color: ${({ theme }) => theme.colors.primaryDark};
     }
+  }
+
+  .redBtn {
+    background-color: ${({ theme }) => theme.colors.red};
+    color: #fff;
+
+    &:hover {
+      background-color: ${({ theme }) => theme.colors.redDark};
+    }
+  }
+
+  .squareBtn {
+    height: 5rem;
+    width: 5rem;
+    font-size: 1.6rem;
+    box-shadow: 0 3px 5px -1px rgba(0, 0, 0, 0.28),
+      0 6px 10px 0 rgba(0, 0, 0, 0.14);
   }
 `;
