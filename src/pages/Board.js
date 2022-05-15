@@ -17,6 +17,7 @@ import {
   adjustElementCoordinates,
   resizeCoordinates,
   convertToSVGCoords,
+  imageSaver,
 } from '../utils';
 import {
   IMAGE_MIN_WIDTH,
@@ -37,7 +38,10 @@ const Board = () => {
   const [elements, setElements, undo, redo] = useHistory([]);
   const [action, setAction] = useState('none');
   const [selectedElement, setSelectedElement] = useState(null);
-  const [modalOpen, setModalOpen] = useState(false);
+
+  // Control modal
+  const [clearCanvasModalOpen, setClearCanvasModalOpen] = useState(false);
+  const [saveImageModalOpen, setSaveImageModalOpen] = useState(false);
 
   // Upload Image to firebase storage
   const [imageUpload, setImageUpload] = useState(null);
@@ -153,7 +157,7 @@ const Board = () => {
   const resetElements = () => {
     setElements([]);
     setViewBoxSizeRatio(1);
-    setModalOpen(false);
+    setClearCanvasModalOpen(false);
   };
 
   // Upload Image to firebase storage
@@ -448,6 +452,54 @@ const Board = () => {
     });
   }, [viewBoxSizeRatio]);
 
+  // // Loading files from storage
+  // const imageURLsRef = ref(storage, 'images/');
+  // useEffect(() => {
+  //   listAll(imageURLsRef).then(res => {
+  //     res.items.forEach(item => {
+  //       getDownloadURL(item).then(url => {
+  //         setImageUrls(prev => [...prev, url]);
+  //       });
+  //     });
+  //   });
+  // }, []);
+
+  const clearCanvasModalActions = (
+    <>
+      <button onClick={() => setClearCanvasModalOpen(false)}>Cancel</button>
+      <button className="redBtn" onClick={resetElements}>
+        Confirm
+      </button>
+    </>
+  );
+
+  const saveImageModalActions = (
+    <div
+      className="buttons"
+      onClick={e => {
+        const { format } = e.target.dataset;
+        const svgData = svgRef.current.outerHTML;
+        format && imageSaver.save(format, svgData);
+        setSaveImageModalOpen(false);
+      }}
+    >
+      <button
+        className="primaryBtn squareBtn"
+        title="Export to PNG"
+        data-format="png"
+      >
+        PNG
+      </button>
+      <button
+        className="redBtn squareBtn"
+        title="Export to SVG"
+        data-format="svg"
+      >
+        SVG
+      </button>
+    </div>
+  );
+
   const svgBoardProps = {
     brushColor,
     action,
@@ -464,27 +516,6 @@ const Board = () => {
     viewBox,
     setViewBox,
   };
-
-  const modalActions = (
-    <>
-      <button onClick={() => setModalOpen(false)}>Cancel</button>
-      <button className="redBtn" onClick={resetElements}>
-        Confirm
-      </button>
-    </>
-  );
-
-  // // Loading files from storage
-  // const imageUrlsRef = ref(storage, 'images/');
-  // useEffect(() => {
-  //   listAll(imageUrlsRef).then(res => {
-  //     res.items.forEach(item => {
-  //       getDownloadURL(item).then(url => {
-  //         setImageUrls(prev => [...prev, url]);
-  //       });
-  //     });
-  //   });
-  // }, []);
 
   return (
     <>
@@ -503,13 +534,23 @@ const Board = () => {
         viewBoxSizeRatio={viewBoxSizeRatio}
         setViewBoxSizeRatio={setViewBoxSizeRatio}
       />
-      <BottomRightToolbar setModalOpen={setModalOpen} />
-      {modalOpen ? (
+      <BottomRightToolbar
+        setClearCanvasModalOpen={setClearCanvasModalOpen}
+        setSaveImageModalOpen={setSaveImageModalOpen}
+      />
+      {saveImageModalOpen ? (
+        <Modal
+          title="Save as image"
+          modalActions={saveImageModalActions}
+          onDismiss={() => setSaveImageModalOpen(false)}
+        />
+      ) : null}
+      {clearCanvasModalOpen ? (
         <Modal
           title="Clear Canvas"
           content="This will clear the whole canvas. Are you sure?"
-          modalActions={modalActions}
-          onDismiss={() => setModalOpen(false)}
+          modalActions={clearCanvasModalActions}
+          onDismiss={() => setClearCanvasModalOpen(false)}
         />
       ) : null}
     </>

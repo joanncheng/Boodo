@@ -3,7 +3,6 @@ import rough from 'roughjs/bundled/rough.esm';
 import { getStroke } from 'perfect-freehand';
 import { TEXTAREA_LINE_HEIGHT } from '../config';
 
-const namespace = 'http://www.w3.org/2000/svg';
 const generator = rough.generator();
 
 // Turn the points returned from perfect-freehand into SVG path data.
@@ -164,7 +163,6 @@ export const drawElement = element => {
       return (
         <path
           key={element.id}
-          namespace={namespace}
           id={element.id}
           d={d}
           stroke={element.options.brushColor}
@@ -175,14 +173,7 @@ export const drawElement = element => {
     case 'rectangle':
     case 'ellipse':
       const [pathInfoObj] = generator.toPaths(element.options.roughElement);
-      return (
-        <path
-          key={element.id}
-          namespace={namespace}
-          id={element.id}
-          {...pathInfoObj}
-        ></path>
-      );
+      return <path key={element.id} id={element.id} {...pathInfoObj}></path>;
     case 'text':
       const attrObj = {
         id: element.id,
@@ -195,7 +186,7 @@ export const drawElement = element => {
       const text = element.options.text.split('\n');
 
       return (
-        <text key={element.id} namespace={namespace} {...attrObj}>
+        <text key={element.id} {...attrObj}>
           {text.map((row, index) => (
             <tspan
               key={index}
@@ -316,4 +307,54 @@ export const getResizedImageURL = image => {
   canvas.height = canvasHeight;
   canvas.getContext('2d').drawImage(image, 0, 0, canvasWidth, canvasHeight);
   return canvas.toDataURL('image/png', 0.5);
+};
+
+export const imageSaver = {
+  save(format, svgData) {
+    this.format = format;
+    this.svgData = svgData;
+    this.parseImage();
+  },
+
+  parseImage() {
+    const svgBlob = new Blob([this.svgData], {
+      type: 'image/svg+xml',
+    });
+    const svgURL = URL.createObjectURL(svgBlob);
+    if (this.format === 'png') {
+      this.convertToPNG(svgURL).then(href => this.downloadImage(href));
+    } else if (this.format === 'svg') {
+      this.downloadImage(svgURL);
+    }
+  },
+
+  convertToPNG(svgURL) {
+    return new Promise(resolve => {
+      const img = new Image();
+      img.src = svgURL;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        const href = canvas.toDataURL('image/png');
+        resolve(href);
+      };
+    });
+  },
+
+  downloadImage(href) {
+    const downloadLink = document.createElement('a');
+    downloadLink.href = href;
+    downloadLink.download = `${new Date().toLocaleDateString()}.${this.format}`;
+    const revokeURL = () => {
+      setTimeout(() => {
+        URL.revokeObjectURL(href);
+      }, 1500);
+    };
+    downloadLink.addEventListener('click', revokeURL);
+    downloadLink.click();
+    downloadLink.removeEventListener('click', revokeURL);
+  },
 };

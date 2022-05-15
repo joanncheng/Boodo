@@ -38,6 +38,9 @@ const TopToolbar = ({ brushColor, brushSize, tool, setImageUpload }) => {
       dispatch(selectTool('image'));
     };
     img.src = URL.createObjectURL(file);
+    setTimeout(() => {
+      URL.revokeObjectURL(img.src);
+    }, 1000 * 30);
   };
 
   return (
