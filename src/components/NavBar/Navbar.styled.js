@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { Link as LinkR } from 'react-router-dom';
 import { Link as LinkS } from 'react-scroll';
-import { IoIosBrush } from 'react-icons/io';
+import Logo from '../../../public/images/icons/logo_white.svg';
 import { Container } from '../GlobalStyles';
 
 export const Nav = styled.nav`
@@ -27,12 +27,12 @@ export const NavbarContainer = styled(Container)`
   z-index: 1;
   height: 80px;
   width: 100%;
-  max-width: 1100px;
+  max-width: 1200px;
   padding: 0 24px;
 `;
 
 export const NavLogo = styled(LinkR)`
-  font-family: 'Virgil';
+  font-family: 'Gochi Hand', 'Virgil';
   color: #fff;
   justify-self: flex-start;
   cursor: pointer;
@@ -40,19 +40,10 @@ export const NavLogo = styled(LinkR)`
   font-size: 3rem;
   display: flex;
   align-items: center;
-
-  &:hover {
-    color: ${({ theme }) => theme.colors.primary};
-  }
 `;
 
-export const LogoIcon = styled(IoIosBrush)`
-  font-size: 1.5rem;
-  margin: 0 2px;
-
-  ${NavLogo}:hover & {
-    color: #fff;
-  }
+export const LogoIcon = styled(Logo)`
+  width: 200px;
 `;
 
 export const MobileIcon = styled.div`

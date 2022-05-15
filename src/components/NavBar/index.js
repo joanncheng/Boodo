@@ -8,7 +8,6 @@ const NavBar = ({ toggle }) => {
     <S.Nav>
       <S.NavbarContainer>
         <S.NavLogo to="/">
-          Boodo
           <S.LogoIcon />
         </S.NavLogo>
         <S.MobileIcon onClick={toggle}>

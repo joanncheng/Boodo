@@ -78,6 +78,9 @@ export const ToolTipWrapper = styled.div`
 
 export const LogoLink = styled(LinkR)`
   text-decoration: none;
+  font-family: 'Gochi Hand';
+  font-size: 2rem;
+  color: ${({ theme }) => theme.colors.primaryDark};
   margin: 0 1.5rem;
 
   &:hover {

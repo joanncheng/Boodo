@@ -38,7 +38,7 @@ export default createGlobalStyle`
   }
   
   tspan {
-    font-family: 'Virgil', 'Klee One', 'Noto Sans TC', Arial, sans-serif;
+    font-family: 'Gochi Hand','Virgil', 'Klee One', 'Noto Sans TC', Arial, sans-serif;
     letter-spacing: 1.5px;
     stroke-width: 0;
     font-size: 24px;

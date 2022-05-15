@@ -29,7 +29,7 @@ const BottomToolbar = ({ setClearCanvasModalOpen, setSaveImageModalOpen }) => {
             <TrashCanIcon />
           </S.ToolIcon>
         </S.ToolTypeButton>
-        <S.LogoLink to="/">LOGO</S.LogoLink>
+        <S.LogoLink to="/">Boodo</S.LogoLink>
       </S.ToolContainer>
     </S.BottomRightStack>
   );
