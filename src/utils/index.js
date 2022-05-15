@@ -1,6 +1,7 @@
 import React from 'react';
 import rough from 'roughjs/bundled/rough.esm';
 import { getStroke } from 'perfect-freehand';
+import { saveSvgAsPng, svgAsDataUri } from 'save-svg-as-png';
 import { TEXTAREA_LINE_HEIGHT } from '../config';
 
 const generator = rough.generator();
@@ -310,38 +311,21 @@ export const getResizedImageURL = image => {
 };
 
 export const imageSaver = {
-  save(format, svgData) {
+  save(format, svg) {
     this.format = format;
-    this.svgData = svgData;
+    this.svg = svg;
     this.parseImage();
   },
 
   parseImage() {
-    const svgBlob = new Blob([this.svgData], {
-      type: 'image/svg+xml',
-    });
-    const svgURL = URL.createObjectURL(svgBlob);
     if (this.format === 'png') {
-      this.convertToPNG(svgURL).then(href => this.downloadImage(href));
+      saveSvgAsPng(this.svg, `${new Date().toLocaleDateString()}.png`, {
+        excludeUnusedCss: true,
+        backgroundColor: '#fff',
+      });
     } else if (this.format === 'svg') {
-      this.downloadImage(svgURL);
+      svgAsDataUri(this.svg).then(uri => this.downloadImage(uri));
     }
-  },
-
-  convertToPNG(svgURL) {
-    return new Promise(resolve => {
-      const img = new Image();
-      img.src = svgURL;
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0);
-        const href = canvas.toDataURL('image/png');
-        resolve(href);
-      };
-    });
   },
 
   downloadImage(href) {

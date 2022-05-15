@@ -478,8 +478,7 @@ const Board = () => {
       className="buttons"
       onClick={e => {
         const { format } = e.target.dataset;
-        const svgData = svgRef.current.outerHTML;
-        format && imageSaver.save(format, svgData);
+        format && imageSaver.save(format, svgRef.current);
         setSaveImageModalOpen(false);
       }}
     >
