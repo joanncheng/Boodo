@@ -26,6 +26,13 @@ export default createGlobalStyle`
     font-style: normal;
   }
   
+  @font-face {
+    font-family: "Gochi Hand";
+    src: url("../fonts/GochiHand-Regular.ttf") format("truetype");
+    font-weight: 400;
+    font-style: normal;
+  }
+  
   * {
     box-sizing: border-box;
     margin: 0;
@@ -38,7 +45,7 @@ export default createGlobalStyle`
   }
   
   tspan {
-    font-family: 'Gochi Hand','Virgil', 'Klee One', 'Noto Sans TC', Arial, sans-serif;
+    font-family: 'Gochi Hand','Virgil', 'Noto Sans TC', Arial, sans-serif;
     letter-spacing: 1.5px;
     stroke-width: 0;
     font-size: 24px;
