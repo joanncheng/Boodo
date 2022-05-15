@@ -31,6 +31,7 @@ const SelectorBox = ({ element }) => {
         );
       case 'rectangle':
       case 'ellipse':
+      case 'diamond':
       case 'image':
         return (
           <g>

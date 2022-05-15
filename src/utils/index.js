@@ -23,6 +23,23 @@ const getSvgPathFromStroke = stroke => {
   return d.join(' ');
 };
 
+const getDiamondPoints = element => {
+  // Here add 1 to avoid numbers to be 0, or rough.js will throw an error
+  const { x1, y1, x2, y2 } = element;
+  const width = x2 - x1;
+  const height = y2 - y1;
+  const topX = Math.floor(width / 2) + 1;
+  const topY = 0;
+  const rightX = width;
+  const rightY = Math.floor(height / 2) + 1;
+  const bottomX = topX;
+  const bottomY = height;
+  const leftX = 0;
+  const leftY = rightY;
+
+  return [topX, topY, rightX, rightY, bottomX, bottomY, leftX, leftY];
+};
+
 const getNearPoint = (x, y, x1, y1, name) => {
   return Math.abs(x - x1) < 5 && Math.abs(y - y1) < 5 ? name : null;
 };
@@ -43,6 +60,7 @@ const getPositionWithinElement = (x, y, element) => {
   switch (type) {
     case 'rectangle':
     case 'ellipse':
+    case 'diamond':
     case 'image':
       const topLeft = getNearPoint(x, y, x1, y1, 'tl');
       const topRight = getNearPoint(x, y, x2, y1, 'tr');
@@ -143,6 +161,32 @@ export const createSVGElement = (id, x1, y1, x2, y2, type, options) => {
         type,
         options: { ...options, roughElement },
       };
+    case 'diamond': {
+      const [topX, topY, rightX, rightY, bottomX, bottomY, leftX, leftY] =
+        getDiamondPoints({ x1, y1, x2, y2 });
+      roughElement = generator.polygon(
+        [
+          [topX + x1, topY + y1],
+          [rightX + x1, rightY + y1],
+          [bottomX + x1, bottomY + y1],
+          [leftX + x1, leftY + y1],
+        ],
+        {
+          roughness: 2,
+          stroke: options.brushColor,
+          strokeWidth: options.brushSize,
+        }
+      );
+      return {
+        id,
+        x1,
+        y1,
+        x2,
+        y2,
+        type,
+        options: { ...options, roughElement },
+      };
+    }
     case 'pencil':
       return { id, type, options, points: [{ x: x1, y: y1 }] };
     case 'text':
@@ -173,6 +217,7 @@ export const drawElement = element => {
     case 'line':
     case 'rectangle':
     case 'ellipse':
+    case 'diamond':
       const [pathInfoObj] = generator.toPaths(element.options.roughElement);
       return <path key={element.id} id={element.id} {...pathInfoObj}></path>;
     case 'text':
@@ -256,7 +301,7 @@ export const adjustElementCoordinates = element => {
     } else {
       return { x1: x2, y1: y2, x2: x1, y2: y1 };
     }
-  } else if (type === 'rectangle' || type === 'ellipse') {
+  } else if (type === 'rectangle' || type === 'ellipse' || type === 'diamond') {
     const minX = Math.min(x1, x2);
     const maxX = Math.max(x1, x2);
     const minY = Math.min(y1, y2);
@@ -266,6 +311,9 @@ export const adjustElementCoordinates = element => {
     return { x1, y1, x2, y2 };
   }
 };
+
+export const isAdjustmentRequired = type =>
+  ['line', 'rectangle', 'ellipse', 'diamond'].includes(type);
 
 export const convertToSVGCoords = ({ x, y }, svg) => {
   const clientPoint = svg.createSVGPoint();

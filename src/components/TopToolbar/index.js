@@ -8,7 +8,7 @@ import PencilIcon from '../../../public/images/icons/pencil.svg';
 import SelectionIcon from '../../../public/images/icons/selection.svg';
 import RectangleIcon from '../../../public/images/icons/rectangle.svg';
 import EllipseIcon from '../../../public/images/icons/ellipse.svg';
-import ArrowIcon from '../../../public/images/icons/arrow.svg';
+import DiamondIcon from '../../../public/images/icons/diamond.svg';
 import TextIcon from '../../../public/images/icons/text.svg';
 import ImageIcon from '../../../public/images/icons/image.svg';
 import AvatarIcon from '../../../public/images/icons/avatar.svg';
@@ -79,15 +79,15 @@ const TopToolbar = ({ brushColor, brushSize, tool, setImageUpload }) => {
             <EllipseIcon />
           </S.ToolIcon>
         </S.ToolLabel>
-        <S.ToolLabel title="Arrow">
+        <S.ToolLabel title="Diamond">
           <S.ToolTypeRadio
             type="radio"
             name="editor-current-shape"
-            onChange={() => dispatch(selectTool('arrow'))}
-            checked={tool === 'arrow' ? true : false}
+            onChange={() => dispatch(selectTool('diamond'))}
+            checked={tool === 'diamond' ? true : false}
           />
           <S.ToolIcon>
-            <ArrowIcon />
+            <DiamondIcon />
           </S.ToolIcon>
         </S.ToolLabel>
         <S.ToolLabel title="Line">

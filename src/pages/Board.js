@@ -15,6 +15,7 @@ import {
   createSVGElement,
   setCursorForPosition,
   adjustElementCoordinates,
+  isAdjustmentRequired,
   resizeCoordinates,
   convertToSVGCoords,
   imageSaver,
@@ -25,9 +26,6 @@ import {
   ERASER_CURSOR,
   ADD_IMAGE_CURSOR,
 } from '../config';
-
-const isAdjustmentRequired = type =>
-  ['line', 'rectangle', 'ellipse'].includes(type);
 
 const Board = () => {
   const dispatch = useDispatch();
@@ -114,6 +112,7 @@ const Board = () => {
       case 'line':
       case 'rectangle':
       case 'ellipse':
+      case 'diamond':
       case 'image':
         elementsCopy[index] = createSVGElement(
           id,
