@@ -203,7 +203,13 @@ export const drawElement = element => {
   switch (element.type) {
     case 'pencil':
       const d = getSvgPathFromStroke(
-        getStroke(element.points, { size: element.options.brushSize * 4 })
+        getStroke(element.points, {
+          size:
+            element.options.brushSize < 2
+              ? element.options.brushSize * 8
+              : element.options.brushSize * 5,
+          thinning: 0.8,
+        })
       );
       return (
         <path
@@ -367,7 +373,7 @@ export const imageSaver = {
 
   parseImage() {
     if (this.format === 'png') {
-      saveSvgAsPng(this.svg, `${new Date().toLocaleDateString()}.png`, {
+      saveSvgAsPng(this.svg, `Boodo_${new Date().toLocaleDateString()}.png`, {
         excludeUnusedCss: true,
         backgroundColor: '#fff',
       });
@@ -379,7 +385,9 @@ export const imageSaver = {
   downloadImage(href) {
     const downloadLink = document.createElement('a');
     downloadLink.href = href;
-    downloadLink.download = `${new Date().toLocaleDateString()}.${this.format}`;
+    downloadLink.download = `Boodo_${new Date().toLocaleDateString()}.${
+      this.format
+    }`;
     const revokeURL = () => {
       setTimeout(() => {
         URL.revokeObjectURL(href);
