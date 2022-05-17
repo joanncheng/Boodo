@@ -16,11 +16,11 @@ const SvgBoard = forwardRef((props, svgRef) => {
     handleMouseMove,
     handleMouseUp,
     updateElement,
-    elements,
     viewBoxSizeRatio,
     resizeCanvas,
     viewBox,
     setViewBox,
+    drawData,
   } = props;
 
   const dispatch = useDispatch();
@@ -120,14 +120,14 @@ const SvgBoard = forwardRef((props, svgRef) => {
           }
         }}
       >
-        {elements &&
-          elements.map(element => {
+        {drawData &&
+          drawData.map(element => {
             if (action === 'writing' && element.id === selectedElement.id)
               return;
             return drawElement(element);
           })}
         {selectedElement &&
-          elements.map(element =>
+          drawData.map(element =>
             element.id === selectedElement.id &&
             element.options.selectorDisplay ? (
               <SelectorBox key={`selector-${element.id}`} element={element} />

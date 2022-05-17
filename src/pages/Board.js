@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { storage } from '../firebase';
+import { storage, db } from '../firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { set, ref as dbRef, onValue, get, child } from 'firebase/database';
 import { v4 as uuid } from 'uuid';
 import useDrawingHistory from '../hooks/useDrawingHistory';
 import { selectTool } from '../redux/activeTool';
@@ -39,6 +40,7 @@ const Board = () => {
   const [elements, setElements, undo, redo] = useDrawingHistory([]);
   const [action, setAction] = useState('none');
   const [selectedElement, setSelectedElement] = useState(null);
+  const [drawData, setDrawData] = useState([]);
 
   // Control modal
   const [clearCanvasModalOpen, setClearCanvasModalOpen] = useState(false);
@@ -63,12 +65,45 @@ const Board = () => {
   const [spacePressing, setSpacePressing] = useState(false);
   const svgRef = useRef(null);
 
-  // If user not login
+  // Get data once from database
   useEffect(() => {
-    if (!user.id) {
+    if (user.id) {
+      const ref = dbRef(db);
+      get(child(ref, `users/${user.id}/boardId`))
+        .then(snapshot => {
+          if (snapshot.exists()) {
+            setElements(snapshot.val());
+          }
+        })
+        .catch(err => {
+          console.log('error from get data: ' + err);
+        });
+    }
+  }, []);
+
+  // If user logged in, listen data changes from db,
+  // else redirect to signin page
+  useEffect(() => {
+    if (user.id) {
+      onValue(dbRef(db, `users/${user.id}/boardId`), snapshot => {
+        setDrawData([]);
+        const data = snapshot.val();
+        if (data !== null) {
+          data.map(element => {
+            setDrawData(prevState => [...prevState, element]);
+          });
+        }
+      });
+    } else {
       history.push('/signin');
     }
   }, []);
+
+  // Write To Database
+  useEffect(() => {
+    if (elements.length === 0 && drawData.length === 0) return;
+    set(dbRef(db, `users/${user.id}/boardId`), elements);
+  }, [elements]);
 
   // Keydown event
   useEffect(() => {
@@ -166,6 +201,12 @@ const Board = () => {
   const resetElements = () => {
     setElements([]);
     setViewBoxSizeRatio(1);
+    setViewBox({
+      x: 0,
+      y: 0,
+      width: window.innerWidth,
+      height: window.innerHeight,
+    });
     setClearCanvasModalOpen(false);
   };
 
@@ -518,11 +559,11 @@ const Board = () => {
     handleMouseMove,
     handleMouseUp,
     updateElement,
-    elements,
     viewBoxSizeRatio,
     resizeCanvas,
     viewBox,
     setViewBox,
+    drawData,
   };
 
   return (
