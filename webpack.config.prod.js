@@ -2,7 +2,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 
 module.exports = {
-  mode: 'development',
+  mode: 'production',
   entry: './src/index.js',
   output: {
     filename: 'bundle.js',
@@ -14,6 +14,7 @@ module.exports = {
       template: './public/index.html',
     }),
   ],
+  devtool: 'source-map',
   resolve: {
     modules: [__dirname, 'src', 'node_modules'],
     extensions: ['*', '.js', '.jsx', '.tsx', '.ts'],
@@ -36,29 +37,14 @@ module.exports = {
       {
         test: /\.(jpe?g|png|gif)$/i,
         loader: 'file-loader',
-        options: {
-          name: '/public/images/[name].[ext]',
-        },
       },
       {
         test: /\.woff2?(\?v=\d+\.\d+\.\d+)?$/,
         loader: 'url-loader',
-        options: {
-          limit: 50000,
-          mimetype: 'application/font-woff',
-          name: './fonts/[name].[ext]',
-        },
       },
       {
         test: /\.ttf$/,
-        use: [
-          {
-            loader: 'ttf-loader',
-            options: {
-              name: './fonts/[name].[ext]',
-            },
-          },
-        ],
+        loader: 'ttf-loader',
       },
       {
         test: /\.svg$/i,
@@ -72,10 +58,5 @@ module.exports = {
         use: ['@svgr/webpack'],
       },
     ],
-  },
-  devServer: {
-    historyApiFallback: true,
-    hot: true,
-    port: 3000,
   },
 };

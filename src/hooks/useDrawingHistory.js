@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-const useHistory = initialState => {
+const useDrawingHistory = initialState => {
   const [index, setIndex] = useState(0);
   const [history, setHistory] = useState([initialState]);
   const setState = (action, overwrite = false) => {
@@ -23,4 +23,4 @@ const useHistory = initialState => {
   return [history[index], setState, undo, redo];
 };
 
-export default useHistory;
+export default useDrawingHistory;

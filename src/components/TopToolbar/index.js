@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { signOut } from 'firebase/auth';
+import { useHistory } from 'react-router-dom';
 import { BsPaletteFill } from 'react-icons/bs';
 import * as S from './TopToolbar.styled';
+import { auth } from '../../firebase';
+import { logout } from '../../redux/user';
 import { selectTool } from '../../redux/activeTool';
 import { selectColor } from '../../redux/brushOptions';
 import PencilIcon from '../../../public/images/icons/pencil.svg';
@@ -16,8 +20,9 @@ import ShapeActions from '../ShapeActions';
 import OutsideClicker from '../OutsideClicker';
 import { getResizedImageURL } from '../../utils';
 
-const TopToolbar = ({ brushColor, brushSize, tool, setImageUpload }) => {
+const TopToolbar = ({ brushColor, brushSize, tool, setImageUpload, user }) => {
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -41,6 +46,17 @@ const TopToolbar = ({ brushColor, brushSize, tool, setImageUpload }) => {
     setTimeout(() => {
       URL.revokeObjectURL(img.src);
     }, 1000 * 30);
+  };
+
+  const handleSignOut = () => {
+    signOut(auth)
+      .then(() => {
+        dispatch(logout());
+        history.push('/');
+      })
+      .catch(err => {
+        console.log('sign out error: ' + err.message);
+      });
   };
 
   return (
@@ -174,8 +190,8 @@ const TopToolbar = ({ brushColor, brushSize, tool, setImageUpload }) => {
         <S.UserIcon>
           <AvatarIcon />
         </S.UserIcon>
-        <p>test@test.com</p>
-        <S.LogoutBtn title="Sign out" />
+        <p>{user.email}</p>
+        <S.LogoutBtn title="Sign out" onClick={handleSignOut} />
       </S.UserInfoWrapper>
     </S.TopStack>
   );

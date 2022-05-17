@@ -32,18 +32,13 @@ export const NavbarContainer = styled(Container)`
 `;
 
 export const NavLogo = styled(LinkR)`
-  font-family: 'Gochi Hand', 'Virgil';
-  color: #fff;
   justify-self: flex-start;
+  width: 160px;
   cursor: pointer;
-  text-decoration: none;
-  font-size: 3rem;
-  display: flex;
-  align-items: center;
 `;
 
 export const LogoIcon = styled(Logo)`
-  width: 200px;
+  width: 100%;
 `;
 
 export const MobileIcon = styled.div`

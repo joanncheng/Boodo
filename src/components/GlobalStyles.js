@@ -7,6 +7,7 @@ export const theme = {
     text: '#58585D',
     textDark: '#343a40',
     textDarkest: '#161617',
+    primaryLightest: '#d1cefc',
     primary: '#665df5',
     primaryDark: '#544af4',
     secondary: '#57e1a3',
@@ -21,15 +22,17 @@ export default createGlobalStyle`
 
   @font-face {
     font-family: 'virgil';
-    src: url('../fonts/Virgil.woff2') format('woff2');
+    src: url('/fonts/Virgil.woff2') format('woff2');
     font-weight: normal;
     font-style: normal;
   }
   
   @font-face {
     font-family: "Gochi Hand";
-    src: url("../fonts/GochiHand-Regular.ttf") format("truetype");
-    font-weight: 400;
+    src: url("./fonts/GochiHand.ttf") format("truetype");
+    src: url("./fonts/GochiHand.woff2") format("woff2");
+    src: url("./fonts/GochiHand.woff") format("woff");
+    font-weight: normal;
     font-style: normal;
   }
   

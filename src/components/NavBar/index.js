@@ -3,7 +3,7 @@ import { FaBars } from 'react-icons/fa';
 import * as S from './Navbar.styled';
 import { Button as GSButton } from '../GlobalStyles';
 
-const NavBar = ({ toggle }) => {
+const NavBar = ({ toggle, user }) => {
   return (
     <S.Nav>
       <S.NavbarContainer>
@@ -24,9 +24,15 @@ const NavBar = ({ toggle }) => {
             <S.NavLinks to="services">Services</S.NavLinks>
           </S.NavItem>
           <S.NavItemBtn>
-            <S.NavBtnLink to="/signin">
-              <GSButton>Sign In</GSButton>
-            </S.NavBtnLink>
+            {user.id ? (
+              <S.NavBtnLink to="/board">
+                <GSButton>Go to board</GSButton>
+              </S.NavBtnLink>
+            ) : (
+              <S.NavBtnLink to="/signin">
+                <GSButton>Sign In</GSButton>
+              </S.NavBtnLink>
+            )}
           </S.NavItemBtn>
         </S.NavMenu>
       </S.NavbarContainer>

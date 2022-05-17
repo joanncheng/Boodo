@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import { storage } from '../firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { v4 as uuid } from 'uuid';
-import useHistory from '../hooks/useHistory';
+import useDrawingHistory from '../hooks/useDrawingHistory';
 import { selectTool } from '../redux/activeTool';
 import SvgBoard from '../components/SvgBoard';
 import TopToolbar from '../components/TopToolbar';
@@ -29,11 +30,13 @@ import {
 
 const Board = () => {
   const dispatch = useDispatch();
+  const history = useHistory();
   const tool = useSelector(state => state.activeTool);
   const brushColor = useSelector(state => state.brushOptions.color);
   const brushSize = useSelector(state => state.brushOptions.size);
+  const user = useSelector(state => state.user);
 
-  const [elements, setElements, undo, redo] = useHistory([]);
+  const [elements, setElements, undo, redo] = useDrawingHistory([]);
   const [action, setAction] = useState('none');
   const [selectedElement, setSelectedElement] = useState(null);
 
@@ -59,6 +62,13 @@ const Board = () => {
   });
   const [spacePressing, setSpacePressing] = useState(false);
   const svgRef = useRef(null);
+
+  // If user not login
+  useEffect(() => {
+    if (!user.id) {
+      history.push('/signin');
+    }
+  }, []);
 
   // Keydown event
   useEffect(() => {
@@ -522,6 +532,7 @@ const Board = () => {
         brushSize={brushSize}
         tool={tool}
         setImageUpload={setImageUpload}
+        user={user}
       />
       <SvgBoard ref={svgRef} {...svgBoardProps}></SvgBoard>
       <BottomLeftToolbar
