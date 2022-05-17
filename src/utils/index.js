@@ -202,12 +202,17 @@ export const createSVGElement = (id, x1, y1, x2, y2, type, options) => {
 export const drawElement = element => {
   switch (element.type) {
     case 'pencil':
+      let size = element.options.brushSize;
+      if (size <= 1) {
+        size *= 10;
+      } else if (size <= 3) {
+        size *= 7;
+      } else {
+        size *= 5;
+      }
       const d = getSvgPathFromStroke(
         getStroke(element.points, {
-          size:
-            element.options.brushSize < 2
-              ? element.options.brushSize * 8
-              : element.options.brushSize * 5,
+          size,
           thinning: 0.8,
         })
       );

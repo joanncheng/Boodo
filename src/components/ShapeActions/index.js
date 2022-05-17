@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React from 'react';
 import { useDispatch } from 'react-redux';
 import { selectSize } from '../../redux/brushOptions';
 import * as S from './ShapeActions.styled';
