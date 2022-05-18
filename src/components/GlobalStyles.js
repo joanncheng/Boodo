@@ -29,9 +29,9 @@ export default createGlobalStyle`
   
   @font-face {
     font-family: "Gochi Hand";
-    src: url("./fonts/GochiHand.ttf") format("truetype");
-    src: url("./fonts/GochiHand.woff2") format("woff2");
-    src: url("./fonts/GochiHand.woff") format("woff");
+    src: url("../fonts/GochiHand.ttf") format("truetype");
+    src: url("../fonts/GochiHand.woff2") format("woff2");
+    src: url("../fonts/GochiHand.woff") format("woff");
     font-weight: normal;
     font-style: normal;
   }

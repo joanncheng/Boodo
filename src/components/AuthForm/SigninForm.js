@@ -60,7 +60,7 @@ const SigninForm = () => {
           />
           <S.FormBtn onClick={handleSignin}>Sign in</S.FormBtn>
           <S.Text>
-            <S.TextLink to="signup">Create an account now</S.TextLink>
+            <S.TextLink to="signup">Create an account</S.TextLink>
           </S.Text>
         </S.FormContent>
       </S.FormWrap>
