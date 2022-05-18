@@ -15,12 +15,12 @@ const SvgBoard = forwardRef((props, svgRef) => {
     handleMouseDown,
     handleMouseMove,
     handleMouseUp,
+    elements,
     updateElement,
     viewBoxSizeRatio,
     resizeCanvas,
     viewBox,
     setViewBox,
-    drawData,
   } = props;
 
   const dispatch = useDispatch();
@@ -110,6 +110,9 @@ const SvgBoard = forwardRef((props, svgRef) => {
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
+        onTouchStart={handleMouseDown}
+        onTouchMove={handleMouseMove}
+        onTouchEnd={handleMouseUp}
         onWheel={e => {
           if (e.ctrlKey) {
             if (e.deltaY > 0) {
@@ -120,14 +123,14 @@ const SvgBoard = forwardRef((props, svgRef) => {
           }
         }}
       >
-        {drawData &&
-          drawData.map(element => {
+        {elements &&
+          elements.map(element => {
             if (action === 'writing' && element.id === selectedElement.id)
               return;
             return drawElement(element);
           })}
         {selectedElement &&
-          drawData.map(element =>
+          elements.map(element =>
             element.id === selectedElement.id &&
             element.options.selectorDisplay ? (
               <SelectorBox key={`selector-${element.id}`} element={element} />

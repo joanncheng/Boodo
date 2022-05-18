@@ -21,7 +21,7 @@ const SignupForm = () => {
     if (!email || !password) return;
     createUserWithEmailAndPassword(auth, email, password)
       .then(() => {
-        history.push('/board');
+        history.push('/board/public');
       })
       .catch(err => {
         console.log('sign up error:' + err.message);

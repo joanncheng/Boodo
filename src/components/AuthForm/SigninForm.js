@@ -12,7 +12,7 @@ const SigninForm = () => {
   useEffect(() => {
     auth.onAuthStateChanged(user => {
       if (user) {
-        history.push('/board');
+        history.push(`/board/public`);
       }
     });
   }, []);
@@ -29,7 +29,7 @@ const SigninForm = () => {
     if (!email || !password) return;
     signInWithEmailAndPassword(auth, email, password)
       .then(() => {
-        history.push('/board');
+        history.push('/board/public');
       })
       .catch(err => {
         console.log('sign in error:' + err.message);

@@ -29,7 +29,19 @@ import {
   ADD_IMAGE_CURSOR,
 } from '../config';
 
-const Board = () => {
+// const currentBoard = () => {
+//   const pathname = window.location.pathname.slice(
+//     1,
+//     window.location.pathname.length
+//   );
+//   if (pathname.length === 0) {
+//     return 'default';
+//   }
+//   return pathname;
+// };
+
+const Board = props => {
+  const currentBoard = props.match.params.id;
   const dispatch = useDispatch();
   const history = useHistory();
   const tool = useSelector(state => state.activeTool);
@@ -40,7 +52,7 @@ const Board = () => {
   const [elements, setElements, undo, redo] = useDrawingHistory([]);
   const [action, setAction] = useState('none');
   const [selectedElement, setSelectedElement] = useState(null);
-  const [drawData, setDrawData] = useState([]);
+  const [drawData, setDrawData] = useState(null);
 
   // Control modal
   const [clearCanvasModalOpen, setClearCanvasModalOpen] = useState(false);
@@ -65,45 +77,24 @@ const Board = () => {
   const [spacePressing, setSpacePressing] = useState(false);
   const svgRef = useRef(null);
 
-  // Get data once from database
-  useEffect(() => {
-    if (user.id) {
-      const ref = dbRef(db);
-      get(child(ref, `users/${user.id}/boardId`))
-        .then(snapshot => {
-          if (snapshot.exists()) {
-            setElements(snapshot.val());
-          }
-        })
-        .catch(err => {
-          console.log('error from get data: ' + err);
-        });
-    }
-  }, []);
-
   // If user logged in, listen data changes from db,
   // else redirect to signin page
   useEffect(() => {
     if (user.id) {
-      onValue(dbRef(db, `users/${user.id}/boardId`), snapshot => {
-        setDrawData([]);
+      onValue(dbRef(db, `boards/${currentBoard}`), snapshot => {
+        setDrawData(null);
         const data = snapshot.val();
-        if (data !== null) {
-          data.map(element => {
-            setDrawData(prevState => [...prevState, element]);
-          });
-        }
+        if (data !== null) setDrawData(data);
       });
     } else {
       history.push('/signin');
     }
   }, []);
 
-  // Write To Database
   useEffect(() => {
-    if (elements.length === 0 && drawData.length === 0) return;
-    set(dbRef(db, `users/${user.id}/boardId`), elements);
-  }, [elements]);
+    if (!drawData) return;
+    setElements(drawData, true);
+  }, [drawData]);
 
   // Keydown event
   useEffect(() => {
@@ -138,6 +129,9 @@ const Board = () => {
       if (e.key === ' ' || e.code === 'Space') {
         setSpacePressing(false);
       }
+
+      // Write data to database
+      set(dbRef(db, `boards/${currentBoard}`), elements);
     };
 
     window.addEventListener('keydown', handleKeydown);
@@ -232,10 +226,9 @@ const Board = () => {
       return;
     }
 
-    const SVGPoint = convertToSVGCoords(
-      { x: e.clientX, y: e.clientY },
-      svgRef.current
-    );
+    const x = e.type === 'touchstart' ? e.changedTouches[0].clientX : e.clientX;
+    const y = e.type === 'touchstart' ? e.changedTouches[0].clientY : e.clientY;
+    const SVGPoint = convertToSVGCoords({ x, y }, svgRef.current);
 
     if (tool === 'eraser') {
       const element = getElementAtPosition(SVGPoint.x, SVGPoint.y, elements);
@@ -308,10 +301,9 @@ const Board = () => {
   };
 
   const handleMouseMove = e => {
-    const SVGPoint = convertToSVGCoords(
-      { x: e.clientX, y: e.clientY },
-      svgRef.current
-    );
+    const x = e.type === 'touchmove' ? e.changedTouches[0].clientX : e.clientX;
+    const y = e.type === 'touchmove' ? e.changedTouches[0].clientY : e.clientY;
+    const SVGPoint = convertToSVGCoords({ x, y }, svgRef.current);
 
     // Changing cursor style
     if (tool === 'selection' || tool === 'eraser') {
@@ -379,12 +371,14 @@ const Board = () => {
         return;
       updateElement(id, x1, y1, x2, y2, type, options);
     } else if (action === 'movingCanvas') {
+      if (e.type === 'touchmove') return; // FIXME
+
       e.target.style.cursor = 'grabbing';
 
       const newSVGPoint = convertToSVGCoords(
         {
-          x: e.clientX + e.movementX,
-          y: e.clientY + e.movementY,
+          x: x + e.movementX,
+          y: y + e.movementY,
         },
         svgRef.current
       );
@@ -400,18 +394,25 @@ const Board = () => {
         y: viewBox.y + delta.dy,
       });
     }
+
+    // Write data to database
+    set(dbRef(db, `boards/${currentBoard}`), elements);
   };
 
   const handleMouseUp = e => {
+    if (e.cancelable) e.preventDefault();
+
+    // Write data to database
+    set(dbRef(db, `boards/${currentBoard}`), elements);
+
     if (action === 'movingCanvas') {
       setAction('none');
       return;
     }
 
-    const SVGPoint = convertToSVGCoords(
-      { x: e.clientX, y: e.clientY },
-      svgRef.current
-    );
+    const x = e.type === 'touchend' ? e.changedTouches[0].clientX : e.clientX;
+    const y = e.type === 'touchend' ? e.changedTouches[0].clientY : e.clientY;
+    const SVGPoint = convertToSVGCoords({ x, y }, svgRef.current);
 
     if (selectedElement) {
       selectedElement.options = {
@@ -458,7 +459,7 @@ const Board = () => {
       setUploadedImageData(null);
     }
 
-    if (action === 'writing' || action === 'loading') return;
+    if (action === 'writing') return;
     setAction('none');
     if (tool !== 'pencil') dispatch(selectTool('selection'));
   };
@@ -558,12 +559,12 @@ const Board = () => {
     handleMouseDown,
     handleMouseMove,
     handleMouseUp,
+    elements,
     updateElement,
     viewBoxSizeRatio,
     resizeCanvas,
     viewBox,
     setViewBox,
-    drawData,
   };
 
   return (
