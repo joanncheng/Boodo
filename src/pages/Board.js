@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { storage, db } from '../firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { set, ref as dbRef, onValue, get, child } from 'firebase/database';
+import { set, ref as dbRef, onValue } from 'firebase/database';
 import { v4 as uuid } from 'uuid';
 import useDrawingHistory from '../hooks/useDrawingHistory';
 import { selectTool } from '../redux/activeTool';
@@ -28,17 +28,6 @@ import {
   ERASER_CURSOR,
   ADD_IMAGE_CURSOR,
 } from '../config';
-
-// const currentBoard = () => {
-//   const pathname = window.location.pathname.slice(
-//     1,
-//     window.location.pathname.length
-//   );
-//   if (pathname.length === 0) {
-//     return 'default';
-//   }
-//   return pathname;
-// };
 
 const Board = props => {
   const currentBoard = props.match.params.id;
@@ -96,6 +85,23 @@ const Board = props => {
     setElements(drawData, true);
   }, [drawData]);
 
+  // Update image's url after image is uploaded to storage
+  useEffect(() => {
+    if (uploadedImageData) {
+      const element = elements.find(
+        el => el.id === uploadedImageData.elementId
+      );
+
+      if (!element) return;
+      const { id, x1, y1, x2, y2, type, options } = element;
+      updateElement(id, x1, y1, x2, y2, type, {
+        ...options,
+        url: uploadedImageData.url,
+      });
+      setUploadedImageData(null);
+    }
+  }, [uploadedImageData]);
+
   // Keydown event
   useEffect(() => {
     const handleKeydown = e => {
@@ -142,6 +148,26 @@ const Board = props => {
       window.removeEventListener('keyup', handleKeyup);
     };
   });
+
+  // Move canvas back to center after resizeCanvas
+  useLayoutEffect(() => {
+    const newCenterPoint = convertToSVGCoords(
+      {
+        x: window.innerWidth / 2,
+        y: window.innerHeight / 2,
+      },
+      svgRef.current
+    );
+    const delta = {
+      dx: centerPoint.x - newCenterPoint.x,
+      dy: centerPoint.y - newCenterPoint.y,
+    };
+    setViewBox({
+      ...viewBox,
+      x: viewBox.x + delta.dx,
+      y: viewBox.y + delta.dy,
+    });
+  }, [viewBoxSizeRatio]);
 
   const updateElement = (id, x1, y1, x2, y2, type, options) => {
     const elementsCopy = [...elements];
@@ -216,6 +242,25 @@ const Board = props => {
         };
       });
     });
+  };
+
+  // Resize Canvas
+  const resizeCanvas = deltaRatio => {
+    if (viewBoxSizeRatio < 0.2) {
+      deltaRatio > 0 && setViewBoxSizeRatio(viewBoxSizeRatio + deltaRatio);
+    } else if (viewBoxSizeRatio > 2) {
+      deltaRatio < 0 && setViewBoxSizeRatio(viewBoxSizeRatio + deltaRatio);
+    } else {
+      setViewBoxSizeRatio(viewBoxSizeRatio + deltaRatio);
+    }
+    const newCenterPoint = convertToSVGCoords(
+      {
+        x: window.innerWidth / 2,
+        y: window.innerHeight / 2,
+      },
+      svgRef.current
+    );
+    setCenterPoint(newCenterPoint);
   };
 
   const handleMouseDown = e => {
@@ -447,61 +492,10 @@ const Board = props => {
       }
     }
 
-    if (uploadedImageData) {
-      const { id, x1, y1, x2, y2, type, options } = elements.find(
-        el => el.id === uploadedImageData.elementId
-      );
-
-      updateElement(id, x1, y1, x2, y2, type, {
-        ...options,
-        url: uploadedImageData.url,
-      });
-      setUploadedImageData(null);
-    }
-
     if (action === 'writing') return;
     setAction('none');
     if (tool !== 'pencil') dispatch(selectTool('selection'));
   };
-
-  // Resize Canvas
-  const resizeCanvas = deltaRatio => {
-    if (viewBoxSizeRatio < 0.2) {
-      deltaRatio > 0 && setViewBoxSizeRatio(viewBoxSizeRatio + deltaRatio);
-    } else if (viewBoxSizeRatio > 2) {
-      deltaRatio < 0 && setViewBoxSizeRatio(viewBoxSizeRatio + deltaRatio);
-    } else {
-      setViewBoxSizeRatio(viewBoxSizeRatio + deltaRatio);
-    }
-    const newCenterPoint = convertToSVGCoords(
-      {
-        x: window.innerWidth / 2,
-        y: window.innerHeight / 2,
-      },
-      svgRef.current
-    );
-    setCenterPoint(newCenterPoint);
-  };
-
-  // Move canvas back to center after resizeCanvas
-  useLayoutEffect(() => {
-    const newCenterPoint = convertToSVGCoords(
-      {
-        x: window.innerWidth / 2,
-        y: window.innerHeight / 2,
-      },
-      svgRef.current
-    );
-    const delta = {
-      dx: centerPoint.x - newCenterPoint.x,
-      dy: centerPoint.y - newCenterPoint.y,
-    };
-    setViewBox({
-      ...viewBox,
-      x: viewBox.x + delta.dx,
-      y: viewBox.y + delta.dy,
-    });
-  }, [viewBoxSizeRatio]);
 
   // // Loading files from storage
   // const imageURLsRef = ref(storage, 'images/');
