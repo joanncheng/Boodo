@@ -1,11 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app';
-import { getStorage } from 'firebase/storage';
-import {
-  getAuth,
-  GoogleAuthProvider,
-  connectAuthEmulator,
-} from 'firebase/auth';
+import { getStorage, connectStorageEmulator } from 'firebase/storage';
+import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 import { getDatabase, connectDatabaseEmulator } from 'firebase/database';
 
 const firebaseConfig = {
@@ -28,4 +24,5 @@ export const googleAuthProvider = new GoogleAuthProvider();
 
 if (location.hostname === 'localhost') {
   connectDatabaseEmulator(db, 'localhost', 9000);
+  connectStorageEmulator(storage, 'localhost', 9199);
 }

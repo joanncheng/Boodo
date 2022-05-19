@@ -71,9 +71,8 @@ const Board = props => {
   useEffect(() => {
     if (user.id) {
       onValue(dbRef(db, `boards/${currentBoard}`), snapshot => {
-        setDrawData(null);
         const data = snapshot.val();
-        if (data !== null) setDrawData(data);
+        setDrawData(data);
       });
     } else {
       history.push('/signin');
@@ -81,8 +80,11 @@ const Board = props => {
   }, []);
 
   useEffect(() => {
-    if (!drawData) return;
-    setElements(drawData, true);
+    if (!drawData) {
+      setElements([], true);
+    } else {
+      setElements(drawData, true);
+    }
   }, [drawData]);
 
   // Update image's url after image is uploaded to storage
@@ -497,18 +499,6 @@ const Board = props => {
     if (tool !== 'pencil') dispatch(selectTool('selection'));
   };
 
-  // // Loading files from storage
-  // const imageURLsRef = ref(storage, 'images/');
-  // useEffect(() => {
-  //   listAll(imageURLsRef).then(res => {
-  //     res.items.forEach(item => {
-  //       getDownloadURL(item).then(url => {
-  //         setImageUrls(prev => [...prev, url]);
-  //       });
-  //     });
-  //   });
-  // }, []);
-
   const clearCanvasModalActions = (
     <>
       <button onClick={() => setClearCanvasModalOpen(false)}>Cancel</button>
@@ -603,3 +593,15 @@ const Board = props => {
 };
 
 export default Board;
+
+// // Loading files from storage
+// const imageURLsRef = ref(storage, 'images/');
+// useEffect(() => {
+//   listAll(imageURLsRef).then(res => {
+//     res.items.forEach(item => {
+//       getDownloadURL(item).then(url => {
+//         setImageUrls(prev => [...prev, url]);
+//       });
+//     });
+//   });
+// }, []);
