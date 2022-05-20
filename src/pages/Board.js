@@ -7,7 +7,7 @@ import {
   getDownloadURL,
 } from 'firebase/storage';
 import { set, ref, onValue, onDisconnect } from 'firebase/database';
-import { useUser } from 'reactfire';
+import { useUser, useDatabaseListData } from 'reactfire';
 import { v4 as uuid } from 'uuid';
 import { storage, db } from '../firebase';
 import useDrawingHistory from '../hooks/useDrawingHistory';
@@ -18,6 +18,7 @@ import BottomRightToolbar from '../components/BottomToolbar/BottomRightToolbar';
 import EditorCursors from '../components/EditorCursors';
 import Modal from '../components/Modal';
 import CollabModal from '../components/Modal/CollabModal';
+import Loader from '../components/Loader';
 import { selectTool } from '../redux/activeTool';
 import {
   getElementAtPosition,
@@ -43,7 +44,7 @@ const Board = props => {
   const tool = useSelector(state => state.activeTool);
   const brushColor = useSelector(state => state.brushOptions.color);
   const brushSize = useSelector(state => state.brushOptions.size);
-  const { status, data: user } = useUser();
+  const { data: user } = useUser();
 
   const [elements, setElements, undo, redo] = useDrawingHistory([]);
   const [action, setAction] = useState('none');
@@ -74,16 +75,19 @@ const Board = props => {
   const [spacePressing, setSpacePressing] = useState(false);
   const svgRef = useRef(null);
 
-  // If user logged in, listen data changes from db
-  // and track the connection of users,
+  // Listen data changes from db
+  const { status } = useDatabaseListData(ref(db, `boards/${currentBoard}`));
+  useEffect(() => {
+    onValue(ref(db, `boards/${currentBoard}`), snapshot => {
+      const data = snapshot.val();
+      setDrawData(data);
+    });
+  }, []);
+
+  // If user logged in,  track the connection,
   // else redirect to signin page
   useEffect(() => {
     if (user) {
-      onValue(ref(db, `boards/${currentBoard}`), snapshot => {
-        const data = snapshot.val();
-        setDrawData(data);
-      });
-
       const ownStatusRef = ref(db, `status/${user.uid}`);
       set(ownStatusRef, {
         email: user.email,
@@ -93,7 +97,7 @@ const Board = props => {
     } else {
       history.push('/signin');
     }
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     if (!drawData) {
@@ -122,6 +126,8 @@ const Board = props => {
 
   // Keydown event
   useEffect(() => {
+    if (status === 'loading') return;
+
     const handleKeydown = e => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'z') {
         if (e.shiftKey) {
@@ -282,7 +288,7 @@ const Board = props => {
   };
 
   const handleMouseDown = e => {
-    if (action === 'writing') return;
+    if (action === 'writing' || status === 'loading') return;
 
     if (spacePressing) {
       setAction('movingCanvas');
@@ -364,6 +370,8 @@ const Board = props => {
   };
 
   const handleMouseMove = e => {
+    if (status === 'loading') return;
+
     const x = e.type === 'touchmove' ? e.changedTouches[0].clientX : e.clientX;
     const y = e.type === 'touchmove' ? e.changedTouches[0].clientY : e.clientY;
     const SVGPoint = convertToSVGCoords({ x, y }, svgRef.current);
@@ -459,10 +467,12 @@ const Board = props => {
     }
 
     // Write data to database
-    set(ref(db, `boards/${currentBoard}`), elements);
+    if (elements.length > 0) set(ref(db, `boards/${currentBoard}`), elements);
   };
 
   const handleMouseUp = e => {
+    if (status === 'loading') return;
+
     if (e.cancelable) e.preventDefault();
 
     // Write data to database
@@ -579,6 +589,7 @@ const Board = props => {
         setImageUpload={setImageUpload}
         user={user}
       />
+      {status === 'loading' && <Loader />}
       <SvgBoard ref={svgRef} {...svgBoardProps}></SvgBoard>
       {user && (
         <EditorCursors
@@ -624,15 +635,3 @@ const Board = props => {
 };
 
 export default Board;
-
-// // Loading files from storage
-// const imageURLsRef = ref(storage, 'images/');
-// useEffect(() => {
-//   listAll(imageURLsRef).then(res => {
-//     res.items.forEach(item => {
-//       getDownloadURL(item).then(url => {
-//         setImageUrls(prev => [...prev, url]);
-//       });
-//     });
-//   });
-// }, []);

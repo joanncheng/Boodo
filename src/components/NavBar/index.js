@@ -25,7 +25,7 @@ const NavBar = ({ toggle, user }) => {
           </S.NavItem>
           <S.NavItemBtn>
             {user ? (
-              <S.NavBtnLink to="/board/public">
+              <S.NavBtnLink to={`/board/${user.uid}`}>
                 <GSButton>Go to board</GSButton>
               </S.NavBtnLink>
             ) : (

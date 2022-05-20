@@ -13,7 +13,7 @@ const SignupForm = () => {
 
   useEffect(() => {
     if (user) {
-      history.push(`/board/public`);
+      history.push(`/board/${user.uid}`);
     }
   }, [user]);
 
@@ -28,8 +28,8 @@ const SignupForm = () => {
   const handleSignup = () => {
     if (!email || !password) return;
     createUserWithEmailAndPassword(auth, email, password)
-      .then(() => {
-        history.push('/board/public');
+      .then(({ user }) => {
+        history.push(`/board/${user.uid}`);
       })
       .catch(err => {
         console.log('sign up error:' + err.message);

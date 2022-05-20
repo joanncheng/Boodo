@@ -28,7 +28,7 @@ const InfoSection = ({
               <S.Subtitle lightTextDesc={lightTextDesc}>
                 {description}
               </S.Subtitle>
-              <LinkR to="/board/public">
+              <LinkR to={`/signup`}>
                 <GSButton big fontBig>
                   {buttonLabel}
                 </GSButton>
