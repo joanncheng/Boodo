@@ -1,17 +1,24 @@
 import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { storage, db } from '../firebase';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { set, ref as dbRef, onValue } from 'firebase/database';
+import {
+  ref as storageRef,
+  uploadBytes,
+  getDownloadURL,
+} from 'firebase/storage';
+import { set, ref, onValue, onDisconnect } from 'firebase/database';
+import { useUser } from 'reactfire';
 import { v4 as uuid } from 'uuid';
+import { storage, db } from '../firebase';
 import useDrawingHistory from '../hooks/useDrawingHistory';
-import { selectTool } from '../redux/activeTool';
 import SvgBoard from '../components/SvgBoard';
 import TopToolbar from '../components/TopToolbar';
 import BottomLeftToolbar from '../components/BottomToolbar/BottomLeftToolbar';
 import BottomRightToolbar from '../components/BottomToolbar/BottomRightToolbar';
+import EditorCursors from '../components/EditorCursors';
 import Modal from '../components/Modal';
+import CollabModal from '../components/Modal/CollabModal';
+import { selectTool } from '../redux/activeTool';
 import {
   getElementAtPosition,
   createSVGElement,
@@ -36,7 +43,7 @@ const Board = props => {
   const tool = useSelector(state => state.activeTool);
   const brushColor = useSelector(state => state.brushOptions.color);
   const brushSize = useSelector(state => state.brushOptions.size);
-  const user = useSelector(state => state.user);
+  const { status, data: user } = useUser();
 
   const [elements, setElements, undo, redo] = useDrawingHistory([]);
   const [action, setAction] = useState('none');
@@ -46,6 +53,7 @@ const Board = props => {
   // Control modal
   const [clearCanvasModalOpen, setClearCanvasModalOpen] = useState(false);
   const [saveImageModalOpen, setSaveImageModalOpen] = useState(false);
+  const [collabModalOpen, setCollabModalOpen] = useState(false);
 
   // Upload Image to firebase storage
   const [imageUpload, setImageUpload] = useState(null);
@@ -66,14 +74,22 @@ const Board = props => {
   const [spacePressing, setSpacePressing] = useState(false);
   const svgRef = useRef(null);
 
-  // If user logged in, listen data changes from db,
+  // If user logged in, listen data changes from db
+  // and track the connection of users,
   // else redirect to signin page
   useEffect(() => {
-    if (user.id) {
-      onValue(dbRef(db, `boards/${currentBoard}`), snapshot => {
+    if (user) {
+      onValue(ref(db, `boards/${currentBoard}`), snapshot => {
         const data = snapshot.val();
         setDrawData(data);
       });
+
+      const ownStatusRef = ref(db, `status/${user.uid}`);
+      set(ownStatusRef, {
+        email: user.email,
+        board: currentBoard,
+      });
+      onDisconnect(ownStatusRef).remove();
     } else {
       history.push('/signin');
     }
@@ -139,7 +155,7 @@ const Board = props => {
       }
 
       // Write data to database
-      set(dbRef(db, `boards/${currentBoard}`), elements);
+      set(ref(db, `boards/${currentBoard}`), elements);
     };
 
     window.addEventListener('keydown', handleKeydown);
@@ -234,7 +250,7 @@ const Board = props => {
 
   // Upload Image to firebase storage
   const uploadImage = (file, elementId) => {
-    const imageRef = ref(storage, `images/${elementId}_${file.name}`);
+    const imageRef = storageRef(storage, `images/${elementId}_${file.name}`);
     uploadBytes(imageRef, file).then(snapshot => {
       getDownloadURL(snapshot.ref).then(url => {
         const image = new Image();
@@ -443,14 +459,14 @@ const Board = props => {
     }
 
     // Write data to database
-    set(dbRef(db, `boards/${currentBoard}`), elements);
+    set(ref(db, `boards/${currentBoard}`), elements);
   };
 
   const handleMouseUp = e => {
     if (e.cancelable) e.preventDefault();
 
     // Write data to database
-    set(dbRef(db, `boards/${currentBoard}`), elements);
+    set(ref(db, `boards/${currentBoard}`), elements);
 
     if (action === 'movingCanvas') {
       setAction('none');
@@ -499,6 +515,7 @@ const Board = props => {
     if (tool !== 'pencil') dispatch(selectTool('selection'));
   };
 
+  // Props of Modal component
   const clearCanvasModalActions = (
     <>
       <button onClick={() => setClearCanvasModalOpen(false)}>Cancel</button>
@@ -549,6 +566,8 @@ const Board = props => {
     resizeCanvas,
     viewBox,
     setViewBox,
+    user,
+    currentBoard,
   };
 
   return (
@@ -561,6 +580,13 @@ const Board = props => {
         user={user}
       />
       <SvgBoard ref={svgRef} {...svgBoardProps}></SvgBoard>
+      {user && (
+        <EditorCursors
+          user={user}
+          currentBoard={currentBoard}
+          viewBox={viewBox}
+        />
+      )}
       <BottomLeftToolbar
         undo={undo}
         redo={redo}
@@ -572,6 +598,8 @@ const Board = props => {
       <BottomRightToolbar
         setClearCanvasModalOpen={setClearCanvasModalOpen}
         setSaveImageModalOpen={setSaveImageModalOpen}
+        setCollabModalOpen={setCollabModalOpen}
+        currentBoard={currentBoard}
       />
       {saveImageModalOpen ? (
         <Modal
@@ -579,6 +607,9 @@ const Board = props => {
           modalActions={saveImageModalActions}
           onDismiss={() => setSaveImageModalOpen(false)}
         />
+      ) : null}
+      {collabModalOpen ? (
+        <CollabModal onDismiss={() => setCollabModalOpen(false)} />
       ) : null}
       {clearCanvasModalOpen ? (
         <Modal

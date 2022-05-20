@@ -73,5 +73,8 @@ node_modules/
 # Prettier config file
 .prettierrc
 
-#config file
+# Config file
 settings.json
+
+# Font
+fonts/

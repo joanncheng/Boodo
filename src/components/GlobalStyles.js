@@ -10,6 +10,7 @@ export const theme = {
     primaryLightest: '#d1cefc',
     primary: '#665df5',
     primaryDark: '#544af4',
+    primaryDarkest: '#3b34ab',
     secondary: '#57e1a3',
     bgDark: '#010606',
     bgGrey: '#ced4da',

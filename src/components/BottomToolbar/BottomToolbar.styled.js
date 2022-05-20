@@ -37,15 +37,18 @@ export const ToolIcon = styled.div`
 `;
 
 export const ToolTypeButton = styled.button`
+  position: relative;
   border: none;
   border-radius: 0.5rem;
   cursor: pointer;
   outline: none;
   background-color: ${({ active }) =>
     active ? ({ theme }) => theme.colors.primary : ''};
+  background-color: ${({ collab }) => (collab ? 'rgba(43, 138, 62, 0.1)' : '')};
 
   & svg {
     fill: ${({ active }) => (active ? '#fff' : '')};
+    fill: ${({ collab }) => (collab ? '#2b8a3e' : '')};
   }
 
   &:hover {
@@ -58,6 +61,17 @@ export const ToolTypeButton = styled.button`
   &:focus-visible {
     box-shadow: 0 0 0 2px #a5d8ff;
   }
+`;
+
+export const Number = styled.div`
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  top: -8px;
+  right: -8px;
+  background-color: #40c057;
+  color: #fff;
+  border-radius: 50%;
 `;
 
 export const ToolTipWrapper = styled.div`
@@ -79,9 +93,9 @@ export const ToolTipWrapper = styled.div`
 export const LogoLink = styled(LinkR)`
   text-decoration: none;
   font-family: 'Gochi Hand';
-  font-size: 2rem;
-  color: ${({ theme }) => theme.colors.primaryDark};
-  margin: 0 1.5rem;
+  font-size: 1.5rem;
+  color: ${({ theme }) => theme.colors.primaryDarkest};
+  margin: 0 1.2rem;
 
   &:hover {
     transform: scale(1.2);

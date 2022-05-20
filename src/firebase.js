@@ -4,7 +4,7 @@ import { getStorage, connectStorageEmulator } from 'firebase/storage';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 import { getDatabase, connectDatabaseEmulator } from 'firebase/database';
 
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: 'AIzaSyCZAHyOh-0-YR9kcXM2rOsRBfbX6NhRtbI',
   authDomain: 'online-whiteboard-boodo.firebaseapp.com',
   databaseURL: 'https://online-whiteboard-boodo-default-rtdb.firebaseio.com/',

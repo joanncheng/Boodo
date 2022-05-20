@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import { useUser } from 'reactfire';
 import { auth } from '../../firebase';
 import * as S from './AuthForm.styled';
 
@@ -8,14 +9,13 @@ const SigninForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const history = useHistory();
+  const { data: user } = useUser();
 
   useEffect(() => {
-    auth.onAuthStateChanged(user => {
-      if (user) {
-        history.push(`/board/public`);
-      }
-    });
-  }, []);
+    if (user) {
+      history.push(`/board/public`);
+    }
+  }, [user]);
 
   const handleEmailChange = e => {
     setEmail(e.target.value);

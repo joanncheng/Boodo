@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
+import { useUser } from 'reactfire';
 import Sidebar from '../components/Sidebar';
 import NavBar from '../components/NavBar';
 import InfoSection from '../components/InfoSection';
 import { homeObjOne } from './Data';
-import { useSelector } from 'react-redux';
 
 const Home = () => {
-  const user = useSelector(state => state.user);
+  const { data: user } = useUser();
   const [isOpen, setIsOpen] = useState(false);
 
   const toggle = () => {

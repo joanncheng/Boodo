@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import ClipboardIcon from '../../../public/images/icons/clipboard.svg';
 
 export const ModalDimmer = styled.div`
   position: fixed;
@@ -10,9 +11,11 @@ export const ModalDimmer = styled.div`
   place-items: center;
   background-color: rgba(0, 0, 0, 0.7);
   transition: box-shadow 0.5s ease-in-out;
+  z-index: 20;
 `;
 
 export const ModalContainer = styled.div`
+  z-index: 30;
   display: grid;
   grid-template-columns: 1fr;
   gap: 1rem;
@@ -21,6 +24,7 @@ export const ModalContainer = styled.div`
   padding: 0 1rem 1rem 1rem;
   width: 60%;
   max-width: 500px;
+  min-width: 300px;
   border-radius: 8px;
   color: ${({ theme }) => theme.colors.textDark};
   background-color: #fff;
@@ -125,5 +129,60 @@ export const ModalActions = styled.div`
     font-size: 1.6rem;
     box-shadow: 0 3px 5px -1px rgba(0, 0, 0, 0.28),
       0 6px 10px 0 rgba(0, 0, 0, 0.14);
+  }
+`;
+
+export const ActionContainer = styled.div`
+  display: grid;
+  grid-template-columns: 5rem auto;
+  align-items: center;
+  gap: 1rem;
+`;
+
+export const CopyIcon = styled(ClipboardIcon)`
+  width: 1.2rem;
+  height: 1.2rem;
+  border-radius: 0.5rem;
+  display: grid;
+  place-items: center;
+`;
+
+export const CopyButton = styled.button`
+  display: grid;
+  place-items: center;
+  justify-self: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.5rem;
+  border: none;
+  outline: none;
+  cursor: pointer;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.bgGrey};
+  }
+
+  &:focus-visible {
+    box-shadow: 0 0 0 2px #a5d8ff;
+  }
+`;
+
+export const TextInput = styled.input`
+  background-color: ${({ readOnly }) => (readOnly ? '#e9ecef' : '')};
+  white-space: nowrap;
+  height: 2.5rem;
+  border: none;
+  border: 1px solid #e9ecef;
+  border-radius: 5px;
+  padding: 5px;
+  cursor: ${({ readOnly }) => (readOnly ? 'pointer' : 'default')};
+
+  &:hover {
+    opacity: ${({ readOnly }) => (readOnly ? 0.9 : 1)};
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px #a5d8ff;
   }
 `;

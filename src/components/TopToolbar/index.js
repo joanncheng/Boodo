@@ -5,7 +5,6 @@ import { useHistory } from 'react-router-dom';
 import { BsPaletteFill } from 'react-icons/bs';
 import * as S from './TopToolbar.styled';
 import { auth } from '../../firebase';
-import { logout } from '../../redux/user';
 import { selectTool } from '../../redux/activeTool';
 import { selectColor } from '../../redux/brushOptions';
 import PencilIcon from '../../../public/images/icons/pencil.svg';
@@ -51,7 +50,6 @@ const TopToolbar = ({ brushColor, brushSize, tool, setImageUpload, user }) => {
   const handleSignOut = () => {
     signOut(auth)
       .then(() => {
-        dispatch(logout());
         history.push('/');
       })
       .catch(err => {
@@ -190,7 +188,7 @@ const TopToolbar = ({ brushColor, brushSize, tool, setImageUpload, user }) => {
         <S.UserIcon>
           <AvatarIcon />
         </S.UserIcon>
-        <p>{user.email}</p>
+        <p>{user && user.email}</p>
         <S.LogoutBtn title="Sign out" onClick={handleSignOut} />
       </S.UserInfoWrapper>
     </S.TopStack>
