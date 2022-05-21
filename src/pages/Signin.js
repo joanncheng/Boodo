@@ -2,11 +2,13 @@ import React from 'react';
 import SigninForm from '../components/AuthForm/SigninForm';
 import ScrollToTop from '../components/ScrollToTop';
 
-const SigninPage = () => {
+const SigninPage = props => {
+  const boardId = props.match.params.id;
+
   return (
     <>
       <ScrollToTop />
-      <SigninForm />
+      <SigninForm boardId={boardId} />
     </>
   );
 };

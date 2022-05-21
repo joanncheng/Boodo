@@ -97,7 +97,7 @@ const Board = props => {
         });
         onDisconnect(ownStatusRef).remove();
       } else {
-        history.push('/signin');
+        history.push(`/signin/${currentBoard}`);
       }
     });
   }, []);

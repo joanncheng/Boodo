@@ -19,6 +19,7 @@ const App = () => {
             <Route path="/" exact component={Home} />
             <Route path="/signup" exact component={SignupPage} />
             <Route path="/signin" exact component={SigninPage} />
+            <Route path="/signin/:id" exact component={SigninPage} />
             <Route path="/board/:id" exact component={Board} />
           </Switch>
         </AuthProvider>

@@ -5,7 +5,7 @@ import { useUser } from 'reactfire';
 import { auth } from '../../firebase';
 import * as S from './AuthForm.styled';
 
-const SigninForm = () => {
+const SigninForm = ({ boardId }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const history = useHistory();
@@ -13,7 +13,11 @@ const SigninForm = () => {
 
   useEffect(() => {
     if (user) {
-      history.goBack();
+      if (boardId) {
+        history.push(`/board/${boardId}`);
+      } else {
+        history.push(`/board/${user.uid}`);
+      }
     }
   }, [user]);
 
@@ -29,7 +33,11 @@ const SigninForm = () => {
     if (!email || !password) return;
     signInWithEmailAndPassword(auth, email, password)
       .then(({ user }) => {
-        history.push(`/board/${user.uid}`);
+        if (boardId) {
+          history.push(`/board/${boardId}`);
+        } else {
+          history.push(`/board/${user.uid}`);
+        }
       })
       .catch(err => {
         console.log('sign in error:' + err.message);
