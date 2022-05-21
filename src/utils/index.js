@@ -217,20 +217,25 @@ export const drawElement = element => {
         })
       );
       return (
-        <path
-          key={element.id}
-          id={element.id}
-          d={d}
-          stroke={element.options.brushColor}
-          fill={element.options.brushColor}
-        ></path>
+        <g key={element.id}>
+          <path
+            id={element.id}
+            d={d}
+            stroke={element.options.brushColor}
+            fill={element.options.brushColor}
+          ></path>
+        </g>
       );
     case 'line':
     case 'rectangle':
     case 'ellipse':
     case 'diamond':
       const [pathInfoObj] = generator.toPaths(element.options.roughElement);
-      return <path key={element.id} id={element.id} {...pathInfoObj}></path>;
+      return (
+        <g key={element.id}>
+          <path id={element.id} {...pathInfoObj}></path>
+        </g>
+      );
     case 'text':
       const attrObj = {
         id: element.id,
@@ -243,28 +248,32 @@ export const drawElement = element => {
       const text = element.options.text.split('\n');
 
       return (
-        <text key={element.id} {...attrObj}>
-          {text.map((row, index) => (
-            <tspan
-              key={index}
-              x={element.x1}
-              y={element.y1 + index * TEXTAREA_LINE_HEIGHT}
-            >
-              {row}
-            </tspan>
-          ))}
-        </text>
+        <g key={element.id}>
+          <text {...attrObj}>
+            {text.map((row, index) => (
+              <tspan
+                key={index}
+                x={element.x1}
+                y={element.y1 + index * TEXTAREA_LINE_HEIGHT}
+                style={{ userSelect: 'none' }}
+              >
+                {row}
+              </tspan>
+            ))}
+          </text>
+        </g>
       );
     case 'image':
       return (
-        <image
-          key={element.id}
-          href={element.options.url}
-          x={element.x1}
-          y={element.y1}
-          width={element.x2 - element.x1}
-          height={element.y2 - element.y1}
-        />
+        <g key={element.id}>
+          <image
+            href={element.options.url}
+            x={element.x1}
+            y={element.y1}
+            width={element.x2 - element.x1}
+            height={element.y2 - element.y1}
+          />
+        </g>
       );
     default:
       throw new Error(`Type not recognized: ${element.type}`);

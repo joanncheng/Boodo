@@ -138,6 +138,7 @@ const Board = props => {
       }
 
       if (e.key === 'Delete' || (e.key === 'Backspace' && action === 'none')) {
+        if (action === 'writing') return;
         if (selectedElement) {
           deleteElement(selectedElement.id);
           setSelectedElement(null);
@@ -344,7 +345,6 @@ const Board = props => {
               tool,
               {
                 url: imageUpload.originalImageURL,
-                selectorDisplay: true,
               }
             )
           : createSVGElement(
@@ -354,7 +354,7 @@ const Board = props => {
               SVGPoint.x,
               SVGPoint.y,
               tool,
-              { brushColor, brushSize, selectorDisplay: false }
+              { brushColor, brushSize }
             );
       setElements(prevState => [...prevState, element]);
       setSelectedElement(element);
@@ -488,10 +488,6 @@ const Board = props => {
     const SVGPoint = convertToSVGCoords({ x, y }, svgRef.current);
 
     if (selectedElement) {
-      selectedElement.options = {
-        ...selectedElement.options,
-        selectorDisplay: true,
-      };
       if (
         selectedElement.type === 'text' &&
         SVGPoint.x - selectedElement.offsetX === selectedElement.x1 &&
@@ -511,6 +507,7 @@ const Board = props => {
       const index = elements.findIndex(el => el.id === selectedElement.id);
 
       const { id, type, options } = selectedElement;
+
       if (
         (action === 'drawing' || action === 'resizing') &&
         isAdjustmentRequired(type)

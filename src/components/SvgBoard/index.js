@@ -50,7 +50,7 @@ const SvgBoard = forwardRef((props, svgRef) => {
 
   useEffect(() => {
     const textarea = textareaRef.current;
-    if (action === 'writing') {
+    if (textarea && action === 'writing') {
       textarea.focus();
       textarea.value = selectedElement.options.text;
       textarea.style.height =
@@ -75,6 +75,7 @@ const SvgBoard = forwardRef((props, svgRef) => {
   };
 
   const renderTextarea = () => {
+    if (!selectedElement) return;
     const x = selectedElement.x1;
     const y = selectedElement.y1 - 5; //FIXME:magic number
 
@@ -130,9 +131,9 @@ const SvgBoard = forwardRef((props, svgRef) => {
             return drawElement(element);
           })}
         {selectedElement &&
+          action !== 'drawing' &&
           elements.map(element =>
-            element.id === selectedElement.id &&
-            element.options.selectorDisplay ? (
+            element.id === selectedElement.id ? (
               <SelectorBox key={`selector-${element.id}`} element={element} />
             ) : null
           )}
