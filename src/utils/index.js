@@ -245,11 +245,12 @@ export const drawElement = element => {
         fill: element.options.brushColor,
         dominantBaseline: 'hanging',
       };
+      if (!element.options.text) return;
       const text = element.options.text.split('\n');
 
       return (
         <g key={element.id}>
-          <text {...attrObj}>
+          <text {...attrObj} tabIndex="-1">
             {text.map((row, index) => (
               <tspan
                 key={index}

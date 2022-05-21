@@ -7,9 +7,10 @@ import {
   getDownloadURL,
 } from 'firebase/storage';
 import { set, ref, onValue, onDisconnect } from 'firebase/database';
+import { onAuthStateChanged } from 'firebase/auth';
 import { useUser, useDatabaseListData } from 'reactfire';
 import { v4 as uuid } from 'uuid';
-import { storage, db } from '../firebase';
+import { storage, db, auth } from '../firebase';
 import useDrawingHistory from '../hooks/useDrawingHistory';
 import SvgBoard from '../components/SvgBoard';
 import TopToolbar from '../components/TopToolbar';
@@ -87,17 +88,19 @@ const Board = props => {
   // If user logged in,  track the connection,
   // else redirect to signin page
   useEffect(() => {
-    if (user) {
-      const ownStatusRef = ref(db, `status/${user.uid}`);
-      set(ownStatusRef, {
-        email: user.email,
-        board: currentBoard,
-      });
-      onDisconnect(ownStatusRef).remove();
-    } else {
-      history.push('/signin');
-    }
-  }, [user]);
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        const ownStatusRef = ref(db, `status/${user.uid}`);
+        set(ownStatusRef, {
+          email: user.email,
+          board: currentBoard,
+        });
+        onDisconnect(ownStatusRef).remove();
+      } else {
+        history.push('/signin');
+      }
+    });
+  }, []);
 
   useEffect(() => {
     if (!drawData) {
