@@ -179,9 +179,9 @@ const Board = props => {
     };
   });
 
-  // Change selectedElement opacity
+  // Change selectedElement opacity except pencil
   useEffect(() => {
-    if (!selectedElement) return;
+    if (!selectedElement || selectedElement.type === 'pencil') return;
 
     if (selectedElement.options.opacity !== opacity) {
       const element = elements.find(el => el.id === selectedElement.id);
@@ -497,7 +497,7 @@ const Board = props => {
     }
 
     // Write data to database
-    if (elements.length > 0) set(ref(db, `boards/${currentBoard}`), elements);
+    set(ref(db, `boards/${currentBoard}`), elements);
   };
 
   const handleMouseUp = e => {
