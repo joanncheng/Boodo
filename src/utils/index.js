@@ -222,6 +222,7 @@ export const drawElement = element => {
             d={d}
             stroke={element.options.brushColor}
             fill={element.options.brushColor}
+            style={{ opacity: element.options.opacity }}
           ></path>
         </g>
       );
@@ -232,7 +233,11 @@ export const drawElement = element => {
       const [pathInfoObj] = generator.toPaths(element.options.roughElement);
       return (
         <g key={element.id}>
-          <path id={element.id} {...pathInfoObj}></path>
+          <path
+            id={element.id}
+            {...pathInfoObj}
+            style={{ opacity: element.options.opacity }}
+          ></path>
         </g>
       );
     case 'text':
@@ -246,7 +251,6 @@ export const drawElement = element => {
       };
       if (!element.options.text) return;
       const text = element.options.text.split('\n');
-
       return (
         <g key={element.id}>
           <text {...attrObj} tabIndex="-1">
@@ -258,6 +262,7 @@ export const drawElement = element => {
                 style={{
                   userSelect: 'none',
                   fontSize: element.options.fontSize,
+                  opacity: element.options.opacity,
                 }}
               >
                 {row}
@@ -275,6 +280,7 @@ export const drawElement = element => {
             y={element.y1}
             width={element.x2 - element.x1}
             height={element.y2 - element.y1}
+            style={{ opacity: element.options.opacity }}
           />
         </g>
       );

@@ -43,9 +43,10 @@ const Board = props => {
   const dispatch = useDispatch();
   const history = useHistory();
   const tool = useSelector(state => state.activeTool);
-  const brushColor = useSelector(state => state.brushOptions.color);
-  const brushSize = useSelector(state => state.brushOptions.size);
-  const fontSize = useSelector(state => state.fontSize);
+  const brushColor = useSelector(state => state.toolOptions.brushColor);
+  const brushSize = useSelector(state => state.toolOptions.brushSize);
+  const fontSize = useSelector(state => state.toolOptions.fontSize);
+  const opacity = useSelector(state => state.toolOptions.opacity);
   const { data: user } = useUser();
 
   const [elements, setElements, undo, redo] = useDrawingHistory([]);
@@ -177,6 +178,17 @@ const Board = props => {
       window.removeEventListener('keyup', handleKeyup);
     };
   });
+
+  // Change selectedElement opacity
+  useEffect(() => {
+    if (!selectedElement) return;
+
+    if (selectedElement.options.opacity !== opacity) {
+      const element = elements.find(el => el.id === selectedElement.id);
+      const { id, x1, y1, x2, y2, type, options } = element;
+      updateElement(id, x1, y1, x2, y2, type, { ...options, opacity });
+    }
+  }, [opacity]);
 
   // Move canvas back to center after resizeCanvas
   useLayoutEffect(() => {
@@ -349,6 +361,7 @@ const Board = props => {
           tool,
           {
             url: imageUpload.originalImageURL,
+            opacity,
           }
         );
       } else if (tool === 'text') {
@@ -359,7 +372,7 @@ const Board = props => {
           SVGPoint.x,
           SVGPoint.y,
           tool,
-          { brushColor, fontSize }
+          { brushColor, fontSize, opacity }
         );
       } else {
         element = createSVGElement(
@@ -369,7 +382,7 @@ const Board = props => {
           SVGPoint.x,
           SVGPoint.y,
           tool,
-          { brushColor, brushSize }
+          { brushColor, brushSize, opacity }
         );
       }
 
@@ -576,7 +589,6 @@ const Board = props => {
 
   const svgBoardProps = {
     brushColor,
-    fontSize,
     action,
     setAction,
     selectedElement,
@@ -599,6 +611,7 @@ const Board = props => {
       <TopToolbar
         brushColor={brushColor}
         brushSize={brushSize}
+        opacity={opacity}
         tool={tool}
         action={action}
         setImageUpload={setImageUpload}

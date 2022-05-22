@@ -85,6 +85,7 @@ export const Button = styled.button`
     transition: all 0.2s ease-in-out;
     background: #fff;
     color: ${({ theme }) => theme.colors.primary};
+    box-shadow: 0 0 1px 2px ${({ theme }) => theme.colors.primary};
   }
 
   @media screen and (max-width: 768px) {

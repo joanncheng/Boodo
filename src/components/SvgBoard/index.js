@@ -21,7 +21,6 @@ const SvgBoard = forwardRef((props, svgRef) => {
     resizeCanvas,
     viewBox,
     setViewBox,
-    fontSize,
   } = props;
 
   const dispatch = useDispatch();
@@ -82,7 +81,7 @@ const SvgBoard = forwardRef((props, svgRef) => {
     const y =
       selectedElement.y1 -
       selectedElement.options.fontSize / TEXTAREA_Y_OFFSET_RATIO;
-    const size = selectedElement.options.fontSize || fontSize;
+    const size = selectedElement.options.fontSize;
     const clientPoint = convertToCanvasCoords({ x, y }, svgRef.current);
 
     return (
@@ -95,6 +94,7 @@ const SvgBoard = forwardRef((props, svgRef) => {
           left: clientPoint.x,
           color: selectedElement.options.brushColor,
           fontSize: size,
+          opacity: selectedElement.options.opacity,
         }}
         onChange={e => setCurrentTextareaValue(e.target.value)}
       />

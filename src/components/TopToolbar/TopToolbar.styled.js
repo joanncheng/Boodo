@@ -113,6 +113,20 @@ export const ToolTypeColor = styled.input`
   }
 `;
 
+export const ToolTypeRange = styled.input`
+  outline: none;
+`;
+
+export const ComboBox = styled.div`
+  display: flex;
+  color: #000;
+  cursor: default;
+
+  ${ToolIcon}:active {
+    background-color: transparent;
+  }
+`;
+
 export const UserInfoWrapper = styled.div`
   display: flex;
   align-items: center;

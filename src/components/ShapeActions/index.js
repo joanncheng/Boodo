@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { selectSize } from '../../redux/brushOptions';
+import { selectBrushSize } from '../../redux/toolOptions';
 import * as S from './ShapeActions.styled';
 
 const ShapeActions = ({ brushColor, brushSize }) => {
@@ -16,7 +16,7 @@ const ShapeActions = ({ brushColor, brushSize }) => {
               <S.ShapeTypeRadio
                 type="radio"
                 name="stroke-width"
-                onChange={() => dispatch(selectSize(1))}
+                onChange={() => dispatch(selectBrushSize(1))}
                 checked={brushSize === 1 ? true : false}
               />
               <S.ActionIcon>
@@ -37,7 +37,7 @@ const ShapeActions = ({ brushColor, brushSize }) => {
               <S.ShapeTypeRadio
                 type="radio"
                 name="stroke-width"
-                onChange={() => dispatch(selectSize(3))}
+                onChange={() => dispatch(selectBrushSize(3))}
                 checked={brushSize === 3 ? true : false}
               />
               <S.ActionIcon>
@@ -58,7 +58,7 @@ const ShapeActions = ({ brushColor, brushSize }) => {
               <S.ShapeTypeRadio
                 type="radio"
                 name="stroke-width"
-                onChange={() => dispatch(selectSize(6))}
+                onChange={() => dispatch(selectBrushSize(6))}
                 checked={brushSize === 6 ? true : false}
               />
               <S.ActionIcon>

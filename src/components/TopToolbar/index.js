@@ -3,10 +3,11 @@ import { useDispatch } from 'react-redux';
 import { signOut } from 'firebase/auth';
 import { useHistory } from 'react-router-dom';
 import { BsPaletteFill } from 'react-icons/bs';
+import { CgDropOpacity } from 'react-icons/cg';
 import * as S from './TopToolbar.styled';
 import { auth } from '../../firebase';
 import { selectTool } from '../../redux/activeTool';
-import { selectColor } from '../../redux/brushOptions';
+import { selectBrushColor, selectOpacity } from '../../redux/toolOptions';
 import PencilIcon from '../../../public/images/icons/pencil.svg';
 import SelectionIcon from '../../../public/images/icons/selection.svg';
 import RectangleIcon from '../../../public/images/icons/rectangle.svg';
@@ -23,6 +24,7 @@ import { getResizedImageURL } from '../../utils';
 const TopToolbar = ({
   brushColor,
   brushSize,
+  opacity,
   tool,
   action,
   setImageUpload,
@@ -163,9 +165,8 @@ const TopToolbar = ({
             type="color"
             value={brushColor}
             name="editor-current-color"
-            onChange={e => dispatch(selectColor(e.target.value))}
+            onChange={e => dispatch(selectBrushColor(e.target.value))}
           />
-
           <BsPaletteFill className="palette-icon" color={brushColor} />
         </S.ToolLabel>
         <S.ToolLabel title="Stroke width">
@@ -191,9 +192,24 @@ const TopToolbar = ({
             )}
           </OutsideClicker>
         </S.ToolLabel>
+        <S.ToolLabel title="Opacity">
+          <S.ComboBox>
+            <S.ToolIcon>
+              <CgDropOpacity className="opacity" />
+            </S.ToolIcon>
+            <S.ToolTypeRange
+              type="range"
+              name="opacity"
+              min="0.1"
+              max="1"
+              step="0.1"
+              value={opacity}
+              onChange={e => dispatch(selectOpacity(e.target.value))}
+            />
+          </S.ComboBox>
+        </S.ToolLabel>
         {tool === 'text' && action !== 'writing' && <FontSizeSelector />}
       </S.ToolContainer>
-
       <S.UserInfoWrapper>
         <S.UserIcon>
           <AvatarIcon />
