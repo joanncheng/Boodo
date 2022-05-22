@@ -45,6 +45,7 @@ const Board = props => {
   const tool = useSelector(state => state.activeTool);
   const brushColor = useSelector(state => state.brushOptions.color);
   const brushSize = useSelector(state => state.brushOptions.size);
+  const fontSize = useSelector(state => state.fontSize);
   const { data: user } = useUser();
 
   const [elements, setElements, undo, redo] = useDrawingHistory([]);
@@ -336,29 +337,42 @@ const Board = props => {
       }
     } else {
       const id = uuid();
-      const element =
-        tool === 'image'
-          ? createSVGElement(
-              id,
-              SVGPoint.x,
-              SVGPoint.y,
-              SVGPoint.x + IMAGE_DEFAULT_WIDTH,
-              SVGPoint.y +
-                (imageUpload.height / imageUpload.width) * IMAGE_DEFAULT_WIDTH,
-              tool,
-              {
-                url: imageUpload.originalImageURL,
-              }
-            )
-          : createSVGElement(
-              id,
-              SVGPoint.x,
-              SVGPoint.y,
-              SVGPoint.x,
-              SVGPoint.y,
-              tool,
-              { brushColor, brushSize }
-            );
+      let element;
+      if (tool === 'image') {
+        element = createSVGElement(
+          id,
+          SVGPoint.x,
+          SVGPoint.y,
+          SVGPoint.x + IMAGE_DEFAULT_WIDTH,
+          SVGPoint.y +
+            (imageUpload.height / imageUpload.width) * IMAGE_DEFAULT_WIDTH,
+          tool,
+          {
+            url: imageUpload.originalImageURL,
+          }
+        );
+      } else if (tool === 'text') {
+        element = createSVGElement(
+          id,
+          SVGPoint.x,
+          SVGPoint.y,
+          SVGPoint.x,
+          SVGPoint.y,
+          tool,
+          { brushColor, fontSize }
+        );
+      } else {
+        element = createSVGElement(
+          id,
+          SVGPoint.x,
+          SVGPoint.y,
+          SVGPoint.x,
+          SVGPoint.y,
+          tool,
+          { brushColor, brushSize }
+        );
+      }
+
       setElements(prevState => [...prevState, element]);
       setSelectedElement(element);
 
@@ -519,7 +533,6 @@ const Board = props => {
         updateElement(id, x1, y1, x2, y2, type, options);
       }
     }
-
     if (action === 'writing') return;
     setAction('none');
     if (tool !== 'pencil') dispatch(selectTool('selection'));
@@ -563,6 +576,7 @@ const Board = props => {
 
   const svgBoardProps = {
     brushColor,
+    fontSize,
     action,
     setAction,
     selectedElement,
@@ -586,6 +600,7 @@ const Board = props => {
         brushColor={brushColor}
         brushSize={brushSize}
         tool={tool}
+        action={action}
         setImageUpload={setImageUpload}
         user={user}
       />

@@ -17,9 +17,17 @@ import ImageIcon from '../../../public/images/icons/image.svg';
 import AvatarIcon from '../../../public/images/icons/avatar.svg';
 import ShapeActions from '../ShapeActions';
 import OutsideClicker from '../OutsideClicker';
+import FontSizeSelector from '../FontSizeSelector';
 import { getResizedImageURL } from '../../utils';
 
-const TopToolbar = ({ brushColor, brushSize, tool, setImageUpload, user }) => {
+const TopToolbar = ({
+  brushColor,
+  brushSize,
+  tool,
+  action,
+  setImageUpload,
+  user,
+}) => {
   const dispatch = useDispatch();
   const history = useHistory();
 
@@ -183,7 +191,9 @@ const TopToolbar = ({ brushColor, brushSize, tool, setImageUpload, user }) => {
             )}
           </OutsideClicker>
         </S.ToolLabel>
+        {tool === 'text' && action !== 'writing' && <FontSizeSelector />}
       </S.ToolContainer>
+
       <S.UserInfoWrapper>
         <S.UserIcon>
           <AvatarIcon />

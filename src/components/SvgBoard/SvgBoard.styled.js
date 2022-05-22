@@ -7,7 +7,6 @@ export const SVGCanvas = styled.svg`
 
 export const TextArea = styled.textarea`
   font-family: 'Gochi Hand', 'Virgil', 'Noto Sans TC', Arial, sans-serif;
-  font-size: 24px;
   letter-spacing: 1.5px;
   width: 50%;
   height: fit-content;

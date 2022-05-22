@@ -3,8 +3,8 @@ import { useDispatch } from 'react-redux';
 import * as S from './SvgBoard.styled';
 import { selectTool } from '../../redux/activeTool';
 import { drawElement, convertToCanvasCoords } from '../../utils';
-import { TEXTAREA_LINE_HEIGHT } from '../../config';
 import SelectorBox from '../SelectorBox';
+import { TEXTAREA_Y_OFFSET_RATIO } from '../../config';
 
 const SvgBoard = forwardRef((props, svgRef) => {
   const {
@@ -21,6 +21,7 @@ const SvgBoard = forwardRef((props, svgRef) => {
     resizeCanvas,
     viewBox,
     setViewBox,
+    fontSize,
   } = props;
 
   const dispatch = useDispatch();
@@ -54,7 +55,8 @@ const SvgBoard = forwardRef((props, svgRef) => {
       textarea.focus();
       textarea.value = selectedElement.options.text;
       textarea.style.height =
-        textarea.value.split('\n').length * TEXTAREA_LINE_HEIGHT + 'px';
+        textarea.value.split('\n').length * selectedElement.options.fontSize +
+        'px';
     }
   }, [action, selectedElement]);
 
@@ -77,8 +79,10 @@ const SvgBoard = forwardRef((props, svgRef) => {
   const renderTextarea = () => {
     if (!selectedElement) return;
     const x = selectedElement.x1;
-    const y = selectedElement.y1 - 5; //FIXME:magic number
-
+    const y =
+      selectedElement.y1 -
+      selectedElement.options.fontSize / TEXTAREA_Y_OFFSET_RATIO;
+    const size = selectedElement.options.fontSize || fontSize;
     const clientPoint = convertToCanvasCoords({ x, y }, svgRef.current);
 
     return (
@@ -90,6 +94,7 @@ const SvgBoard = forwardRef((props, svgRef) => {
           top: clientPoint.y,
           left: clientPoint.x,
           color: selectedElement.options.brushColor,
+          fontSize: size,
         }}
         onChange={e => setCurrentTextareaValue(e.target.value)}
       />

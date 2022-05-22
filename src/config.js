@@ -1,8 +1,8 @@
-export const TEXTAREA_LINE_HEIGHT = 30;
-
 export const IMAGE_MIN_WIDTH = 30;
 
 export const IMAGE_DEFAULT_WIDTH = 300;
+
+export const TEXTAREA_Y_OFFSET_RATIO = 4.8;
 
 export const ERASER_CURSOR =
   "url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABmJLR0QA/wD/AP+gvaeTAAAArklEQVQ4jaXTPQ6BQRDG8R/u4OscDoRSlCqJSqehcR2NC2jkpZVI1A6AZleQfV82nmSSzcz+n9nJZPlTjR/utLFAE7vcBi3scQ8x+wfOMimDfzLpoKiAY/ShnoA3qGH15ZW9ss6HcIZ5SfcijPlUKySLFzjq0yR1xxrnVCFoWQXDADeMErVOGKsUjpoEk/FLLq7ziG4VnDLJhqOmweTsfSNJpT7TFidcMcQlp3u2Ht7nQaPZqVymAAAAAElFTkSuQmCC'), crosshair";

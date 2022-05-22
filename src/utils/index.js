@@ -2,7 +2,6 @@ import React from 'react';
 import rough from 'roughjs/bundled/rough.esm';
 import { getStroke } from 'perfect-freehand';
 import { saveSvgAsPng, svgAsDataUri } from 'save-svg-as-png';
-import { TEXTAREA_LINE_HEIGHT } from '../config';
 
 const generator = rough.generator();
 
@@ -255,8 +254,11 @@ export const drawElement = element => {
               <tspan
                 key={index}
                 x={element.x1}
-                y={element.y1 + index * TEXTAREA_LINE_HEIGHT}
-                style={{ userSelect: 'none' }}
+                y={element.y1 + index * element.options.fontSize}
+                style={{
+                  userSelect: 'none',
+                  fontSize: element.options.fontSize,
+                }}
               >
                 {row}
               </tspan>
