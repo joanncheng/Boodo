@@ -167,7 +167,9 @@ const TopToolbar = ({
             name="editor-current-color"
             onChange={e => dispatch(selectBrushColor(e.target.value))}
           />
-          <BsPaletteFill className="palette-icon" color={brushColor} />
+          <S.ToolIcon color={brushColor}>
+            <BsPaletteFill />
+          </S.ToolIcon>
         </S.ToolLabel>
         <S.ToolLabel title="Stroke width">
           <OutsideClicker onDismiss={() => setDropdownOpen(false)}>
@@ -193,7 +195,7 @@ const TopToolbar = ({
           </OutsideClicker>
         </S.ToolLabel>
         <S.ToolLabel title="Opacity">
-          <S.ComboBox>
+          <S.ComboBox notAllowed={action === 'writing' ? true : false}>
             <S.ToolIcon>
               <CgDropOpacity className="opacity" />
             </S.ToolIcon>

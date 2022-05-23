@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import * as S from './SvgBoard.styled';
 import { selectTool } from '../../redux/activeTool';
 import { drawElement, convertToCanvasCoords } from '../../utils';
-import SelectorBox from '../SelectorBox';
+import SelectedBox from '../SelectedBox';
 import { TEXTAREA_Y_OFFSET_RATIO } from '../../config';
 
 const SvgBoard = forwardRef((props, svgRef) => {
@@ -67,7 +67,6 @@ const SvgBoard = forwardRef((props, svgRef) => {
 
     const { id, x1, y1, type, options } = selectedElement;
     setAction('none');
-    setSelectedElement(null);
     updateElement(id, x1, y1, null, null, type, {
       ...options,
       text: e.target.value,
@@ -137,9 +136,10 @@ const SvgBoard = forwardRef((props, svgRef) => {
           })}
         {selectedElement &&
           action !== 'drawing' &&
+          action !== 'writing' &&
           elements.map(element =>
             element.id === selectedElement.id ? (
-              <SelectorBox key={`selector-${element.id}`} element={element} />
+              <SelectedBox key={`selector-${element.id}`} element={element} />
             ) : null
           )}
       </S.SVGCanvas>

@@ -75,14 +75,23 @@ const getPositionWithinElement = (x, y, element) => {
     case 'pencil':
       const betweenAnyPoint = element.points.some((point, index) => {
         const nextPoint = element.points[index + 1];
-        return nextPoint
-          ? checkOnLine(point.x, point.y, nextPoint.x, nextPoint.y, x, y, 5) !==
-              null
-          : checkOnLine(point.x, point.y, point.x, point.y, x, y, 10) !== null;
+        return (
+          checkOnLine(
+            point.x,
+            point.y,
+            nextPoint ? nextPoint.x : point.x,
+            nextPoint ? nextPoint.y : point.y,
+            x,
+            y,
+            35
+          ) !== null
+        );
       });
       return betweenAnyPoint ? 'inside' : null;
     case 'text':
-      return x >= x1 && x <= x2 && y >= y1 && y <= y2 ? 'inside' : null;
+      return x >= x1 - 15 && x <= x2 && y >= y1 - 15 && y <= y2
+        ? 'inside'
+        : null;
     default:
       throw new Error(`Type not recognized: ${type}`);
   }
@@ -215,6 +224,7 @@ export const drawElement = element => {
           thinning: 0.8,
         })
       );
+
       return (
         <g key={element.id}>
           <path
@@ -253,7 +263,7 @@ export const drawElement = element => {
       const text = element.options.text.split('\n');
       return (
         <g key={element.id}>
-          <text {...attrObj} tabIndex="-1">
+          <text {...attrObj}>
             {text.map((row, index) => (
               <tspan
                 key={index}

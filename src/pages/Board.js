@@ -21,6 +21,7 @@ import Modal from '../components/Modal';
 import CollabModal from '../components/Modal/CollabModal';
 import Loader from '../components/Loader';
 import { selectTool } from '../redux/activeTool';
+import { selectOpacity } from '../redux/toolOptions';
 import {
   getElementAtPosition,
   createSVGElement,
@@ -154,6 +155,7 @@ const Board = props => {
         setAction('none');
         setImageUpload(null);
         dispatch(selectTool('selection'));
+        dispatch(selectOpacity(1));
       }
 
       if (e.key === ' ') {
@@ -179,16 +181,35 @@ const Board = props => {
     };
   });
 
-  // Change selectedElement opacity except pencil
+  // Change selectedElement opacity
   useEffect(() => {
-    if (!selectedElement || selectedElement.type === 'pencil') return;
+    if (!selectedElement) return;
 
     if (selectedElement.options.opacity !== opacity) {
-      const element = elements.find(el => el.id === selectedElement.id);
-      const { id, x1, y1, x2, y2, type, options } = element;
-      updateElement(id, x1, y1, x2, y2, type, { ...options, opacity });
+      if (selectedElement.type === 'pencil') {
+        const elementsCopy = [...elements];
+        const index = elements.findIndex(el => el.id === selectedElement.id);
+        elementsCopy[index] = {
+          ...elementsCopy[index],
+          options: { ...elementsCopy[index].options, opacity },
+        };
+        setElements(elementsCopy, true);
+      } else {
+        const element = elements.find(el => el.id === selectedElement.id);
+        const { id, x1, y1, x2, y2, type, options } = element;
+        updateElement(id, x1, y1, x2, y2, type, { ...options, opacity });
+      }
     }
   }, [opacity]);
+
+  // Reset opacity bar value
+  useEffect(() => {
+    if (selectedElement) {
+      dispatch(selectOpacity(selectedElement.options.opacity));
+    } else {
+      dispatch(selectOpacity(1));
+    }
+  }, [selectedElement]);
 
   // Move canvas back to center after resizeCanvas
   useLayoutEffect(() => {

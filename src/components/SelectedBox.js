@@ -1,15 +1,39 @@
 import React from 'react';
-import { adjustElementCoordinates } from '../../utils';
+import { adjustElementCoordinates } from '../utils';
 
-const SelectorBox = ({ element }) => {
+const SelectedBox = ({ element }) => {
   const { type } = element;
   const { x1, y1, x2, y2 } = adjustElementCoordinates(element);
   const width = x2 - x1 + 5; // FIXME: there are lots of magic numbers
   const height = y2 - y1 + 5;
 
   const drawSelector = () => {
-    if (type === 'text' || type === 'pencil') return;
+    if (type === 'text' && !element.options.text) return;
     switch (type) {
+      case 'pencil':
+        return (
+          <g>
+            <circle
+              id="selector"
+              cx={element.points[0].x - 10}
+              cy={element.points[0].y - 10}
+              r={5}
+              style={{ fill: '#fff', strokeWidth: 1, stroke: '#000' }}
+            />
+          </g>
+        );
+      case 'text':
+        return (
+          <g>
+            <circle
+              id="selector"
+              cx={element.x1 - 10}
+              cy={element.y1 - 10}
+              r={5}
+              style={{ fill: '#fff', strokeWidth: 1, stroke: '#000' }}
+            />
+          </g>
+        );
       case 'line':
         return (
           <g>
@@ -80,4 +104,4 @@ const SelectorBox = ({ element }) => {
   return drawSelector();
 };
 
-export default SelectorBox;
+export default SelectedBox;

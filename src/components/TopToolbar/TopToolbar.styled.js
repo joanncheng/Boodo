@@ -28,7 +28,6 @@ export const ToolLabel = styled.label`
   color: ${({ theme }) => theme.colors.primary};
   margin: 0 0.8rem;
   border-radius: 0.5rem;
-  cursor: pointer;
 `;
 
 export const ToolIcon = styled.div`
@@ -37,11 +36,12 @@ export const ToolIcon = styled.div`
   border-radius: 0.5rem;
   display: grid;
   place-items: center;
+  cursor: pointer;
 
   svg {
     position: relative;
     height: 1em;
-    fill: black;
+    fill: ${({ color }) => (color ? color : 'black')};
     stroke: black;
   }
 
@@ -106,11 +106,6 @@ export const ToolTypeColor = styled.input`
   position: absolute;
   opacity: 0;
   pointer-events: none;
-  color: ${({ color }) => color};
-
-  & + .palette-icon {
-    width: 2.5rem;
-  }
 `;
 
 export const ToolTypeRange = styled.input`
@@ -121,8 +116,11 @@ export const ComboBox = styled.div`
   display: flex;
   color: #000;
   cursor: default;
+  pointer-events: ${({ notAllowed }) => (notAllowed ? 'none' : '')};
+  opacity: ${({ notAllowed }) => (notAllowed ? 0.2 : 1)};
 
-  ${ToolIcon}:active {
+  ${ToolIcon} {
+    cursor: default;
     background-color: transparent;
   }
 `;
