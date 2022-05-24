@@ -3,13 +3,16 @@ import { useState } from 'react';
 const useDrawingHistory = initialState => {
   const [index, setIndex] = useState(0);
   const [history, setHistory] = useState([initialState]);
-  const setState = (action, overwrite = false) => {
+  const setState = (action, mode = '') => {
     const newState =
       typeof action === 'function' ? action(history[index]) : action;
-    if (overwrite) {
+    if (mode === 'overwrite') {
       const historyCopy = [...history];
       historyCopy[index] = newState;
       setHistory(historyCopy);
+    } else if (mode === 'reset') {
+      setHistory([newState]);
+      setIndex(0);
     } else {
       const updatedState = [...history].slice(0, index + 1);
       setHistory([...updatedState, newState]);

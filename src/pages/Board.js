@@ -114,10 +114,13 @@ const Board = props => {
   }, []);
 
   useEffect(() => {
-    if (!drawData) {
-      setElements([], true);
+    if (!drawData) return;
+    if (!drawData.elements) {
+      setElements([], 'overwrite');
+    } else if (drawData.uploader === user.uid) {
+      setElements(drawData.elements, 'overwrite');
     } else {
-      setElements(drawData, true);
+      setElements(drawData.elements, 'reset');
     }
   }, [drawData]);
 
@@ -175,9 +178,7 @@ const Board = props => {
       if (e.key === ' ' || e.code === 'Space') {
         setSpacePressing(false);
       }
-
-      // Write data to database
-      set(ref(db, `boards/${currentBoard}`), elements);
+      writeDataToDatabase();
     };
 
     window.addEventListener('keydown', handleKeydown);
@@ -201,7 +202,7 @@ const Board = props => {
           ...elementsCopy[index],
           options: { ...elementsCopy[index].options, opacity },
         };
-        setElements(elementsCopy, true);
+        setElements(elementsCopy, 'overwrite');
       } else {
         const element = elements.find(el => el.id === selectedElement.id);
         const { id, x1, y1, x2, y2, type, options } = element;
@@ -238,6 +239,13 @@ const Board = props => {
       y: viewBox.y + delta.dy,
     });
   }, [viewBoxSizeRatio]);
+
+  const writeDataToDatabase = () => {
+    set(ref(db, `boards/${currentBoard}`), {
+      uploader: user.uid,
+      elements,
+    });
+  };
 
   const updateElement = (id, x1, y1, x2, y2, type, options) => {
     const elementsCopy = [...elements];
@@ -280,7 +288,7 @@ const Board = props => {
       default:
         throw new Error(`Type not recognized: ${type}`);
     }
-    setElements(elementsCopy, true);
+    setElements(elementsCopy, 'overwrite');
   };
 
   const deleteElement = id => {
@@ -467,7 +475,7 @@ const Board = props => {
           ...elementsCopy[index],
           points: newPoints,
         };
-        setElements(elementsCopy, true);
+        setElements(elementsCopy, 'overwrite');
       } else {
         const { id, x1, y1, x2, y2, type, offsetX, offsetY, options } =
           selectedElement;
@@ -525,22 +533,18 @@ const Board = props => {
       });
     }
 
-    // Write data to database
-    set(ref(db, `boards/${currentBoard}`), elements);
+    writeDataToDatabase();
   };
 
   const handleMouseUp = e => {
     if (status === 'loading') return;
-
-    if (e.cancelable) e.preventDefault();
-
-    // Write data to database
-    set(ref(db, `boards/${currentBoard}`), elements);
+    writeDataToDatabase();
 
     if (action === 'movingCanvas') {
       setAction('none');
       return;
     }
+    if (e.cancelable) e.preventDefault();
 
     const x = e.type === 'touchend' ? e.changedTouches[0].clientX : e.clientX;
     const y = e.type === 'touchend' ? e.changedTouches[0].clientY : e.clientY;
