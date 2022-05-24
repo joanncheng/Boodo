@@ -82,10 +82,14 @@ const Board = props => {
   // Listen data changes from db
   const { status } = useDatabaseListData(ref(db, `boards/${currentBoard}`));
   useEffect(() => {
-    onValue(ref(db, `boards/${currentBoard}`), snapshot => {
-      const data = snapshot.val();
-      setDrawData(data);
-    });
+    try {
+      onValue(ref(db, `boards/${currentBoard}`), snapshot => {
+        const data = snapshot.val();
+        setDrawData(data);
+      });
+    } catch (err) {
+      console.error(err);
+    }
   }, []);
 
   // If user logged in,  track the connection,
@@ -93,12 +97,16 @@ const Board = props => {
   useEffect(() => {
     onAuthStateChanged(auth, user => {
       if (user) {
-        const ownStatusRef = ref(db, `status/${user.uid}`);
-        set(ownStatusRef, {
-          email: user.email,
-          board: currentBoard,
-        });
-        onDisconnect(ownStatusRef).remove();
+        try {
+          const ownStatusRef = ref(db, `status/${user.uid}`);
+          set(ownStatusRef, {
+            email: user.email,
+            board: currentBoard,
+          });
+          onDisconnect(ownStatusRef).remove();
+        } catch (err) {
+          console.error(err);
+        }
       } else {
         history.push(`/signin/${currentBoard}`);
       }
@@ -430,7 +438,7 @@ const Board = props => {
     // Changing cursor style
     if (tool === 'selection' || tool === 'eraser') {
       const element = getElementAtPosition(SVGPoint.x, SVGPoint.y, elements);
-      if (element) {
+      if (element && action !== 'writing') {
         e.target.style.cursor =
           tool === 'selection'
             ? setCursorForPosition(element.position)

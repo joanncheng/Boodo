@@ -43,8 +43,9 @@ export const ToolTypeButton = styled.button`
   cursor: pointer;
   outline: none;
   background-color: ${({ active }) =>
-    active ? ({ theme }) => theme.colors.primary : ''};
-  background-color: ${({ collab }) => (collab ? 'rgba(43, 138, 62, 0.1)' : '')};
+    active ? ({ theme }) => theme.colors.primary : '#e9ecef'};
+  background-color: ${({ collab }) =>
+    collab ? 'rgba(43, 138, 62, 0.1)' : '#e9ecef'};
 
   & svg {
     fill: ${({ active }) => (active ? '#fff' : '')};
