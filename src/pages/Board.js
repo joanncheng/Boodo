@@ -644,7 +644,7 @@ const Board = props => {
         <EditorCursors
           user={user}
           currentBoard={currentBoard}
-          viewBox={viewBox}
+          svgRef={svgRef}
         />
       )}
       <BottomLeftToolbar
