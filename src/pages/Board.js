@@ -206,7 +206,10 @@ const Board = props => {
       } else {
         const element = elements.find(el => el.id === selectedElement.id);
         const { id, x1, y1, x2, y2, type, options } = element;
-        updateElement(id, x1, y1, x2, y2, type, { ...options, opacity });
+        updateElement(id, x1, y1, x2, y2, type, {
+          ...options,
+          opacity,
+        });
       }
     }
   }, [opacity]);

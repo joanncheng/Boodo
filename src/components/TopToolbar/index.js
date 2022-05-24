@@ -19,6 +19,7 @@ import AvatarIcon from '../../../public/images/icons/avatar.svg';
 import ShapeActions from '../ShapeActions';
 import OutsideClicker from '../OutsideClicker';
 import FontSizeSelector from '../FontSizeSelector';
+import ColorPicker from '../ColorPicker';
 import { getResizedImageURL } from '../../utils';
 
 const TopToolbar = ({
@@ -161,15 +162,7 @@ const TopToolbar = ({
           </S.ToolIcon>
         </S.ToolLabel>
         <S.ToolLabel title="Stroke">
-          <S.ToolTypeColor
-            type="color"
-            value={brushColor}
-            name="editor-current-color"
-            onChange={e => dispatch(selectBrushColor(e.target.value))}
-          />
-          <S.ToolIcon color={brushColor}>
-            <BsPaletteFill />
-          </S.ToolIcon>
+          <ColorPicker />
         </S.ToolLabel>
         <S.ToolLabel title="Stroke width">
           <OutsideClicker onDismiss={() => setDropdownOpen(false)}>
