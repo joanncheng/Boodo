@@ -14,6 +14,7 @@ export const theme = {
     secondary: '#57e1a3',
     bgDark: '#010606',
     bgGrey: '#ced4da',
+    textRed: '#ff6b6b',
     red: '#fa5252',
     redDark: '#e03131',
   },

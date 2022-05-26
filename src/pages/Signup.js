@@ -1,12 +1,12 @@
 import React from 'react';
-import SignupForm from '../components/AuthForm/SignupForm';
+import AuthForm from '../components/AuthForm';
 import ScrollToTop from '../components/ScrollToTop';
 
 const SignupPage = () => {
   return (
     <>
       <ScrollToTop />
-      <SignupForm />
+      <AuthForm signup />
     </>
   );
 };

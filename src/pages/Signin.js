@@ -1,5 +1,5 @@
 import React from 'react';
-import SigninForm from '../components/AuthForm/SigninForm';
+import AuthForm from '../components/AuthForm';
 import ScrollToTop from '../components/ScrollToTop';
 
 const SigninPage = props => {
@@ -8,7 +8,7 @@ const SigninPage = props => {
   return (
     <>
       <ScrollToTop />
-      <SigninForm boardId={boardId} />
+      <AuthForm signin boardId={boardId} />
     </>
   );
 };
