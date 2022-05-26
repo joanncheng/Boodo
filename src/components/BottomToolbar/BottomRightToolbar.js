@@ -56,7 +56,9 @@ const BottomToolbar = ({
             <TrashCanIcon />
           </S.ToolIcon>
         </S.ToolTypeButton>
-        <S.LogoLink to="/">Boodo</S.LogoLink>
+        <S.LogoLink to="/">
+          <S.LogoIcon />
+        </S.LogoLink>
       </S.ToolContainer>
     </S.BottomRightStack>
   );

@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { Link as LinkR } from 'react-router-dom';
 import { Link as LinkS } from 'react-scroll';
-import Logo from '../../../public/images/icons/logo_white.svg';
+import Logo from '../../../public/images/logo-boodo-w.svg';
 import { Container } from '../GlobalStyles';
 
 export const Nav = styled.nav`
@@ -33,12 +33,13 @@ export const NavbarContainer = styled(Container)`
 
 export const NavLogo = styled(LinkR)`
   justify-self: flex-start;
-  width: 160px;
+  width: 200px;
   cursor: pointer;
 `;
 
 export const LogoIcon = styled(Logo)`
   width: 100%;
+  height: 100%;
 `;
 
 export const MobileIcon = styled.div`

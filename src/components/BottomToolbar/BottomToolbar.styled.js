@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { Link as LinkR } from 'react-router-dom';
+import Logo from '../../../public/images/icons/logo.svg';
 
 export const BottomLeftStack = styled.div`
   position: fixed;
@@ -91,13 +92,16 @@ export const ToolTipWrapper = styled.div`
 `;
 
 export const LogoLink = styled(LinkR)`
-  text-decoration: none;
-  font-family: 'Gochi Hand';
-  font-size: 1.5rem;
-  color: ${({ theme }) => theme.colors.primaryDarkest};
   margin: 0 1.2rem;
+  max-width: 50px;
+  max-height: 50px;
 
   &:hover {
     transform: scale(1.2);
   }
+`;
+
+export const LogoIcon = styled(Logo)`
+  width: 100%;
+  height: 100%;
 `;
