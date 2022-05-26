@@ -1,7 +1,11 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app';
 import { getStorage, connectStorageEmulator } from 'firebase/storage';
-import { getAuth, GoogleAuthProvider } from 'firebase/auth';
+import {
+  getAuth,
+  GoogleAuthProvider,
+  FacebookAuthProvider,
+} from 'firebase/auth';
 import { getDatabase, connectDatabaseEmulator } from 'firebase/database';
 
 export const firebaseConfig = {
@@ -21,6 +25,7 @@ export const storage = getStorage(firebaseApp);
 export const db = getDatabase(firebaseApp);
 export const auth = getAuth(firebaseApp);
 export const googleAuthProvider = new GoogleAuthProvider();
+export const facebookAuthProvider = new FacebookAuthProvider();
 
 if (location.hostname === 'localhost') {
   connectDatabaseEmulator(db, 'localhost', 9000);

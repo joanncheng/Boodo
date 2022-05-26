@@ -268,8 +268,9 @@ export const drawElement = element => {
               <tspan
                 key={index}
                 x={element.x1}
-                y={element.y1 + index * element.options.fontSize}
+                y={element.y1 + index * element.options.fontSize * 1.3}
                 style={{
+                  whiteSpace: 'pre',
                   userSelect: 'none',
                   fontSize: element.options.fontSize,
                   opacity: element.options.opacity,

@@ -46,16 +46,22 @@ const SvgBoard = forwardRef((props, svgRef) => {
     const textarea = textareaRef.current;
     if (!textarea) return;
     textarea.style.height = textarea.scrollHeight + 'px';
+    textarea.style.width = textarea.scrollWidth + 'px';
   }, [currentTextareaValue]);
 
   useEffect(() => {
     const textarea = textareaRef.current;
     if (textarea && action === 'writing') {
       textarea.focus();
-      textarea.value = selectedElement.options.text;
+      const {
+        x1,
+        x2,
+        options: { fontSize, text },
+      } = selectedElement;
+      textarea.value = text;
+      textarea.style.width = x2 - x1 + 'px';
       textarea.style.height =
-        textarea.value.split('\n').length * selectedElement.options.fontSize +
-        'px';
+        textarea.value.split('\n').length * fontSize * 1.3 + 'px';
     }
   }, [action, selectedElement]);
 
@@ -89,8 +95,8 @@ const SvgBoard = forwardRef((props, svgRef) => {
         onBlur={handleTextareaBlur}
         style={{
           position: 'fixed',
-          top: clientPoint.y,
-          left: clientPoint.x,
+          top: clientPoint.y - 3,
+          left: clientPoint.x - 1,
           color: selectedElement.options.brushColor,
           fontSize: size,
           opacity: selectedElement.options.opacity,

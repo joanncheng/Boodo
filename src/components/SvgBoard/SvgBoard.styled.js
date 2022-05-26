@@ -10,9 +10,11 @@ export const TextArea = styled.textarea`
   letter-spacing: 1.5px;
   margin: 0;
   padding: 0;
-  border: 1px dashed rgba(0, 0, 0, 0.08);
+  resize: none;
+  border: none;
   outline: none;
-  white-space: pre;
+  white-space: nowrap;
   overflow: hidden;
   background: transparent;
+  line-height: 1.3;
 `;
