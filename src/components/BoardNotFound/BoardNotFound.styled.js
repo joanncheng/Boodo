@@ -20,6 +20,7 @@ export const Header = styled.div`
 `;
 
 export const Logo = styled(LogoImg)`
+  width: 100%;
   height: 100%;
 `;
 
@@ -30,6 +31,10 @@ export const ContentWrapper = styled.div`
   background-color: #fff;
   border-radius: 0.5rem;
   box-shadow: 0 0 5px 1px rgba(0, 0, 0, 0.05);
+
+  @media screen and (max-width: 768px) {
+    width: 90%;
+  }
 `;
 
 export const ContentTop = styled.h1`
@@ -42,4 +47,8 @@ export const ContentBottom = styled.div`
   gap: 2rem;
 `;
 
-export const ActionBtn = styled(Button)``;
+export const ActionBtn = styled(Button)`
+  @media screen and (max-width: 768px) {
+    width: inherit;
+  }
+`;
