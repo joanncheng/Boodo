@@ -61,6 +61,6 @@ export const Tooltip = styled.div`
 
   &:hover::before {
     visibility: visible;
-    opacity: 1;
+    opacity: 0.8;
   }
 `;

@@ -1,5 +1,6 @@
 import styled from 'styled-components';
-import { FaSignOutAlt } from 'react-icons/fa';
+import { Link as LinkR } from 'react-router-dom';
+import Logo from '../../../public/images/icons/logo.svg';
 
 export const TopStack = styled.div`
   position: fixed;
@@ -78,7 +79,7 @@ export const ToolTypeRadio = styled.input`
   }
 
   &:focus-visible + ${ToolLabel} {
-    box-shadow: 0 0 0 2px #a5d8ff;
+    box-shadow: 0 0 0 2px ${({ theme }) => theme.colors.secondary};
   }
 `;
 
@@ -98,7 +99,7 @@ export const ToolTypeFile = styled.input`
   }
 
   &:focus-visible + ${ToolLabel} {
-    box-shadow: 0 0 0 2px #a5d8ff;
+    box-shadow: 0 0 0 2px ${({ theme }) => theme.colors.secondary};
   }
 `;
 
@@ -125,30 +126,37 @@ export const ComboBox = styled.div`
   }
 `;
 
-export const UserInfoWrapper = styled.div`
+export const BoardName = styled.div`
   display: flex;
-  align-items: center;
-  gap: 10px;
-  height: 2.5rem;
-  margin-right: 2rem;
 `;
 
-export const UserIcon = styled.div`
-  display: grid;
-  place-items: center;
+export const BoardNameInput = styled.input`
+  width: 120px;
+  background-color: transparent;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 8px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  outline: none;
 
-  svg {
-    height: 1.2em;
-    fill: black;
+  &:focus {
+    box-shadow: 0 0 0 2px ${({ theme }) => theme.colors.secondary};
   }
 `;
 
-export const LogoutBtn = styled(FaSignOutAlt)`
-  cursor: pointer;
-  width: 2rem;
-  height: 1.2rem;
+export const LogoLink = styled(LinkR)`
+  margin: 0 1rem;
+  max-width: 2.2rem;
+  max-height: 2.2rem;
 
   &:hover {
-    fill: ${({ theme }) => theme.colors.primary};
+    transform: scale(1.1);
   }
+`;
+
+export const LogoIcon = styled(Logo)`
+  width: 100%;
+  height: 100%;
 `;

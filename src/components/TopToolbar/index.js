@@ -1,13 +1,9 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { signOut } from 'firebase/auth';
-import { useHistory } from 'react-router-dom';
-import { BsPaletteFill } from 'react-icons/bs';
 import { CgDropOpacity } from 'react-icons/cg';
 import * as S from './TopToolbar.styled';
-import { auth } from '../../firebase';
 import { selectTool } from '../../redux/activeTool';
-import { selectBrushColor, selectOpacity } from '../../redux/toolOptions';
+import { selectOpacity } from '../../redux/toolOptions';
 import PencilIcon from '../../../public/images/icons/pencil.svg';
 import SelectionIcon from '../../../public/images/icons/selection.svg';
 import RectangleIcon from '../../../public/images/icons/rectangle.svg';
@@ -15,11 +11,11 @@ import EllipseIcon from '../../../public/images/icons/ellipse.svg';
 import DiamondIcon from '../../../public/images/icons/diamond.svg';
 import TextIcon from '../../../public/images/icons/text.svg';
 import ImageIcon from '../../../public/images/icons/image.svg';
-import AvatarIcon from '../../../public/images/icons/avatar.svg';
-import ShapeActions from '../ShapeActions';
+import BrushWidthSelector from '../BrushWidthSelector';
 import OutsideClicker from '../OutsideClicker';
 import FontSizeSelector from '../FontSizeSelector';
 import ColorPicker from '../ColorPicker';
+import Tooltip from '../Tooltip';
 import { getResizedImageURL } from '../../utils';
 
 const TopToolbar = ({
@@ -28,12 +24,12 @@ const TopToolbar = ({
   opacity,
   tool,
   action,
+  setAction,
   setImageUpload,
-  user,
+  boardName,
+  setBoardName,
 }) => {
   const dispatch = useDispatch();
-  const history = useHistory();
-
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const handleImageUpload = e => {
@@ -53,19 +49,6 @@ const TopToolbar = ({
       dispatch(selectTool('image'));
     };
     img.src = URL.createObjectURL(file);
-    // setTimeout(() => {
-    //   URL.revokeObjectURL(img.src);
-    // }, 1000 * 30);
-  };
-
-  const handleSignOut = () => {
-    signOut(auth)
-      .then(() => {
-        history.push('/');
-      })
-      .catch(err => {
-        console.log('sign out error: ' + err.message);
-      });
   };
 
   return (
@@ -179,7 +162,7 @@ const TopToolbar = ({
               </svg>
             </S.ToolIcon>
             {dropdownOpen && (
-              <ShapeActions
+              <BrushWidthSelector
                 brushColor={brushColor}
                 brushSize={brushSize}
                 setDropdownOpen={setDropdownOpen}
@@ -205,13 +188,26 @@ const TopToolbar = ({
         </S.ToolLabel>
         {tool === 'text' && action !== 'writing' && <FontSizeSelector />}
       </S.ToolContainer>
-      <S.UserInfoWrapper>
-        <S.UserIcon>
-          <AvatarIcon />
-        </S.UserIcon>
-        <p>{user && user.email}</p>
-        <S.LogoutBtn title="Sign out" onClick={handleSignOut} />
-      </S.UserInfoWrapper>
+      <S.ToolContainer>
+        <S.BoardName>
+          <Tooltip content="Rename the board" position="bottom">
+            <S.BoardNameInput
+              type="text"
+              value={boardName}
+              onChange={e => setBoardName(e.target.value)}
+              onFocus={() => setAction('renaming')}
+              onBlur={e => {
+                !/(.|\s)*\S(.|\s)*/.test(e.target.value) &&
+                  setBoardName('Untitled Board');
+                setAction('none');
+              }}
+            />
+          </Tooltip>
+        </S.BoardName>
+        <S.LogoLink to="/myBoards" title="Back to boards">
+          <S.LogoIcon />
+        </S.LogoLink>
+      </S.ToolContainer>
     </S.TopStack>
   );
 };

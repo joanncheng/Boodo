@@ -95,8 +95,8 @@ const SvgBoard = forwardRef((props, svgRef) => {
         onBlur={handleTextareaBlur}
         style={{
           position: 'fixed',
-          top: clientPoint.y - 3,
-          left: clientPoint.x - 1,
+          top: clientPoint.y - 5,
+          left: clientPoint.x,
           color: selectedElement.options.brushColor,
           fontSize: size,
           opacity: selectedElement.options.opacity,

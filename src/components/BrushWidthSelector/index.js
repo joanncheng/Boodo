@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { selectBrushSize } from '../../redux/toolOptions';
-import * as S from './ShapeActions.styled';
+import * as S from './BrushWidthSelector.styled';
 
 const ShapeActions = ({ brushColor, brushSize }) => {
   const dispatch = useDispatch();

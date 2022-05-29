@@ -1,6 +1,4 @@
 import styled from 'styled-components';
-import { Link as LinkR } from 'react-router-dom';
-import Logo from '../../../public/images/icons/logo.svg';
 
 export const BottomLeftStack = styled.div`
   position: fixed;
@@ -12,7 +10,7 @@ export const BottomLeftStack = styled.div`
 export const BottomRightStack = styled.div`
   position: fixed;
   bottom: 8px;
-  right: 0;
+  right: 10px;
   padding: 0 15px;
 `;
 
@@ -60,7 +58,7 @@ export const ToolTypeButton = styled.button`
   }
 
   &:focus-visible {
-    box-shadow: 0 0 0 2px #a5d8ff;
+    box-shadow: 0 0 0 2px ${({ theme }) => theme.colors.secondary};
   }
 `;
 
@@ -89,19 +87,4 @@ export const ToolTipWrapper = styled.div`
       background-color: ${({ theme }) => theme.colors.bgGrey};
     }
   }
-`;
-
-export const LogoLink = styled(LinkR)`
-  margin: 0 1.2rem;
-  max-width: 50px;
-  max-height: 50px;
-
-  &:hover {
-    transform: scale(1.2);
-  }
-`;
-
-export const LogoIcon = styled(Logo)`
-  width: 100%;
-  height: 100%;
 `;

@@ -6,9 +6,9 @@ import {
   uploadBytes,
   getDownloadURL,
 } from 'firebase/storage';
-import { set, ref, onValue, onDisconnect } from 'firebase/database';
+import { set, ref, onValue, onDisconnect, update } from 'firebase/database';
 import { onAuthStateChanged } from 'firebase/auth';
-import { useUser, useDatabaseListData } from 'reactfire';
+import { useUser } from 'reactfire';
 import { v4 as uuid } from 'uuid';
 import { storage, db, auth } from '../firebase';
 import useDrawingHistory from '../hooks/useDrawingHistory';
@@ -54,6 +54,7 @@ const Board = props => {
   const [action, setAction] = useState('none');
   const [selectedElement, setSelectedElement] = useState(null);
   const [drawData, setDrawData] = useState(null);
+  const [boardName, setBoardName] = useState('');
 
   // Control modal
   const [clearCanvasModalOpen, setClearCanvasModalOpen] = useState(false);
@@ -80,7 +81,6 @@ const Board = props => {
   const svgRef = useRef(null);
 
   // Listen data changes from db
-  const { status } = useDatabaseListData(ref(db, `boards/${currentBoard}`));
   useEffect(() => {
     try {
       onValue(ref(db, `boards/${currentBoard}`), snapshot => {
@@ -115,6 +115,7 @@ const Board = props => {
 
   useEffect(() => {
     if (!drawData) return;
+    drawData.boardName && setBoardName(drawData.boardName);
     if (!drawData.elements) {
       setElements([], 'overwrite');
     } else if (drawData.uploader === user.uid) {
@@ -143,7 +144,7 @@ const Board = props => {
 
   // Keydown event
   useEffect(() => {
-    if (status === 'loading') return;
+    if (!drawData) return;
 
     const handleKeydown = e => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'z') {
@@ -155,7 +156,7 @@ const Board = props => {
       }
 
       if (e.key === 'Delete' || (e.key === 'Backspace' && action === 'none')) {
-        if (action === 'writing') return;
+        if (action === 'writing' || action === 'renaming') return;
         if (selectedElement) {
           deleteElement(selectedElement.id);
           setSelectedElement(null);
@@ -163,7 +164,7 @@ const Board = props => {
       }
 
       if (e.key === 'Escape') {
-        setAction('none');
+        action !== 'renaming' && setAction('none');
         setImageUpload(null);
         dispatch(selectTool('selection'));
         dispatch(selectOpacity(1));
@@ -244,10 +245,19 @@ const Board = props => {
   }, [viewBoxSizeRatio]);
 
   const writeDataToDatabase = () => {
-    set(ref(db, `boards/${currentBoard}`), {
+    const data = {
       uploader: user.uid,
       elements,
-    });
+      boardName,
+      owner: drawData.owner,
+    };
+    const updates = {};
+    updates[`boards/${currentBoard}`] = data;
+    if (drawData.owner === user.uid) {
+      updates[`users/${user.uid}/boards/${currentBoard}`] = data;
+    }
+
+    update(ref(db), updates);
   };
 
   const updateElement = (id, x1, y1, x2, y2, type, options) => {
@@ -345,7 +355,7 @@ const Board = props => {
   };
 
   const handleMouseDown = e => {
-    if (action === 'writing' || status === 'loading') return;
+    if (action === 'writing' || !drawData) return;
 
     if (spacePressing) {
       setAction('movingCanvas');
@@ -440,7 +450,7 @@ const Board = props => {
   };
 
   const handleMouseMove = e => {
-    if (status === 'loading') return;
+    if (!drawData) return;
 
     const x = e.type === 'touchmove' ? e.changedTouches[0].clientX : e.clientX;
     const y = e.type === 'touchmove' ? e.changedTouches[0].clientY : e.clientY;
@@ -540,7 +550,7 @@ const Board = props => {
   };
 
   const handleMouseUp = e => {
-    if (status === 'loading') return;
+    if (!drawData) return;
     writeDataToDatabase();
 
     if (action === 'movingCanvas') {
@@ -650,10 +660,13 @@ const Board = props => {
         opacity={opacity}
         tool={tool}
         action={action}
+        setAction={setAction}
         setImageUpload={setImageUpload}
         user={user}
+        boardName={boardName}
+        setBoardName={setBoardName}
       />
-      {status === 'loading' && <Loader />}
+      {!drawData && <Loader fontColor="#343a40" />}
       <SvgBoard ref={svgRef} {...svgBoardProps}></SvgBoard>
       {user && (
         <EditorCursors

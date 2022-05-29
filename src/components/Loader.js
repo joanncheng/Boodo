@@ -1,7 +1,7 @@
 import React from 'react';
 import { SpinnerCircularFixed } from 'spinners-react';
 
-const Loader = () => {
+const Loader = ({ fontColor }) => {
   return (
     <div
       style={{
@@ -18,7 +18,7 @@ const Loader = () => {
         color="rgba(84, 74, 244, 1)"
         secondaryColor="rgba(206, 212, 218, 0.3)"
       />
-      <p style={{ fontSize: '0.8rem' }}>Loading...</p>
+      <p style={{ fontSize: '0.8rem', color: fontColor }}>Loading...</p>
     </div>
   );
 };

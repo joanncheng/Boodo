@@ -7,6 +7,7 @@ import Home from './pages/Home';
 import Board from './pages/Board';
 import SignupPage from './pages/Signup';
 import SigninPage from './pages/Signin';
+import MyBoards from './pages/MyBoards';
 import { auth } from './firebase';
 
 const App = () => {
@@ -21,6 +22,7 @@ const App = () => {
             <Route path="/signin" exact component={SigninPage} />
             <Route path="/signin/:id" exact component={SigninPage} />
             <Route path="/board/:id" exact component={Board} />
+            <Route path="/myBoards" exact component={MyBoards} />
           </Switch>
         </AuthProvider>
       </BrowserRouter>

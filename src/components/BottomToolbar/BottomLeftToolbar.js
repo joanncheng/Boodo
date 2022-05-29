@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { selectTool } from '../../redux/activeTool';
-import Tooltip from '../ToolTip';
+import Tooltip from '../Tooltip';
 import * as S from './BottomToolbar.styled';
 import ZoomOutIcon from '../../../public/images/icons/zoomOut.svg';
 import ZoomInIcon from '../../../public/images/icons/zoomIn.svg';

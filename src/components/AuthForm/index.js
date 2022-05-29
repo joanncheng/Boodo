@@ -24,9 +24,7 @@ const AuthForm = ({ boardId, signin, signup }) => {
 
   useEffect(() => {
     if (!user) return;
-    boardId
-      ? history.push(`/board/${boardId}`)
-      : history.push(`/board/${user.uid}`);
+    boardId ? history.push(`/board/${boardId}`) : history.push(`/myBoards`);
   }, [user]);
 
   const handleSigninWithProvider = async provider => {
@@ -173,14 +171,17 @@ const AuthForm = ({ boardId, signin, signup }) => {
           {error.type === 'emailPassword' && (
             <S.ErrorMessage>{error.message}</S.ErrorMessage>
           )}
-          <S.Text>
-            {signup && 'Already have an account?  '}
-            {signup ? (
+          {signin ? (
+            <S.Text>
+              Don't have an account?&nbsp;
+              <S.TextLink to="signup">Sign up</S.TextLink>
+            </S.Text>
+          ) : (
+            <S.Text>
+              Already have an account?&nbsp;
               <S.TextLink to="signin">Just sign in</S.TextLink>
-            ) : (
-              <S.TextLink to="signup">Create an account</S.TextLink>
-            )}
-          </S.Text>
+            </S.Text>
+          )}
         </S.FormContent>
       </S.FormWrap>
     </S.Container>
