@@ -8,7 +8,7 @@ import {
 } from 'firebase/storage';
 import { set, ref, onValue, onDisconnect, update } from 'firebase/database';
 import { onAuthStateChanged } from 'firebase/auth';
-import { useUser } from 'reactfire';
+import { useUser, useDatabaseListData } from 'reactfire';
 import { v4 as uuid } from 'uuid';
 import { storage, db, auth } from '../firebase';
 import useDrawingHistory from '../hooks/useDrawingHistory';
@@ -38,6 +38,7 @@ import {
   ERASER_CURSOR,
   ADD_IMAGE_CURSOR,
 } from '../config';
+import BoardNotFound from '../components/BoardNotFound';
 
 const Board = props => {
   const currentBoard = props.match.params.id;
@@ -81,6 +82,8 @@ const Board = props => {
   const svgRef = useRef(null);
 
   // Listen data changes from db
+  const { status } = useDatabaseListData(ref(db, `boards/${currentBoard}`));
+
   useEffect(() => {
     try {
       onValue(ref(db, `boards/${currentBoard}`), snapshot => {
@@ -144,7 +147,7 @@ const Board = props => {
 
   // Keydown event
   useEffect(() => {
-    if (!drawData) return;
+    if (status === 'loading' || !drawData) return;
 
     const handleKeydown = e => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'z') {
@@ -226,6 +229,7 @@ const Board = props => {
 
   // Move canvas back to center after resizeCanvas
   useLayoutEffect(() => {
+    if (!svgRef.current) return;
     const newCenterPoint = convertToSVGCoords(
       {
         x: window.innerWidth / 2,
@@ -355,7 +359,7 @@ const Board = props => {
   };
 
   const handleMouseDown = e => {
-    if (action === 'writing' || !drawData) return;
+    if (action === 'writing' || status === 'loading') return;
 
     if (spacePressing) {
       setAction('movingCanvas');
@@ -450,7 +454,7 @@ const Board = props => {
   };
 
   const handleMouseMove = e => {
-    if (!drawData) return;
+    if (status === 'loading' || !drawData) return;
 
     const x = e.type === 'touchmove' ? e.changedTouches[0].clientX : e.clientX;
     const y = e.type === 'touchmove' ? e.changedTouches[0].clientY : e.clientY;
@@ -550,7 +554,7 @@ const Board = props => {
   };
 
   const handleMouseUp = e => {
-    if (!drawData) return;
+    if (status === 'loading' || !drawData) return;
     writeDataToDatabase();
 
     if (action === 'movingCanvas') {
@@ -651,6 +655,14 @@ const Board = props => {
     user,
     currentBoard,
   };
+
+  if (status !== 'loading' && drawData === null) {
+    return (
+      <>
+        <BoardNotFound />
+      </>
+    );
+  }
 
   return (
     <>
