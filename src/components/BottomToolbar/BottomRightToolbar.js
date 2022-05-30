@@ -10,6 +10,7 @@ const BottomToolbar = ({
   setClearCanvasModalOpen,
   setSaveImageModalOpen,
   setCollabModalOpen,
+  setSelectedElement,
   currentBoard,
 }) => {
   const [collaborators, setCollaborators] = useState([]);
@@ -30,7 +31,10 @@ const BottomToolbar = ({
       <S.ToolContainer>
         <S.ToolTypeButton
           title="Save as image"
-          onClick={() => setSaveImageModalOpen(true)}
+          onClick={() => {
+            setSelectedElement(null);
+            setSaveImageModalOpen(true);
+          }}
         >
           <S.ToolIcon>
             <SaveFileIcon />

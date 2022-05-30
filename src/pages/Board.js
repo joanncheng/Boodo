@@ -1,11 +1,7 @@
 import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import {
-  ref as storageRef,
-  uploadBytes,
-  getDownloadURL,
-} from 'firebase/storage';
+import { ref as storageRef, uploadBytes, getBlob } from 'firebase/storage';
 import { set, ref, onValue, onDisconnect, update } from 'firebase/database';
 import { onAuthStateChanged } from 'firebase/auth';
 import { useUser, useDatabaseListData } from 'reactfire';
@@ -329,11 +325,12 @@ const Board = props => {
   const uploadImage = (file, elementId) => {
     const imageRef = storageRef(storage, `images/${elementId}_${file.name}`);
     uploadBytes(imageRef, file).then(snapshot => {
-      getDownloadURL(snapshot.ref).then(url => {
-        const image = new Image();
-        image.src = url;
-        image.onload = () => {
-          setUploadedImageData({ url, elementId });
+      getBlob(snapshot.ref).then(blob => {
+        const reader = new FileReader();
+        reader.readAsDataURL(blob);
+        reader.onloadend = () => {
+          const base64data = reader.result;
+          setUploadedImageData({ url: base64data, elementId });
         };
       });
     });
@@ -616,6 +613,9 @@ const Board = props => {
       className="buttons"
       onClick={e => {
         const { format } = e.target.dataset;
+        svgRef.current.childNodes.forEach(node => {
+          node.childNodes.forEach(node => (node.style.cursor = 'default'));
+        });
         format && imageSaver.save(format, svgRef.current);
         setSaveImageModalOpen(false);
       }}
@@ -699,6 +699,7 @@ const Board = props => {
         setClearCanvasModalOpen={setClearCanvasModalOpen}
         setSaveImageModalOpen={setSaveImageModalOpen}
         setCollabModalOpen={setCollabModalOpen}
+        setSelectedElement={setSelectedElement}
         currentBoard={currentBoard}
       />
       {saveImageModalOpen ? (

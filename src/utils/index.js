@@ -262,25 +262,23 @@ export const drawElement = element => {
       if (!element.options.text) return;
       const text = element.options.text.split('\n');
       return (
-        <g key={element.id}>
-          <text {...attrObj}>
-            {text.map((row, index) => (
-              <tspan
-                key={index}
-                x={element.x1}
-                y={element.y1 + index * element.options.fontSize * 1.3}
-                style={{
-                  whiteSpace: 'pre',
-                  userSelect: 'none',
-                  fontSize: element.options.fontSize,
-                  opacity: element.options.opacity,
-                }}
-              >
-                {row}
-              </tspan>
-            ))}
-          </text>
-        </g>
+        <text key={element.id} {...attrObj}>
+          {text.map((row, index) => (
+            <tspan
+              key={index}
+              x={element.x1}
+              y={element.y1 + index * element.options.fontSize * 1.3}
+              style={{
+                whiteSpace: 'pre',
+                userSelect: 'none',
+                fontSize: element.options.fontSize,
+                opacity: element.options.opacity,
+              }}
+            >
+              {row}
+            </tspan>
+          ))}
+        </text>
       );
     case 'image':
       return (
@@ -406,13 +404,19 @@ export const imageSaver = {
   },
 
   parseImage() {
+    const options = {
+      excludeUnusedCss: true,
+      backgroundColor: '#fff',
+    };
+
     if (this.format === 'png') {
-      saveSvgAsPng(this.svg, `Boodo_${new Date().toLocaleDateString()}.png`, {
-        excludeUnusedCss: true,
-        backgroundColor: '#fff',
-      });
+      saveSvgAsPng(
+        this.svg,
+        `Boodo_${new Date().toLocaleDateString()}.png`,
+        options
+      );
     } else if (this.format === 'svg') {
-      svgAsDataUri(this.svg).then(uri => this.downloadImage(uri));
+      svgAsDataUri(this.svg, options).then(uri => this.downloadImage(uri));
     }
   },
 
