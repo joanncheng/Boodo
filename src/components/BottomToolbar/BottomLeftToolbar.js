@@ -38,26 +38,28 @@ const BottomToolbar = ({
   return (
     <S.BottomLeftStack>
       <S.ToolContainer>
-        <S.ToolTipWrapper>
-          <Tooltip content="Reset zoom" position="top">
-            <S.ToolTypeButton
-              title="Reset zoom"
-              onClick={() => setViewBoxSizeRatio(1)}
-            >
-              {(viewBoxSizeRatio * 100).toFixed(0)} %
-            </S.ToolTypeButton>
-          </Tooltip>
-        </S.ToolTipWrapper>
-        <S.ToolTypeButton title="Zoom out" onClick={zoomOutCanvas}>
-          <S.ToolIcon>
-            <ZoomOutIcon />
-          </S.ToolIcon>
-        </S.ToolTypeButton>
-        <S.ToolTypeButton title="Zoom in" onClick={zoomInCanvas}>
-          <S.ToolIcon>
-            <ZoomInIcon />
-          </S.ToolIcon>
-        </S.ToolTypeButton>
+        <S.ZoomTool>
+          <S.ToolTipWrapper>
+            <Tooltip content="Reset zoom" position="top">
+              <S.ToolTypeButton
+                title="Reset zoom"
+                onClick={() => setViewBoxSizeRatio(1)}
+              >
+                <span>{(viewBoxSizeRatio * 100).toFixed(0)} %</span>
+              </S.ToolTypeButton>
+            </Tooltip>
+          </S.ToolTipWrapper>
+          <S.ToolTypeButton title="Zoom out" onClick={zoomOutCanvas}>
+            <S.ToolIcon>
+              <ZoomOutIcon />
+            </S.ToolIcon>
+          </S.ToolTypeButton>
+          <S.ToolTypeButton title="Zoom in" onClick={zoomInCanvas}>
+            <S.ToolIcon>
+              <ZoomInIcon />
+            </S.ToolIcon>
+          </S.ToolTypeButton>
+        </S.ZoomTool>
         <S.ToolTypeButton title="Undo" onClick={undo}>
           <S.ToolIcon>
             <UndoIcon />

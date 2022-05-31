@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { selectBrushSize } from '../../redux/toolOptions';
 import * as S from './BrushWidthSelector.styled';
 
-const ShapeActions = ({ brushColor, brushSize }) => {
+const BrushWidthSelector = ({ brushColor, brushSize }) => {
   const dispatch = useDispatch();
 
   return (
@@ -80,4 +80,4 @@ const ShapeActions = ({ brushColor, brushSize }) => {
   );
 };
 
-export default ShapeActions;
+export default BrushWidthSelector;

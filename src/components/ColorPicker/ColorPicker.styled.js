@@ -8,6 +8,8 @@ export const ToolIcon = styled.div`
   place-items: center;
 
   svg {
+    width: 1rem;
+    height: 1rem;
     fill: ${({ color }) => (color ? color : 'black')};
     stroke: ${({ color }) => (color ? color : 'black')};
   }
@@ -19,6 +21,11 @@ export const ToolIcon = styled.div`
 
   &:active {
     background-color: #e2e1fc;
+  }
+
+  @media screen and (max-width: 400px) {
+    width: 2rem;
+    height: 2rem;
   }
 `;
 
@@ -43,6 +50,11 @@ export const DropdownMenu = styled.div`
   grid-template-columns: repeat(5, auto);
   grid-gap: 0.5rem;
   border-radius: 4px;
+
+  @media screen and (max-width: 768px) {
+    left: 0;
+    transform: translateX(0);
+  }
 `;
 
 export const DropdownItem = styled.div`

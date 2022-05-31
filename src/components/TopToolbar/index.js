@@ -30,7 +30,8 @@ const TopToolbar = ({
   setBoardName,
 }) => {
   const dispatch = useDispatch();
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [brushSelectorOpen, setBrushSelectorOpen] = useState(false);
+  const [opacitySelectorOpen, setOpacitySelectorOpen] = useState(false);
 
   const handleImageUpload = e => {
     const file = e.target.files[0];
@@ -53,7 +54,7 @@ const TopToolbar = ({
 
   return (
     <S.TopStack>
-      <S.ToolContainer>
+      <S.ToolContainer main>
         <S.ToolLabel title="Selection">
           <S.ToolTypeRadio
             type="radio"
@@ -144,69 +145,71 @@ const TopToolbar = ({
             <ImageIcon />
           </S.ToolIcon>
         </S.ToolLabel>
-        <S.ToolLabel title="Stroke">
-          <ColorPicker />
-        </S.ToolLabel>
-        <S.ToolLabel title="Stroke width">
-          <OutsideClicker onDismiss={() => setDropdownOpen(false)}>
-            <S.ToolIcon
-              onClick={e => {
-                e.preventDefault();
-                setDropdownOpen(prev => !prev);
-              }}
-            >
-              <svg viewBox="0 0 100 100">
-                <line x1="0" y1="15" x2="100" y2="15" strokeWidth="5"></line>
-                <line x1="0" y1="45" x2="100" y2="45" strokeWidth="10"></line>
-                <line x1="0" y1="80" x2="100" y2="80" strokeWidth="20"></line>
-              </svg>
-            </S.ToolIcon>
-            {dropdownOpen && (
-              <BrushWidthSelector
-                brushColor={brushColor}
-                brushSize={brushSize}
-                setDropdownOpen={setDropdownOpen}
-              />
-            )}
-          </OutsideClicker>
-        </S.ToolLabel>
-        <S.ToolLabel title="Opacity">
-          <S.ComboBox notAllowed={action === 'writing' ? true : false}>
-            <S.ToolIcon>
-              <CgDropOpacity className="opacity" />
-            </S.ToolIcon>
-            <S.ToolTypeRange
-              type="range"
-              name="opacity"
-              min="0.1"
-              max="1"
-              step="0.1"
-              value={opacity}
-              onChange={e => dispatch(selectOpacity(e.target.value))}
-            />
-          </S.ComboBox>
-        </S.ToolLabel>
-        {tool === 'text' && action !== 'writing' && <FontSizeSelector />}
       </S.ToolContainer>
       <S.ToolContainer>
-        <S.BoardName>
-          <Tooltip content="Rename the board" position="bottom">
-            <S.BoardNameInput
-              type="text"
-              value={boardName}
-              onChange={e => setBoardName(e.target.value)}
-              onFocus={() => setAction('renaming')}
-              onBlur={e => {
-                !/(.|\s)*\S(.|\s)*/.test(e.target.value) &&
-                  setBoardName('Untitled Board');
-                setAction('none');
-              }}
-            />
-          </Tooltip>
-        </S.BoardName>
-        <S.LogoLink to="/myBoards" title="Back to boards">
-          <S.LogoIcon />
-        </S.LogoLink>
+        <S.ShapeActions>
+          <S.ToolLabel title="Stroke">
+            <ColorPicker />
+          </S.ToolLabel>
+          <S.ToolLabel title="Stroke width">
+            <OutsideClicker onDismiss={() => setBrushSelectorOpen(false)}>
+              <S.ToolIcon onClick={() => setBrushSelectorOpen(prev => !prev)}>
+                <svg viewBox="0 0 100 100">
+                  <line x1="0" y1="15" x2="100" y2="15" strokeWidth="5"></line>
+                  <line x1="0" y1="45" x2="100" y2="45" strokeWidth="10"></line>
+                  <line x1="0" y1="80" x2="100" y2="80" strokeWidth="20"></line>
+                </svg>
+              </S.ToolIcon>
+              {brushSelectorOpen && (
+                <BrushWidthSelector
+                  brushColor={brushColor}
+                  brushSize={brushSize}
+                />
+              )}
+            </OutsideClicker>
+          </S.ToolLabel>
+          <S.ToolLabel title="Opacity">
+            <OutsideClicker onDismiss={() => setOpacitySelectorOpen(false)}>
+              <S.ToolIcon onClick={() => setOpacitySelectorOpen(prev => !prev)}>
+                <CgDropOpacity className="opacity" />
+              </S.ToolIcon>
+              {opacitySelectorOpen && (
+                <S.OpacitySelector>
+                  <S.ToolTypeRange
+                    type="range"
+                    name="opacity"
+                    min="0.1"
+                    max="1"
+                    step="0.1"
+                    value={opacity}
+                    onChange={e => dispatch(selectOpacity(e.target.value))}
+                  />
+                </S.OpacitySelector>
+              )}
+            </OutsideClicker>
+          </S.ToolLabel>
+          {tool === 'text' && action !== 'writing' && <FontSizeSelector />}
+        </S.ShapeActions>
+        <S.OtherActions>
+          <S.BoardName>
+            <Tooltip content="Rename the board" position="bottom">
+              <S.BoardNameInput
+                type="text"
+                value={boardName}
+                onChange={e => setBoardName(e.target.value)}
+                onFocus={() => setAction('renaming')}
+                onBlur={e => {
+                  !/(.|\s)*\S(.|\s)*/.test(e.target.value) &&
+                    setBoardName('Untitled Board');
+                  setAction('none');
+                }}
+              />
+            </Tooltip>
+          </S.BoardName>
+          <S.LogoLink to="/myBoards" title="Back to boards">
+            <S.LogoIcon />
+          </S.LogoLink>
+        </S.OtherActions>
       </S.ToolContainer>
     </S.TopStack>
   );

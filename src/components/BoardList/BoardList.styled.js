@@ -54,7 +54,7 @@ export const BoardCardsContainer = styled.div`
   margin: 2rem;
 
   @media screen and (max-width: 768px) {
-    height: auto;
+    height: 100vh;
     justify-content: center;
   }
 `;

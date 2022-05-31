@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 export const Dropdown = styled.div`
   height: 2.5rem;
-  min-width: 2.8rem;
+  min-width: 2.5rem;
   position: relative;
 `;
 
@@ -24,7 +24,7 @@ export const DropdownMenu = styled.div`
 `;
 
 export const DropdownBtn = styled.button`
-  min-width: 2.8rem;
+  min-width: 2.5rem;
   height: 2.5rem;
   border: none;
   border-radius: 0.5rem;

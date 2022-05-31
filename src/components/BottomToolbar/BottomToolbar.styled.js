@@ -5,6 +5,10 @@ export const BottomLeftStack = styled.div`
   bottom: 8px;
   left: 0;
   padding: 0 15px;
+
+  @media screen and (max-width: 550px) {
+    padding: 0 10px;
+  }
 `;
 
 export const BottomRightStack = styled.div`
@@ -12,6 +16,10 @@ export const BottomRightStack = styled.div`
   bottom: 8px;
   right: 10px;
   padding: 0 15px;
+
+  @media screen and (max-width: 550px) {
+    padding: 0;
+  }
 `;
 
 export const ToolContainer = styled.div`
@@ -60,6 +68,10 @@ export const ToolTypeButton = styled.button`
   &:focus-visible {
     box-shadow: 0 0 0 2px ${({ theme }) => theme.colors.secondary};
   }
+
+  span {
+    user-select: 'none';
+  }
 `;
 
 export const Number = styled.div`
@@ -86,5 +98,15 @@ export const ToolTipWrapper = styled.div`
     &:hover {
       background-color: ${({ theme }) => theme.colors.bgGrey};
     }
+  }
+`;
+
+export const ZoomTool = styled.div`
+  display: flex;
+  gap: 15px;
+  align-items: center;
+
+  @media screen and (max-width: 550px) {
+    display: none;
   }
 `;

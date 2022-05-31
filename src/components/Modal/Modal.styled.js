@@ -134,7 +134,7 @@ export const ModalActions = styled.div`
 
 export const ActionContainer = styled.div`
   display: grid;
-  grid-template-columns: 5rem auto;
+  grid-template-columns: auto 1fr;
   align-items: center;
   gap: 1rem;
 `;
@@ -175,6 +175,7 @@ export const TextInput = styled.input`
   border: 1px solid #e9ecef;
   border-radius: 5px;
   padding: 5px;
+  width: 100%;
   cursor: ${({ readOnly }) => (readOnly ? 'pointer' : 'default')};
 
   &:hover {
