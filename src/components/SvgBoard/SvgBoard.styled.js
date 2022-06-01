@@ -3,6 +3,7 @@ import styled from 'styled-components';
 export const SVGCanvas = styled.svg`
   display: block;
   overflow: hidden;
+  touch-action: none;
 `;
 
 export const TextArea = styled.textarea`

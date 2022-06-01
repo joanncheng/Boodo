@@ -1,7 +1,5 @@
 import React, { forwardRef, useRef, useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import * as S from './SvgBoard.styled';
-import { selectTool } from '../../redux/activeTool';
 import { drawElement, convertToCanvasCoords } from '../../utils';
 import SelectedBox from '../SelectedBox';
 import { TEXTAREA_Y_OFFSET_RATIO } from '../../config';
@@ -9,7 +7,6 @@ import { TEXTAREA_Y_OFFSET_RATIO } from '../../config';
 const SvgBoard = forwardRef((props, svgRef) => {
   const {
     action,
-    setAction,
     selectedElement,
     handlePointerDown,
     handlePointerMove,
@@ -17,12 +14,9 @@ const SvgBoard = forwardRef((props, svgRef) => {
     elements,
     updateElement,
     viewBoxSizeRatio,
-    resizeCanvas,
     viewBox,
     setViewBox,
   } = props;
-
-  const dispatch = useDispatch();
 
   const [currentTextareaValue, setCurrentTextareaValue] = useState('');
 
@@ -121,15 +115,6 @@ const SvgBoard = forwardRef((props, svgRef) => {
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
-        onWheel={e => {
-          if (e.ctrlKey) {
-            if (e.deltaY > 0) {
-              resizeCanvas(-0.01);
-            } else if (e.deltaY < 0) {
-              resizeCanvas(0.01);
-            }
-          }
-        }}
       >
         {elements &&
           elements.map(element => {

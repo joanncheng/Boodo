@@ -372,6 +372,16 @@ export const convertToCanvasCoords = ({ x, y }, svg) => {
   return { x: canvasPoint.x, y: canvasPoint.y };
 };
 
+export const getSVGMovement = (x, y, movementX, movementY, svg) => {
+  const SVGPoint = convertToSVGCoords({ x, y }, svg);
+  const newSVGPoint = convertToSVGCoords(
+    { x: x + movementX, y: y + movementY },
+    svg
+  );
+
+  return { dx: SVGPoint.x - newSVGPoint.x, dy: SVGPoint.y - newSVGPoint.y };
+};
+
 export const getResizedImageURL = image => {
   const canvas = document.createElement('canvas');
   const MAX_WIDTH = 120;

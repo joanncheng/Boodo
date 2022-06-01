@@ -26,6 +26,7 @@ import {
   isAdjustmentRequired,
   resizeCoordinates,
   convertToSVGCoords,
+  getSVGMovement,
   imageSaver,
 } from '../utils';
 import {
@@ -35,6 +36,10 @@ import {
   ADD_IMAGE_CURSOR,
 } from '../config';
 import BoardNotFound from '../components/BoardNotFound';
+
+// Global variables to cache touch events and track diff between two fingers
+let eventsCache = [];
+let prevDiff = -1;
 
 const Board = props => {
   const currentBoard = props.match.params.id;
@@ -141,7 +146,7 @@ const Board = props => {
     }
   }, [uploadedImageData]);
 
-  // Keydown event
+  // Keydown & wheel event
   useEffect(() => {
     if (status === 'loading' || !drawData) return;
 
@@ -181,12 +186,25 @@ const Board = props => {
       writeDataToDatabase();
     };
 
+    const handleWheel = e => {
+      e.preventDefault();
+      if (e.ctrlKey) {
+        if (e.deltaY > 0) {
+          resizeCanvas(-0.01);
+        } else if (e.deltaY < 0) {
+          resizeCanvas(0.01);
+        }
+      }
+    };
+
     window.addEventListener('keydown', handleKeydown);
     window.addEventListener('keyup', handleKeyup);
+    window.addEventListener('wheel', handleWheel, { passive: false });
 
     return () => {
       window.removeEventListener('keydown', handleKeydown);
       window.removeEventListener('keyup', handleKeyup);
+      window.removeEventListener('wheel', handleWheel, { passive: false });
     };
   });
 
@@ -363,10 +381,9 @@ const Board = props => {
       return;
     }
 
-    if (spacePressing) {
-      setAction('movingCanvas');
-      return;
-    }
+    if (spacePressing) return setAction('movingCanvas');
+
+    if (e.pointerType === 'touch') eventsCache.push(e);
 
     const x = e.clientX;
     const y = e.clientY;
@@ -404,6 +421,7 @@ const Board = props => {
         setAction('movingCanvas');
       }
     } else {
+      // Create svg element
       const id = uuid();
       let element;
       if (tool === 'image') {
@@ -457,11 +475,59 @@ const Board = props => {
 
   const handlePointerMove = e => {
     if (status === 'loading' || !drawData) return;
+    writeDataToDatabase();
 
     const x = e.clientX;
     const y = e.clientY;
     const SVGPoint = convertToSVGCoords({ x, y }, svgRef.current);
 
+    //// Touch interaction ////
+    if (e.pointerType === 'touch' && tool === 'selection') {
+      const touchDownEvent = eventsCache.find(ev => ev.isPrimary);
+      if (touchDownEvent) {
+        e.movementX = x - touchDownEvent.clientX;
+        e.movementY = y - touchDownEvent.clientY;
+      }
+
+      for (let i = 0; i < eventsCache.length; i++) {
+        if (e.pointerId == eventsCache[i].pointerId) {
+          eventsCache[i] = e;
+          break;
+        }
+      }
+
+      // Moving canvas
+      if (eventsCache.length === 1 && !selectedElement) {
+        const svgMovement = getSVGMovement(
+          x,
+          y,
+          e.movementX,
+          e.movementY,
+          svgRef.current
+        );
+        setViewBox({
+          ...viewBox,
+          x: viewBox.x + svgMovement.dx,
+          y: viewBox.y + svgMovement.dy,
+        });
+        return;
+      }
+
+      // Zooming in/out canvas
+      if (eventsCache.length === 2) {
+        const curDiff = Math.abs(
+          eventsCache[0].clientX - eventsCache[1].clientX
+        );
+        if (prevDiff > 0) {
+          if (curDiff > prevDiff) resizeCanvas(0.05);
+          if (curDiff < prevDiff) resizeCanvas(-0.05);
+        }
+        prevDiff = curDiff;
+        return;
+      }
+    }
+
+    //// Mouse interaction////
     // Changing cursor style
     if (tool === 'selection' || tool === 'eraser') {
       const element = getElementAtPosition(SVGPoint.x, SVGPoint.y, elements);
@@ -529,38 +595,38 @@ const Board = props => {
       updateElement(id, x1, y1, x2, y2, type, options);
     } else if (action === 'movingCanvas') {
       e.target.style.cursor = 'grabbing';
-
-      const newSVGPoint = convertToSVGCoords(
-        {
-          x: x + e.movementX,
-          y: y + e.movementY,
-        },
+      const svgMovement = getSVGMovement(
+        x,
+        y,
+        e.movementX,
+        e.movementY,
         svgRef.current
       );
-
-      const delta = {
-        dx: SVGPoint.x - newSVGPoint.x,
-        dy: SVGPoint.y - newSVGPoint.y,
-      };
-
       setViewBox({
         ...viewBox,
-        x: viewBox.x + delta.dx,
-        y: viewBox.y + delta.dy,
+        x: viewBox.x + svgMovement.dx,
+        y: viewBox.y + svgMovement.dy,
       });
     }
-
-    writeDataToDatabase();
   };
 
   const handlePointerUp = e => {
     if (status === 'loading' || !drawData) return;
+    writeDataToDatabase();
 
-    if (action === 'movingCanvas') {
-      setAction('none');
-      return;
+    // Remove the pointer from the eventsCache
+    if (e.pointerType === 'touch') {
+      for (let i = 0; i < eventsCache.length; i++) {
+        if (eventsCache[i].pointerId == e.pointerId) {
+          eventsCache.splice(i, 1);
+          break;
+        }
+      }
+      // Reset diff tracker
+      if (eventsCache.length < 2) prevDiff = -1;
     }
-    // if (e.cancelable) e.preventDefault();
+
+    if (action === 'movingCanvas') return setAction('none');
 
     const x = e.clientX;
     const y = e.clientY;
@@ -571,10 +637,8 @@ const Board = props => {
         selectedElement.type === 'text' &&
         SVGPoint.x - selectedElement.offsetX === selectedElement.x1 &&
         SVGPoint.y - selectedElement.offsetY === selectedElement.y1
-      ) {
-        setAction('writing');
-        return;
-      }
+      )
+        return setAction('writing');
 
       if (action === 'deleting') {
         deleteElement(selectedElement.id);
@@ -584,7 +648,6 @@ const Board = props => {
       }
 
       const index = elements.findIndex(el => el.id === selectedElement.id);
-
       const { id, type, options } = selectedElement;
 
       if (
@@ -595,7 +658,6 @@ const Board = props => {
         updateElement(id, x1, y1, x2, y2, type, options);
       }
     }
-    writeDataToDatabase();
 
     if (action === 'writing') return;
     setAction('none');
@@ -642,22 +704,16 @@ const Board = props => {
   );
 
   const svgBoardProps = {
-    brushColor,
     action,
-    setAction,
     selectedElement,
-    setSelectedElement,
     handlePointerDown,
     handlePointerMove,
     handlePointerUp,
     elements,
     updateElement,
     viewBoxSizeRatio,
-    resizeCanvas,
     viewBox,
     setViewBox,
-    user,
-    currentBoard,
   };
 
   if (status !== 'loading' && drawData === null) {
