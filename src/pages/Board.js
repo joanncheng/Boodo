@@ -384,6 +384,7 @@ const Board = props => {
     if (spacePressing) return setAction('movingCanvas');
 
     if (e.pointerType === 'touch') eventsCache.push(e);
+    if (e.pointerType === 'touch' && !e.isPrimary) return;
 
     const x = e.clientX;
     const y = e.clientY;
@@ -527,7 +528,8 @@ const Board = props => {
       }
     }
 
-    //// Mouse interaction////
+    if (e.pointerType === 'touch' && !e.isPrimary) return;
+
     // Changing cursor style
     if (tool === 'selection' || tool === 'eraser') {
       const element = getElementAtPosition(SVGPoint.x, SVGPoint.y, elements);
