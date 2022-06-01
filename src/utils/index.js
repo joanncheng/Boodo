@@ -89,6 +89,7 @@ const getPositionWithinElement = (x, y, element) => {
       });
       return betweenAnyPoint ? 'inside' : null;
     case 'text':
+      if (!/(.|\s)*\S(.|\s)*/.test(element.options.text)) return null;
       return x >= x1 - 15 && x <= x2 && y >= y1 - 15 && y <= y2
         ? 'inside'
         : null;

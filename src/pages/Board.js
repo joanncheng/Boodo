@@ -287,7 +287,6 @@ const Board = props => {
         ];
         break;
       case 'text':
-        if (!options.text || options.text === ' ') return;
         elementsCopy[index] = createSVGElement(
           id,
           x1,
@@ -355,16 +354,22 @@ const Board = props => {
     setCenterPoint(newCenterPoint);
   };
 
-  const handleMouseDown = e => {
-    if (action === 'writing' || status === 'loading') return;
+  const handlePointerDown = e => {
+    if (status === 'loading' || !drawData) return;
+
+    if (action === 'writing') {
+      setAction('none');
+      dispatch(selectTool('selection'));
+      return;
+    }
 
     if (spacePressing) {
       setAction('movingCanvas');
       return;
     }
 
-    const x = e.type === 'touchstart' ? e.changedTouches[0].clientX : e.clientX;
-    const y = e.type === 'touchstart' ? e.changedTouches[0].clientY : e.clientY;
+    const x = e.clientX;
+    const y = e.clientY;
     const SVGPoint = convertToSVGCoords({ x, y }, svgRef.current);
 
     if (tool === 'eraser') {
@@ -450,11 +455,11 @@ const Board = props => {
     }
   };
 
-  const handleMouseMove = e => {
+  const handlePointerMove = e => {
     if (status === 'loading' || !drawData) return;
 
-    const x = e.type === 'touchmove' ? e.changedTouches[0].clientX : e.clientX;
-    const y = e.type === 'touchmove' ? e.changedTouches[0].clientY : e.clientY;
+    const x = e.clientX;
+    const y = e.clientY;
     const SVGPoint = convertToSVGCoords({ x, y }, svgRef.current);
 
     // Changing cursor style
@@ -523,8 +528,6 @@ const Board = props => {
         return;
       updateElement(id, x1, y1, x2, y2, type, options);
     } else if (action === 'movingCanvas') {
-      if (e.type === 'touchmove') return; // FIXME
-
       e.target.style.cursor = 'grabbing';
 
       const newSVGPoint = convertToSVGCoords(
@@ -550,18 +553,17 @@ const Board = props => {
     writeDataToDatabase();
   };
 
-  const handleMouseUp = e => {
+  const handlePointerUp = e => {
     if (status === 'loading' || !drawData) return;
-    writeDataToDatabase();
 
     if (action === 'movingCanvas') {
       setAction('none');
       return;
     }
-    if (e.cancelable) e.preventDefault();
+    // if (e.cancelable) e.preventDefault();
 
-    const x = e.type === 'touchend' ? e.changedTouches[0].clientX : e.clientX;
-    const y = e.type === 'touchend' ? e.changedTouches[0].clientY : e.clientY;
+    const x = e.clientX;
+    const y = e.clientY;
     const SVGPoint = convertToSVGCoords({ x, y }, svgRef.current);
 
     if (selectedElement) {
@@ -593,6 +595,8 @@ const Board = props => {
         updateElement(id, x1, y1, x2, y2, type, options);
       }
     }
+    writeDataToDatabase();
+
     if (action === 'writing') return;
     setAction('none');
     if (tool !== 'pencil') dispatch(selectTool('selection'));
@@ -643,9 +647,9 @@ const Board = props => {
     setAction,
     selectedElement,
     setSelectedElement,
-    handleMouseDown,
-    handleMouseMove,
-    handleMouseUp,
+    handlePointerDown,
+    handlePointerMove,
+    handlePointerUp,
     elements,
     updateElement,
     viewBoxSizeRatio,
@@ -715,7 +719,12 @@ const Board = props => {
       {clearCanvasModalOpen ? (
         <Modal
           title="Clear Canvas"
-          content="This will clear the whole canvas. Are you sure?"
+          content={
+            <>
+              This will clear the whole canvas.
+              <br /> Are you sure?
+            </>
+          }
           modalActions={clearCanvasModalActions}
           onDismiss={() => setClearCanvasModalOpen(false)}
         />

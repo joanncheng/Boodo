@@ -11,10 +11,9 @@ const SvgBoard = forwardRef((props, svgRef) => {
     action,
     setAction,
     selectedElement,
-    setSelectedElement,
-    handleMouseDown,
-    handleMouseMove,
-    handleMouseUp,
+    handlePointerDown,
+    handlePointerMove,
+    handlePointerUp,
     elements,
     updateElement,
     viewBoxSizeRatio,
@@ -68,16 +67,16 @@ const SvgBoard = forwardRef((props, svgRef) => {
   const handleTextareaBlur = e => {
     if (!e.target.value && textareaRef.current) {
       textareaRef.current.focus();
-      return;
     }
+  };
 
+  const handleTextareaChange = e => {
+    setCurrentTextareaValue(e.target.value);
     const { id, x1, y1, type, options } = selectedElement;
-    setAction('none');
     updateElement(id, x1, y1, null, null, type, {
       ...options,
       text: e.target.value,
     });
-    dispatch(selectTool('selection'));
   };
 
   const renderTextarea = () => {
@@ -101,7 +100,7 @@ const SvgBoard = forwardRef((props, svgRef) => {
           fontSize: size,
           opacity: selectedElement.options.opacity,
         }}
-        onChange={e => setCurrentTextareaValue(e.target.value)}
+        onChange={handleTextareaChange}
       />
     );
   };
@@ -110,6 +109,7 @@ const SvgBoard = forwardRef((props, svgRef) => {
     <>
       {action === 'writing' && renderTextarea()}
       <S.SVGCanvas
+        version="1.1"
         xmlns="http://www.w3.org/2000/svg"
         width={window.innerWidth}
         height={window.innerHeight}
@@ -118,12 +118,9 @@ const SvgBoard = forwardRef((props, svgRef) => {
         } ${viewBox.height / viewBoxSizeRatio}`}
         preserveAspectRatio="xMidYMid meet"
         ref={svgRef}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onTouchStart={handleMouseDown}
-        onTouchMove={handleMouseMove}
-        onTouchEnd={handleMouseUp}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
         onWheel={e => {
           if (e.ctrlKey) {
             if (e.deltaY > 0) {
