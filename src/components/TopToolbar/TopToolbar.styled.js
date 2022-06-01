@@ -147,12 +147,6 @@ export const ToolTypeFile = styled.input`
   }
 `;
 
-export const ToolTypeColor = styled.input`
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-`;
-
 export const OpacitySelector = styled.div`
   display: grid;
   place-items: center;
@@ -202,6 +196,7 @@ export const BoardNameInput = styled.input`
 export const LogoLink = styled(LinkR)`
   width: 2rem;
   height: 2rem;
+  outline: none;
 
   &:hover {
     transform: scale(1.1);

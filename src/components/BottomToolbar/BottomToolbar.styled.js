@@ -49,6 +49,7 @@ export const ToolTypeButton = styled.button`
   border-radius: 0.5rem;
   cursor: pointer;
   outline: none;
+  user-select: none;
   background-color: ${({ active }) =>
     active ? ({ theme }) => theme.colors.primary : '#e9ecef'};
   background-color: ${({ collab }) => (collab ? 'rgba(43, 138, 62, 0.1)' : '')};
@@ -68,10 +69,6 @@ export const ToolTypeButton = styled.button`
   &:focus-visible {
     box-shadow: 0 0 0 2px ${({ theme }) => theme.colors.secondary};
   }
-
-  span {
-    user-select: 'none';
-  }
 `;
 
 export const Number = styled.div`
@@ -87,6 +84,7 @@ export const Number = styled.div`
 
 export const ToolTipWrapper = styled.div`
   display: flex;
+  width: 55px;
 
   button {
     width: fit-content;

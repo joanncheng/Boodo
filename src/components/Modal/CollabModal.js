@@ -10,7 +10,8 @@ const CollabModalActions = ({ onDismiss }) => {
   const inputRef = useRef();
   const dispatch = useDispatch();
 
-  const copyToClipboard = e => {
+  const copyToClipboard = () => {
+    inputRef.current.focus();
     inputRef.current.select();
     navigator.clipboard.writeText(inputRef.current.value);
   };

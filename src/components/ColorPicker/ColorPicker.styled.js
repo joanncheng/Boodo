@@ -34,6 +34,7 @@ export const DropdownBtn = styled.button`
   border-radius: 0.5rem;
   cursor: pointer;
   background-color: transparent;
+  outline: none;
 `;
 
 export const DropdownMenu = styled.div`
