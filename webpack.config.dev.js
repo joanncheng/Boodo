@@ -44,11 +44,6 @@ module.exports = {
       {
         test: /\.woff2?(\?v=\d+\.\d+\.\d+)?$/,
         loader: 'url-loader',
-        options: {
-          limit: 50000,
-          mimetype: 'application/font-woff',
-          name: 'dist/fonts/[name].[ext]',
-        },
       },
       {
         test: /\.ttf$/,
