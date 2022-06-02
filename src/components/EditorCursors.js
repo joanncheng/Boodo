@@ -30,6 +30,7 @@ const EditorCursors = ({ user, currentBoard, svgRef }) => {
     if (!user) return;
     const ownCursorRef = ref(db, `userCursors/${user.uid}`);
     const trackCursor = e => {
+      if (e.pointerType === 'touch' && !e.isPrimary) return;
       const SVGPoint = convertToSVGCoords(
         { x: e.clientX, y: e.clientY },
         svgRef.current
@@ -43,8 +44,8 @@ const EditorCursors = ({ user, currentBoard, svgRef }) => {
       });
     };
     onDisconnect(ownCursorRef).remove();
-    addEventListener('mousemove', trackCursor);
-    return () => removeEventListener('mousemove', trackCursor);
+    addEventListener('pointermove', trackCursor);
+    return () => removeEventListener('pointermove', trackCursor);
   });
 
   useEffect(() => {

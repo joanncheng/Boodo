@@ -72,7 +72,7 @@ const MyBoards = () => {
 
   return (
     <>
-      {!user ? (
+      {boards === [] ? (
         <Loader />
       ) : (
         <>

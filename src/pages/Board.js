@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom';
 import { ref as storageRef, uploadBytes, getBlob } from 'firebase/storage';
 import { set, ref, onValue, onDisconnect, update } from 'firebase/database';
 import { onAuthStateChanged } from 'firebase/auth';
-import { useUser, useDatabaseListData } from 'reactfire';
+import { useUser } from 'reactfire';
 import { v4 as uuid } from 'uuid';
 import { storage, db, auth } from '../firebase';
 import useDrawingHistory from '../hooks/useDrawingHistory';
@@ -56,7 +56,6 @@ const Board = props => {
   const [action, setAction] = useState('none');
   const [selectedElement, setSelectedElement] = useState(null);
   const [drawData, setDrawData] = useState(null);
-  const [boardName, setBoardName] = useState('');
 
   // Control modal
   const [clearCanvasModalOpen, setClearCanvasModalOpen] = useState(false);
@@ -83,25 +82,37 @@ const Board = props => {
   const svgRef = useRef(null);
 
   // Listen data changes from db
-  const { status } = useDatabaseListData(ref(db, `boards/${currentBoard}`));
+  // useEffect(() => {
+  //   try {
+  //     onValue(ref(db, `boards/${currentBoard}`), snapshot => {
+  //       if (snapshot.exists()) {
+  //         const data = snapshot.val();
+  //         if (data.uploader !== user.uid) setDrawData(data);
+  //       } else {
+  //         setDrawData(undefined);
+  //       }
+  //     });
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // }, []);
 
-  useEffect(() => {
-    try {
-      onValue(ref(db, `boards/${currentBoard}`), snapshot => {
-        const data = snapshot.val();
-        setDrawData(data);
-      });
-    } catch (err) {
-      console.error(err);
-    }
-  }, []);
-
-  // If user logged in,  track the connection,
-  // else redirect to signin page
+  // Check user logged in or not
   useEffect(() => {
     onAuthStateChanged(auth, user => {
       if (user) {
         try {
+          // Listen data changes from db
+          onValue(ref(db, `boards/${currentBoard}`), snapshot => {
+            if (snapshot.exists()) {
+              const data = snapshot.val();
+              setDrawData(data);
+            } else {
+              setDrawData(undefined);
+            }
+          });
+
+          // track user connection
           const ownStatusRef = ref(db, `status/${user.uid}`);
           set(ownStatusRef, {
             email: user.email,
@@ -112,6 +123,7 @@ const Board = props => {
           console.error(err);
         }
       } else {
+        // Redirect to signin page
         history.push(`/signin/${currentBoard}`);
       }
     });
@@ -119,7 +131,6 @@ const Board = props => {
 
   useEffect(() => {
     if (!drawData) return;
-    drawData.boardName && setBoardName(drawData.boardName);
     if (!drawData.elements) {
       setElements([], 'overwrite');
     } else if (drawData.uploader === user.uid) {
@@ -148,7 +159,7 @@ const Board = props => {
 
   // Keydown & wheel event
   useEffect(() => {
-    if (status === 'loading' || !drawData) return;
+    if (!drawData) return;
 
     const handleKeydown = e => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'z') {
@@ -183,7 +194,7 @@ const Board = props => {
       if (e.key === ' ' || e.code === 'Space') {
         setSpacePressing(false);
       }
-      writeDataToDatabase();
+      writeDataToDatabase(elements);
     };
 
     const handleWheel = e => {
@@ -262,11 +273,11 @@ const Board = props => {
     });
   }, [viewBoxSizeRatio]);
 
-  const writeDataToDatabase = () => {
+  const writeDataToDatabase = elements => {
     const data = {
       uploader: user.uid,
       elements,
-      boardName,
+      boardName: drawData.boardName,
       owner: drawData.owner,
     };
     const updates = {};
@@ -275,6 +286,15 @@ const Board = props => {
       updates[`users/${user.uid}/boards/${currentBoard}`] = data;
     }
 
+    update(ref(db), updates);
+  };
+
+  const renameBoard = name => {
+    const updates = {};
+    updates[`boards/${currentBoard}/boardName`] = name;
+    if (drawData.owner === user.uid) {
+      updates[`users/${user.uid}/boards/${currentBoard}/boardName`] = name;
+    }
     update(ref(db), updates);
   };
 
@@ -324,6 +344,7 @@ const Board = props => {
   const deleteElement = id => {
     const elementsCopy = elements.filter(element => element.id !== id);
     setElements(elementsCopy);
+    writeDataToDatabase(elementsCopy);
   };
 
   const resetElements = () => {
@@ -336,6 +357,7 @@ const Board = props => {
       height: window.innerHeight,
     });
     setClearCanvasModalOpen(false);
+    writeDataToDatabase(null);
   };
 
   // Upload Image to firebase storage
@@ -373,7 +395,7 @@ const Board = props => {
   };
 
   const handlePointerDown = e => {
-    if (status === 'loading' || !drawData) return;
+    if (!drawData) return;
 
     if (action === 'writing') {
       setAction('none');
@@ -475,8 +497,8 @@ const Board = props => {
   };
 
   const handlePointerMove = e => {
-    if (status === 'loading' || !drawData) return;
-    writeDataToDatabase();
+    if (!drawData) return;
+    writeDataToDatabase(elements);
 
     const x = e.clientX;
     const y = e.clientY;
@@ -613,8 +635,8 @@ const Board = props => {
   };
 
   const handlePointerUp = e => {
-    if (status === 'loading' || !drawData) return;
-    writeDataToDatabase();
+    if (!drawData) return;
+    writeDataToDatabase(elements);
 
     // Remove the pointer from the eventsCache
     if (e.pointerType === 'touch') {
@@ -629,6 +651,7 @@ const Board = props => {
     }
 
     if (action === 'movingCanvas') return setAction('none');
+    if (e.pointerType === 'touch' && !e.isPrimary) return;
 
     const x = e.clientX;
     const y = e.clientY;
@@ -718,7 +741,7 @@ const Board = props => {
     setViewBox,
   };
 
-  if (status !== 'loading' && drawData === null) {
+  if (drawData === undefined) {
     return (
       <>
         <BoardNotFound />
@@ -737,8 +760,8 @@ const Board = props => {
         setAction={setAction}
         setImageUpload={setImageUpload}
         user={user}
-        boardName={boardName}
-        setBoardName={setBoardName}
+        boardName={drawData ? drawData.boardName : ''}
+        renameBoard={renameBoard}
       />
       {!drawData && <Loader fontColor="#343a40" />}
       <SvgBoard ref={svgRef} {...svgBoardProps}></SvgBoard>

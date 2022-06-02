@@ -27,7 +27,7 @@ const TopToolbar = ({
   setAction,
   setImageUpload,
   boardName,
-  setBoardName,
+  renameBoard,
 }) => {
   const dispatch = useDispatch();
   const [brushSelectorOpen, setBrushSelectorOpen] = useState(false);
@@ -196,11 +196,11 @@ const TopToolbar = ({
               <S.BoardNameInput
                 type="text"
                 value={boardName}
-                onChange={e => setBoardName(e.target.value)}
+                onChange={e => renameBoard(e.target.value)}
                 onFocus={() => setAction('renaming')}
                 onBlur={e => {
                   !/(.|\s)*\S(.|\s)*/.test(e.target.value) &&
-                    setBoardName('Untitled Board');
+                    renameBoard('Untitled Board');
                   setAction('none');
                 }}
               />
