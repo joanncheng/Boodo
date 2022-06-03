@@ -361,18 +361,20 @@ const Board = props => {
   };
 
   // Upload Image to firebase storage
-  const uploadImage = (file, elementId) => {
+  const uploadImage = async (file, elementId) => {
     const imageRef = storageRef(storage, `images/${elementId}_${file.name}`);
-    uploadBytes(imageRef, file).then(snapshot => {
-      getBlob(snapshot.ref).then(blob => {
-        const reader = new FileReader();
-        reader.readAsDataURL(blob);
-        reader.onloadend = () => {
-          const base64data = reader.result;
-          setUploadedImageData({ url: base64data, elementId });
-        };
-      });
-    });
+    try {
+      const snapshot = await uploadBytes(imageRef, file);
+      const blob = await getBlob(snapshot.ref);
+      const reader = new FileReader();
+      reader.readAsDataURL(blob);
+      reader.onloadend = () => {
+        const base64data = reader.result;
+        setUploadedImageData({ url: base64data, elementId });
+      };
+    } catch (err) {
+      console.err(err);
+    }
   };
 
   // Resize Canvas

@@ -213,9 +213,9 @@ export const drawElement = element => {
     case 'pencil':
       let size = element.options.brushSize;
       if (size <= 1) {
-        size *= 10;
+        size *= 8;
       } else if (size <= 3) {
-        size *= 7;
+        size *= 6;
       } else {
         size *= 5;
       }

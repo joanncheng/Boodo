@@ -4,7 +4,7 @@ import * as S from './FontSizeSelector.styled';
 import OutsideClicker from '../OutsideClicker';
 import { selectFontSize } from '../../redux/toolOptions';
 
-const options = [12, 14, 18, 24, 30, 36, 48, 60, 72, 96, 120];
+const options = [14, 18, 24, 30, 36, 48, 60, 72, 96, 120];
 
 const FontSizeSelector = () => {
   const dispatch = useDispatch();
@@ -34,15 +34,12 @@ const FontSizeSelector = () => {
       <S.Dropdown>
         <S.DropdownBtn
           title="Select Font Size"
-          onClick={e => {
-            e.preventDefault();
-            setFontSizeSelectorOpen(prev => !prev);
-          }}
+          onClick={() => setFontSizeSelectorOpen(prev => !prev)}
         >
           {fontSize} pt
         </S.DropdownBtn>
         {fontSizeSelectorOpen && (
-          <S.DropdownMenu role="menu">{renderedOptions}</S.DropdownMenu>
+          <S.DropdownMenu>{renderedOptions}</S.DropdownMenu>
         )}
       </S.Dropdown>
     </OutsideClicker>

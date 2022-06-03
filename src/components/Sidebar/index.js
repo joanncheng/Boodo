@@ -3,7 +3,7 @@ import { Link as LinkR } from 'react-router-dom';
 import * as S from './Sidebar.styled';
 import { Button as GSButton } from '../GlobalStyles';
 
-const Sidebar = ({ isOpen, toggle }) => {
+const Sidebar = ({ isOpen, toggle, user }) => {
   return (
     <S.SidebarContainer isOpen={isOpen} onClick={toggle}>
       <S.Icon onClick={toggle}>
@@ -22,11 +22,19 @@ const Sidebar = ({ isOpen, toggle }) => {
           </S.SidebarLink>
         </S.SidebarMenu>
         <S.SideBtnWrap>
-          <LinkR to="/signin">
-            <GSButton big fontBig>
-              Sign In
-            </GSButton>
-          </LinkR>
+          {user ? (
+            <LinkR to="/myBoards">
+              <GSButton big fontBig>
+                Go to boards
+              </GSButton>
+            </LinkR>
+          ) : (
+            <LinkR to="/signin">
+              <GSButton big fontBig>
+                Sign In
+              </GSButton>
+            </LinkR>
+          )}
         </S.SideBtnWrap>
       </S.SidebarWrapper>
     </S.SidebarContainer>

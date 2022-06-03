@@ -12,15 +12,18 @@ export const DropdownMenu = styled.div`
   left: 50%;
   transform: translateX(-50%);
   padding: 0.5rem;
-  min-width: 2.8rem;
+  min-width: 2.5rem;
   border-radius: 0.5rem;
   box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.12);
   background-color: #fff;
   z-index: 10;
-  height: 225px;
-  overflow-y: scroll;
+  overflow-y: auto;
   overflow-x: hidden;
   text-align: center;
+
+  @media screen and (max-width: 768px) {
+    height: 225px;
+  }
 `;
 
 export const DropdownBtn = styled.button`

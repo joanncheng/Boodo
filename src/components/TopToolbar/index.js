@@ -36,6 +36,10 @@ const TopToolbar = ({
   const handleImageUpload = e => {
     const file = e.target.files[0];
     if (!file) return;
+    if (file.size > 2097152) {
+      alert('File is too big. Maximum allowed size is 2MB.');
+      return;
+    }
 
     const img = new Image();
     img.onload = function () {
