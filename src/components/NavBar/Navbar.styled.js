@@ -31,7 +31,7 @@ export const NavbarContainer = styled(Container)`
   padding: 0 24px;
 `;
 
-export const NavLogo = styled(LinkR)`
+export const NavLogo = styled(LinkS)`
   justify-self: flex-start;
   width: 200px;
   cursor: pointer;
@@ -70,11 +70,6 @@ export const NavMenu = styled.ul`
 
 export const NavItem = styled.li`
   height: 80px;
-  border-bottom: 4px solid transparent;
-
-  &:hover {
-    border-bottom: 4px solid ${({ theme }) => theme.colors.primary};
-  }
 `;
 
 export const NavLinks = styled(LinkS)`
@@ -85,6 +80,11 @@ export const NavLinks = styled(LinkS)`
   padding: 0 1rem;
   height: 100%;
   cursor: pointer;
+  border-bottom: 5px solid transparent;
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.primary};
+  }
 
   &.active {
     border-bottom: 5px solid ${({ theme }) => theme.colors.primary};

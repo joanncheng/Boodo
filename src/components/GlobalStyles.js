@@ -13,7 +13,7 @@ export const theme = {
     primaryDarkest: '#3b34ab',
     secondary: '#a5d8ff',
     bgDark: '#010606',
-    bgGrey: '#ced4da',
+    bgGrey: '#f1f3f5',
     textRed: '#ff6b6b',
     red: '#fa5252',
     redDark: '#e03131',

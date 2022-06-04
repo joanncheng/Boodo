@@ -11,31 +11,38 @@ const Sidebar = ({ isOpen, toggle, user }) => {
       </S.Icon>
       <S.SidebarWrapper>
         <S.SidebarMenu>
-          <S.SidebarLink to="about" onClick={toggle}>
+          <S.SidebarLink
+            to="about"
+            smooth={true}
+            duration={500}
+            onClick={toggle}
+          >
             About
           </S.SidebarLink>
-          <S.SidebarLink to="discover" onClick={toggle}>
-            Discover
+          <S.SidebarLink
+            to="features"
+            smooth={true}
+            duration={500}
+            onClick={toggle}
+          >
+            Features
           </S.SidebarLink>
-          <S.SidebarLink to="services" onClick={toggle}>
-            Services
-          </S.SidebarLink>
+          <S.SideBtnWrap>
+            {user ? (
+              <LinkR to="/myBoards">
+                <GSButton big fontBig>
+                  Go to boards
+                </GSButton>
+              </LinkR>
+            ) : (
+              <LinkR to="/signin">
+                <GSButton big fontBig>
+                  Sign In
+                </GSButton>
+              </LinkR>
+            )}
+          </S.SideBtnWrap>
         </S.SidebarMenu>
-        <S.SideBtnWrap>
-          {user ? (
-            <LinkR to="/myBoards">
-              <GSButton big fontBig>
-                Go to boards
-              </GSButton>
-            </LinkR>
-          ) : (
-            <LinkR to="/signin">
-              <GSButton big fontBig>
-                Sign In
-              </GSButton>
-            </LinkR>
-          )}
-        </S.SideBtnWrap>
       </S.SidebarWrapper>
     </S.SidebarContainer>
   );

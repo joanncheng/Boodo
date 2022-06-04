@@ -3,7 +3,10 @@ import { useUser } from 'reactfire';
 import Sidebar from '../components/Sidebar';
 import NavBar from '../components/NavBar';
 import InfoSection from '../components/InfoSection';
-import { homeObjOne } from './Data';
+import { homeObj1st, homeObj2nd } from '../components/InfoSection/Data';
+import FeaturesSection from '../components/FeaturesSection';
+import Footer from '../components/Footer';
+import CtaSection from '../components/CtaSection';
 
 const Home = () => {
   const { data: user } = useUser();
@@ -17,7 +20,11 @@ const Home = () => {
     <>
       <Sidebar isOpen={isOpen} toggle={toggle} user={user} />
       <NavBar toggle={toggle} user={user} />
-      <InfoSection {...homeObjOne} />
+      <InfoSection {...homeObj1st} />
+      <InfoSection {...homeObj2nd} />
+      <FeaturesSection />
+      <CtaSection />
+      <Footer />
     </>
   );
 };

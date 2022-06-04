@@ -9,7 +9,7 @@ export const InfoSec = styled.div`
 
 export const InfoRow = styled.div`
   display: flex;
-  margin: 0 -15px -15px -15px;
+  justify-content: space-between;
   flex-wrap: wrap;
   align-items: center;
   flex-direction: ${({ imgStart }) => (imgStart ? 'row-reverse' : 'row')};
@@ -19,8 +19,8 @@ export const InfoColumn = styled.div`
   margin-bottom: 15px;
   padding: 0 15px;
   flex: 1;
-  max-width: 50%;
-  flex-basis: 50%;
+  max-width: 48%;
+  flex-basis: 48%;
 
   @media screen and (max-width: 768px) {
     display: flex;
@@ -33,17 +33,16 @@ export const InfoColumn = styled.div`
 export const TextWrapper = styled.div`
   max-width: 540px;
   padding-top: 0;
-  padding-bottom: 60px;
 
   @media screen and (max-width: 768px) {
-    padding-bottom: 65px;
+    padding-bottom: ${({ hasButton }) => (hasButton ? '65px' : '0')};
   }
 `;
 
 export const TopLine = styled.div`
   color: ${({ lightTopLine }) =>
     lightTopLine
-      ? ({ theme }) => theme.colors.textLight
+      ? ({ theme }) => theme.colors.primaryLightest
       : ({ theme }) => theme.colors.primary};
   font-size: 18px;
   line-height: 16px;
@@ -54,12 +53,14 @@ export const TopLine = styled.div`
 export const Heading = styled.h1`
   font-family: 'Gochi Hand', 'Virgil';
   margin-bottom: 24px;
-  font-size: 48px;
+  font-size: 60px;
   line-height: 1.1;
   color: ${({ lightText }) =>
-    lightText
-      ? ({ theme }) => theme.colors.textLightest
-      : ({ theme }) => theme.colors.textDarkest};
+    lightText ? '#fff' : ({ theme }) => theme.colors.textDarkest};
+
+  @media screen and (max-width: 768px) {
+    font-size: 48px;
+  }
 `;
 
 export const Subtitle = styled.p`
@@ -69,17 +70,18 @@ export const Subtitle = styled.p`
   line-height: 24px;
   color: ${({ lightTextDesc }) =>
     lightTextDesc
-      ? ({ theme }) => theme.colors.textLight
+      ? ({ theme }) => theme.colors.textLightest
       : ({ theme }) => theme.colors.textDarkest};
 `;
 
 export const ImgWrapper = styled.div`
-  max-width: 555px;
+  box-shadow: ${({ imgShadow }) =>
+    imgShadow ? '0 2px 8px 2px rgba(0, 0, 0, 0.1)' : ''};
+  border-radius: 5px;
   display: flex;
-  justify-content: ${({ start }) => (start ? 'flex-start' : 'flex-end')};
 `;
 
-export const HeroImg = styled.img`
+export const Img = styled.img`
   display: inline-block;
   padding-right: 0;
   max-width: 100%;

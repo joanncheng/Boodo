@@ -4,7 +4,7 @@ import Logo from '../../../public/images/icons/logo.svg';
 
 export const TopStack = styled.div`
   position: fixed;
-  top: 0;
+  top: 10px;
   left: 50%;
   transform: translateX(-50%);
   background-color: #fafafa;
@@ -13,8 +13,8 @@ export const TopStack = styled.div`
   grid-template-columns: auto 1fr;
   gap: 10px;
   align-items: center;
-  border-radius: 0 0 5px 5px;
-  padding: 0 0.5rem;
+  border-radius: 5px;
+  padding: 0.3rem 0.5rem;
   min-width: 775px;
 
   @media screen and (max-width: 768px) {

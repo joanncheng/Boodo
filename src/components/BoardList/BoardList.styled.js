@@ -5,7 +5,7 @@ import { Button } from '../GlobalStyles';
 export const BoardsSec = styled.div`
   color: #fff;
   padding: 40px 0;
-  background-color: #f1f3f5;
+  background-color: ${({ theme }) => theme.colors.bgGrey};
 `;
 
 export const HeaderContainer = styled.div`

@@ -37,8 +37,9 @@ export const SidebarWrapper = styled.div`
 
 export const SidebarMenu = styled.ul`
   display: grid;
+  gap: 2rem;
   grid-template-columns: 1fr;
-  grid-template-rows: repeat(4, 80px);
+  grid-template-rows: repeat(3, 80px);
   justify-content: center;
 
   @media screen and (max-width: 480px) {
@@ -64,6 +65,6 @@ export const SidebarLink = styled(LinkS)`
 `;
 
 export const SideBtnWrap = styled.div`
-  display: flex;
-  justify-content: center;
+  justify-self: center;
+  align-self: center;
 `;
