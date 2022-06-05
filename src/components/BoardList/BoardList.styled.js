@@ -13,7 +13,7 @@ export const HeaderContainer = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 2rem;
-  border-bottom: 2px solid ${({ theme }) => theme.colors.bgGrey};
+  border-bottom: 2px solid rgba(169, 179, 193, 0.3);
 
   @media screen and (max-width: 578px) {
     flex-direction: column;
