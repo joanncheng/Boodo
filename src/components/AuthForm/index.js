@@ -10,7 +10,7 @@ import { useForm } from 'react-hook-form';
 import { auth, googleAuthProvider, facebookAuthProvider } from '../../firebase';
 import * as S from './AuthForm.styled';
 
-const AuthForm = ({ boardId, signin, signup }) => {
+const AuthForm = ({ boardId, signin }) => {
   const [error, setError] = useState({ type: '', message: '' });
   const [loadingType, setLoadingType] = useState('none');
   const history = useHistory();
@@ -71,7 +71,15 @@ const AuthForm = ({ boardId, signin, signup }) => {
       setLoadingType('none');
     } catch (err) {
       setLoadingType('none');
-      setError({ type, message: err.code.split('/')[1] });
+      if (
+        err.code === 'auth/user-not-found' ||
+        err.code === 'auth/wrong-password'
+      ) {
+        setError({
+          type,
+          message: 'Sorry, wrong email or password.',
+        });
+      } else setError({ type, message: err.code.split('/')[1] });
     }
   };
 

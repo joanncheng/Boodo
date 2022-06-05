@@ -37,7 +37,11 @@ const BoardList = ({
           </S.CreateBtn>
         </S.HeaderContainer>
         <S.BoardCardsContainer>
-          {!user ? <Loader fontColor="#343a40" /> : renderedBoardCards()}
+          {!user || boards === undefined ? (
+            <Loader fontColor="#343a40" />
+          ) : (
+            renderedBoardCards()
+          )}
         </S.BoardCardsContainer>
       </GSContainer>
     </S.BoardsSec>

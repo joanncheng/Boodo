@@ -4,6 +4,7 @@ import { useUser } from 'reactfire';
 import { useHistory } from 'react-router-dom';
 import { signOut, onAuthStateChanged } from 'firebase/auth';
 import { auth, db } from '../firebase';
+import ScrollToTop from '../components/ScrollToTop';
 import BoardList from '../components/BoardList';
 import BoardsNav from '../components/BoardsNav';
 import Loader from '../components/Loader';
@@ -12,7 +13,7 @@ import Modal from '../components/Modal';
 const MyBoards = () => {
   const { data: user } = useUser();
   const history = useHistory();
-  const [boards, setBoards] = useState([]);
+  const [boards, setBoards] = useState(undefined);
   const [boardToBeDeleted, setBoardToBeDeleted] = useState(false);
 
   useEffect(() => {
@@ -76,6 +77,7 @@ const MyBoards = () => {
         <Loader />
       ) : (
         <>
+          <ScrollToTop />
           <BoardsNav user={user} handleSignOut={handleSignOut} />
           <BoardList
             user={user}

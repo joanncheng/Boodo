@@ -5,8 +5,8 @@ import NavBar from '../components/NavBar';
 import InfoSection from '../components/InfoSection';
 import { homeObj1st, homeObj2nd } from '../components/InfoSection/Data';
 import FeaturesSection from '../components/FeaturesSection';
-import Footer from '../components/Footer';
 import CtaSection from '../components/CtaSection';
+import Footer from '../components/Footer';
 
 const Home = () => {
   const { data: user } = useUser();
