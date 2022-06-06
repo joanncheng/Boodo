@@ -3,7 +3,7 @@ import { AiFillGithub } from 'react-icons/ai';
 
 export const FooterContainer = styled.footer`
   width: 100%;
-  background-color: #fff;
+  background-color: ${({ theme }) => theme.colors.bgGrey};
 `;
 
 export const FooterWrapper = styled.div`

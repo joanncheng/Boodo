@@ -13,12 +13,18 @@ const BoardList = ({
   const renderedBoardCards = () => {
     if (!boards) return null;
     return Object.keys(boards).map(boardId => {
+      const lastModifiedAt = new Date(
+        boards[boardId].modifiedAt
+      ).toLocaleString();
+
       return (
         <BoardCard
           key={boardId}
           boardId={boardId}
           boardName={boards[boardId].boardName}
           setBoardToBeDeleted={setBoardToBeDeleted}
+          lastModifiedAt={lastModifiedAt}
+          modifiedBy={boards[boardId].modifiedBy}
         />
       );
     });

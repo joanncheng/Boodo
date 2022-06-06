@@ -47,14 +47,13 @@ export const CreateBtn = styled(Button)`
 export const BoardCardsContainer = styled.div`
   display: grid;
   justify-content: start;
-  height: 100vh;
+  min-height: 100vh;
   gap: 2rem;
   grid-template-columns: repeat(auto-fit, minmax(150px, 201px));
   grid-template-rows: repeat(auto-fit, minmax(150px, 150px));
   margin: 2rem;
 
   @media screen and (max-width: 768px) {
-    height: 100vh;
     justify-content: center;
   }
 `;

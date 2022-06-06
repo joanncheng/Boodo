@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const CtaContainer = styled.div`
-  background-color: #fff;
+  background-color: ${({ theme }) => theme.colors.bgGrey};
   display: grid;
   place-items: center;
   padding: 0 30px;

@@ -2,7 +2,13 @@ import React from 'react';
 import * as S from './BoardCard.styled';
 import TrashCanIcon from '../../../public/images/icons/trashCan.svg';
 
-const BoardCard = ({ boardName, boardId, setBoardToBeDeleted }) => {
+const BoardCard = ({
+  boardName,
+  boardId,
+  setBoardToBeDeleted,
+  lastModifiedAt,
+  modifiedBy,
+}) => {
   return (
     <S.Card to={`/board/${boardId}`}>
       <S.DeleteBtn
@@ -14,10 +20,17 @@ const BoardCard = ({ boardName, boardId, setBoardToBeDeleted }) => {
       >
         <TrashCanIcon />
       </S.DeleteBtn>
+
       <S.CardImg>
         <S.LogoIcon />
       </S.CardImg>
       <S.BoardName title={boardName}>{boardName}</S.BoardName>
+      {lastModifiedAt !== 'Invalid Date' && modifiedBy ? (
+        <S.Info>
+          <p>Last modified: {lastModifiedAt}</p>
+          <p>By: {modifiedBy}</p>
+        </S.Info>
+      ) : null}
     </S.Card>
   );
 };

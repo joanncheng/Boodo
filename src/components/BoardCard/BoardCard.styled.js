@@ -5,8 +5,7 @@ import Logo from '../../../public/images/icons/logo.svg';
 export const Card = styled(Link)`
   position: relative;
   display: grid;
-  grid-template-rows: 1fr auto;
-  align-items: center;
+  place-items: center;
   background-color: #fff;
   height: 150px;
   border-radius: 0.5rem;
@@ -46,8 +45,16 @@ export const DeleteBtn = styled.button`
   }
 `;
 
+export const Info = styled.div`
+  position: absolute;
+  bottom: 0;
+  text-align: center;
+  color: ${({ theme }) => theme.colors.text};
+  font-size: 10px;
+  margin-bottom: 0.5rem;
+`;
+
 export const CardImg = styled.div`
-  justify-self: center;
   height: 80px;
   width: 80px;
 `;
@@ -59,7 +66,10 @@ export const LogoIcon = styled(Logo)`
 `;
 
 export const BoardName = styled.div`
-  margin-bottom: 10px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   max-width: 90%;
   white-space: nowrap;
   text-overflow: ellipsis;
