@@ -1,9 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import { onValue, ref, push, update } from 'firebase/database';
+import {
+  onValue,
+  ref,
+  push,
+  update,
+  equalTo,
+  query,
+  orderByChild,
+} from 'firebase/database';
 import { useUser } from 'reactfire';
 import { useHistory } from 'react-router-dom';
 import { signOut, onAuthStateChanged } from 'firebase/auth';
 import { auth, db } from '../firebase';
+import { useDispatch } from 'react-redux';
+import { selectTool } from '../redux/activeTool';
+import {
+  selectBrushColor,
+  selectBrushSize,
+  selectFontSize,
+} from '../redux/toolOptions';
 import ScrollToTop from '../components/ScrollToTop';
 import BoardList from '../components/BoardList';
 import BoardsNav from '../components/BoardsNav';
@@ -16,14 +31,26 @@ const MyBoards = () => {
   const [boards, setBoards] = useState(undefined);
   const [boardToBeDeleted, setBoardToBeDeleted] = useState(false);
 
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(selectTool('selection'));
+    dispatch(selectBrushColor('#4740A5'));
+    dispatch(selectBrushSize(1));
+    dispatch(selectFontSize(24));
+  }, []);
+
   useEffect(() => {
     onAuthStateChanged(auth, user => {
       if (user) {
         try {
-          onValue(ref(db, `users/${user.uid}/boards`), snapshot => {
-            const data = snapshot.val();
-            setBoards(data);
-          });
+          onValue(
+            query(ref(db, `boards`), orderByChild('owner'), equalTo(user.uid)),
+            snapshot => {
+              const data = snapshot.val();
+              setBoards(data);
+            }
+          );
         } catch (err) {
           console.error(err);
         }
@@ -49,14 +76,12 @@ const MyBoards = () => {
       boardName: 'Untitled board',
     };
     const updates = {};
-    updates[`users/${user.uid}/boards/${newBoardKey}`] = newBoard;
     updates[`boards/${newBoardKey}`] = newBoard;
     update(ref(db), updates);
   };
 
   const deleteBoard = boardId => {
     const removes = {};
-    removes[`users/${user.uid}/boards/${boardId}`] = null;
     removes[`boards/${boardId}`] = null;
     update(ref(db), removes);
     setBoardToBeDeleted(null);

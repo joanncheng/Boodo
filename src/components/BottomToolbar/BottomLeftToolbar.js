@@ -10,8 +10,7 @@ import RedoIcon from '../../../public/images/icons/redo.svg';
 import EraserIcon from '../../../public/images/icons/eraser.svg';
 
 const BottomToolbar = ({
-  undo,
-  redo,
+  handleRedoUndo,
   tool,
   viewBoxSizeRatio,
   setViewBoxSizeRatio,
@@ -60,12 +59,12 @@ const BottomToolbar = ({
             </S.ToolIcon>
           </S.ToolTypeButton>
         </S.ZoomTool>
-        <S.ToolTypeButton title="Undo" onClick={undo}>
+        <S.ToolTypeButton title="Undo" onClick={() => handleRedoUndo('undo')}>
           <S.ToolIcon>
             <UndoIcon />
           </S.ToolIcon>
         </S.ToolTypeButton>
-        <S.ToolTypeButton title="Redo" onClick={redo}>
+        <S.ToolTypeButton title="Redo" onClick={() => handleRedoUndo('redo')}>
           <S.ToolIcon>
             <RedoIcon />
           </S.ToolIcon>

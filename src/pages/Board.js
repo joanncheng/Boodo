@@ -2,7 +2,14 @@ import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { ref as storageRef, uploadBytes, getBlob } from 'firebase/storage';
-import { set, ref, onValue, onDisconnect, update } from 'firebase/database';
+import {
+  set,
+  ref,
+  onValue,
+  onDisconnect,
+  update,
+  serverTimestamp,
+} from 'firebase/database';
 import { onAuthStateChanged } from 'firebase/auth';
 import { useUser } from 'reactfire';
 import { v4 as uuid } from 'uuid';
@@ -16,6 +23,7 @@ import EditorCursors from '../components/EditorCursors';
 import Modal from '../components/Modal';
 import CollabModal from '../components/Modal/CollabModal';
 import Loader from '../components/Loader';
+import BoardNotFound from '../components/BoardNotFound';
 import { selectTool } from '../redux/activeTool';
 import { selectOpacity } from '../redux/toolOptions';
 import {
@@ -35,7 +43,6 @@ import {
   ERASER_CURSOR,
   ADD_IMAGE_CURSOR,
 } from '../config';
-import BoardNotFound from '../components/BoardNotFound';
 
 // Global variables to cache touch events and track diff between two fingers
 let eventsCache = [];
@@ -81,22 +88,6 @@ const Board = props => {
   const [spacePressing, setSpacePressing] = useState(false);
   const svgRef = useRef(null);
 
-  // Listen data changes from db
-  // useEffect(() => {
-  //   try {
-  //     onValue(ref(db, `boards/${currentBoard}`), snapshot => {
-  //       if (snapshot.exists()) {
-  //         const data = snapshot.val();
-  //         if (data.uploader !== user.uid) setDrawData(data);
-  //       } else {
-  //         setDrawData(undefined);
-  //       }
-  //     });
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // }, []);
-
   // Check user logged in or not
   useEffect(() => {
     onAuthStateChanged(auth, user => {
@@ -106,6 +97,12 @@ const Board = props => {
           onValue(ref(db, `boards/${currentBoard}`), snapshot => {
             if (snapshot.exists()) {
               const data = snapshot.val();
+              if (data.elements) {
+                const elements = Object.keys(data.elements).map(
+                  id => data.elements[`${id}`]
+                );
+                data.elements = elements;
+              }
               setDrawData(data);
             } else {
               setDrawData(undefined);
@@ -163,11 +160,7 @@ const Board = props => {
 
     const handleKeydown = e => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'z') {
-        if (e.shiftKey) {
-          redo();
-        } else {
-          undo();
-        }
+        e.shiftKey ? handleRedoUndo('redo') : handleRedoUndo('undo');
       }
 
       if (e.key === 'Delete' || (e.key === 'Backspace' && action === 'none')) {
@@ -194,7 +187,6 @@ const Board = props => {
       if (e.key === ' ' || e.code === 'Space') {
         setSpacePressing(false);
       }
-      writeDataToDatabase(elements);
     };
 
     const handleWheel = e => {
@@ -232,6 +224,7 @@ const Board = props => {
           options: { ...elementsCopy[index].options, opacity },
         };
         setElements(elementsCopy, 'overwrite');
+        writeDataToDatabase(elementsCopy[index]);
       } else {
         const element = elements.find(el => el.id === selectedElement.id);
         const { id, x1, y1, x2, y2, type, options } = element;
@@ -273,29 +266,46 @@ const Board = props => {
     });
   }, [viewBoxSizeRatio]);
 
-  const writeDataToDatabase = elements => {
-    const data = {
-      uploader: user.uid,
-      elements,
-      boardName: drawData.boardName,
-      owner: drawData.owner,
-    };
+  const writeDataToDatabase = (data, mode = 'updateOne') => {
     const updates = {};
-    updates[`boards/${currentBoard}`] = data;
-    if (drawData.owner === user.uid) {
-      updates[`users/${user.uid}/boards/${currentBoard}`] = data;
-    }
 
+    updates[`boards/${currentBoard}/uploader`] = user.uid;
+    updates[`boards/${currentBoard}/modifiedAt`] = serverTimestamp();
+    updates[`boards/${currentBoard}/modifiedBy`] = user.email.split('@')[0];
+
+    const id = mode === 'deleteOne' ? data : data.id;
+
+    switch (mode) {
+      case 'updateOne':
+        updates[`boards/${currentBoard}/elements/${id}`] = data;
+        break;
+      case 'updateAll':
+        updates[`boards/${currentBoard}/elements`] = data;
+        break;
+      case 'deleteOne':
+        updates[`boards/${currentBoard}/elements/${id}`] = null;
+        break;
+      case 'deleteAll':
+        updates[`boards/${currentBoard}/elements`] = null;
+        break;
+    }
     update(ref(db), updates);
   };
 
   const renameBoard = name => {
     const updates = {};
     updates[`boards/${currentBoard}/boardName`] = name;
-    if (drawData.owner === user.uid) {
-      updates[`users/${user.uid}/boards/${currentBoard}/boardName`] = name;
-    }
     update(ref(db), updates);
+  };
+
+  const handleRedoUndo = action => {
+    setSelectedElement(null);
+    const elements = action === 'redo' ? redo() : undo();
+    if (!elements) return;
+
+    const updatedData = {};
+    elements.forEach(element => (updatedData[element.id] = element));
+    writeDataToDatabase(updatedData, 'updateAll');
   };
 
   const updateElement = (id, x1, y1, x2, y2, type, options) => {
@@ -339,16 +349,18 @@ const Board = props => {
         throw new Error(`Type not recognized: ${type}`);
     }
     setElements(elementsCopy, 'overwrite');
+    writeDataToDatabase(elementsCopy[index]);
   };
 
   const deleteElement = id => {
     const elementsCopy = elements.filter(element => element.id !== id);
     setElements(elementsCopy);
-    writeDataToDatabase(elementsCopy);
+    writeDataToDatabase(id, 'deleteOne');
   };
 
   const resetElements = () => {
     setElements([]);
+    setSelectedElement(null);
     setViewBoxSizeRatio(1);
     setViewBox({
       x: 0,
@@ -357,7 +369,7 @@ const Board = props => {
       height: window.innerHeight,
     });
     setClearCanvasModalOpen(false);
-    writeDataToDatabase(null);
+    writeDataToDatabase('', 'deleteAll');
   };
 
   // Upload Image to firebase storage
@@ -500,7 +512,6 @@ const Board = props => {
 
   const handlePointerMove = e => {
     if (!drawData) return;
-    writeDataToDatabase(elements);
 
     const x = e.clientX;
     const y = e.clientY;
@@ -587,6 +598,7 @@ const Board = props => {
           points: newPoints,
         };
         setElements(elementsCopy, 'overwrite');
+        writeDataToDatabase(elementsCopy[index]);
       } else {
         const { id, x1, y1, x2, y2, type, offsetX, offsetY, options } =
           selectedElement;
@@ -638,7 +650,6 @@ const Board = props => {
 
   const handlePointerUp = e => {
     if (!drawData) return;
-    writeDataToDatabase(elements);
 
     // Remove the pointer from the eventsCache
     if (e.pointerType === 'touch') {
@@ -684,6 +695,9 @@ const Board = props => {
         const { x1, y1, x2, y2 } = adjustElementCoordinates(elements[index]);
         updateElement(id, x1, y1, x2, y2, type, options);
       }
+
+      if (action === 'drawing' || tool === 'image')
+        writeDataToDatabase(elements[index]);
     }
 
     if (action === 'writing') return;
@@ -775,8 +789,7 @@ const Board = props => {
         />
       )}
       <BottomLeftToolbar
-        undo={undo}
-        redo={redo}
+        handleRedoUndo={handleRedoUndo}
         tool={tool}
         resizeCanvas={resizeCanvas}
         viewBoxSizeRatio={viewBoxSizeRatio}

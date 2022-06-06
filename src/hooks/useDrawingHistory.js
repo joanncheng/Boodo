@@ -19,9 +19,18 @@ const useDrawingHistory = initialState => {
       setIndex(prevState => prevState + 1);
     }
   };
-  const undo = () => index > 0 && setIndex(prevState => prevState - 1);
-  const redo = () =>
-    index < history.length - 1 && setIndex(prevState => prevState + 1);
+  const undo = () => {
+    if (index > 0) {
+      setIndex(prevState => prevState - 1);
+      return history[index - 1];
+    }
+  };
+  const redo = () => {
+    if (index < history.length - 1) {
+      setIndex(prevState => prevState + 1);
+      return history[index + 1];
+    }
+  };
 
   return [history[index], setState, undo, redo];
 };
