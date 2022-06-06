@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import {
   onValue,
   ref,
@@ -8,11 +8,11 @@ import {
   query,
   orderByChild,
 } from 'firebase/database';
-import { useUser } from 'reactfire';
 import { useHistory } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { signOut, onAuthStateChanged } from 'firebase/auth';
 import { auth, db } from '../firebase';
-import { useDispatch } from 'react-redux';
+import AuthContext from '../contexts/AuthContext';
 import { selectTool } from '../redux/activeTool';
 import {
   selectBrushColor,
@@ -26,7 +26,7 @@ import Loader from '../components/Loader';
 import Modal from '../components/Modal';
 
 const MyBoards = () => {
-  const { data: user } = useUser();
+  const user = useContext(AuthContext);
   const history = useHistory();
   const [boards, setBoards] = useState(undefined);
   const [boardToBeDeleted, setBoardToBeDeleted] = useState(false);
@@ -41,23 +41,21 @@ const MyBoards = () => {
   }, []);
 
   useEffect(() => {
-    onAuthStateChanged(auth, user => {
-      if (user) {
-        try {
-          onValue(
-            query(ref(db, `boards`), orderByChild('owner'), equalTo(user.uid)),
-            snapshot => {
-              const data = snapshot.val();
-              setBoards(data);
-            }
-          );
-        } catch (err) {
-          console.error(err);
-        }
-      } else {
-        history.push(`/signin`);
+    if (user) {
+      try {
+        onValue(
+          query(ref(db, `boards`), orderByChild('owner'), equalTo(user.uid)),
+          snapshot => {
+            const data = snapshot.val();
+            setBoards(data);
+          }
+        );
+      } catch (err) {
+        console.error(err);
       }
-    });
+    } else {
+      history.push(`/signin`);
+    }
   }, []);
 
   const handleSignOut = async () => {

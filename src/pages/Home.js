@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useUser } from 'reactfire';
+import React, { useContext, useState } from 'react';
+import AuthContext from '../contexts/AuthContext';
 import Sidebar from '../components/Sidebar';
 import NavBar from '../components/NavBar';
 import InfoSection from '../components/InfoSection';
@@ -9,7 +9,7 @@ import CtaSection from '../components/CtaSection';
 import Footer from '../components/Footer';
 
 const Home = () => {
-  const { data: user } = useUser();
+  const user = useContext(AuthContext);
   const [isOpen, setIsOpen] = useState(false);
 
   const toggle = () => {

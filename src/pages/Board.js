@@ -1,4 +1,10 @@
-import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useLayoutEffect,
+  useContext,
+} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { ref as storageRef, uploadBytes, getBlob } from 'firebase/storage';
@@ -11,9 +17,9 @@ import {
   serverTimestamp,
 } from 'firebase/database';
 import { onAuthStateChanged } from 'firebase/auth';
-import { useUser } from 'reactfire';
 import { v4 as uuid } from 'uuid';
 import { storage, db, auth } from '../firebase';
+import AuthContext from '../contexts/AuthContext';
 import useDrawingHistory from '../hooks/useDrawingHistory';
 import SvgBoard from '../components/SvgBoard';
 import TopToolbar from '../components/TopToolbar';
@@ -57,7 +63,7 @@ const Board = props => {
   const brushSize = useSelector(state => state.toolOptions.brushSize);
   const fontSize = useSelector(state => state.toolOptions.fontSize);
   const opacity = useSelector(state => state.toolOptions.opacity);
-  const { data: user } = useUser();
+  const user = useContext(AuthContext);
 
   const [elements, setElements, undo, redo] = useDrawingHistory([]);
   const [action, setAction] = useState('none');

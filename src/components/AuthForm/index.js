@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import {
   signInWithEmailAndPassword,
   signInWithPopup,
   createUserWithEmailAndPassword,
 } from 'firebase/auth';
-import { useUser } from 'reactfire';
 import { useForm } from 'react-hook-form';
+import AuthContext from '../../contexts/AuthContext';
 import { auth, googleAuthProvider, facebookAuthProvider } from '../../firebase';
 import * as S from './AuthForm.styled';
 
@@ -14,7 +14,7 @@ const AuthForm = ({ boardId, signin }) => {
   const [error, setError] = useState({ type: '', message: '' });
   const [loadingType, setLoadingType] = useState('none');
   const history = useHistory();
-  const { data: user } = useUser();
+  const user = useContext(AuthContext);
 
   const {
     register,
