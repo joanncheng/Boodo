@@ -12,10 +12,16 @@ const BoardList = ({
 }) => {
   const renderedBoardCards = () => {
     if (!boards) return null;
+
     return Object.keys(boards).map(boardId => {
       const lastModifiedAt = new Date(
         boards[boardId].modifiedAt
       ).toLocaleString();
+
+      const modifiedBy =
+        boards[boardId].modifiedBy === user.email.split('@')[0]
+          ? 'me'
+          : boards[boardId].modifiedBy;
 
       return (
         <BoardCard
@@ -24,7 +30,7 @@ const BoardList = ({
           boardName={boards[boardId].boardName}
           setBoardToBeDeleted={setBoardToBeDeleted}
           lastModifiedAt={lastModifiedAt}
-          modifiedBy={boards[boardId].modifiedBy}
+          modifiedBy={modifiedBy}
         />
       );
     });

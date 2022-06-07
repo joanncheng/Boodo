@@ -27,8 +27,11 @@ const BoardCard = ({
       <S.BoardName title={boardName}>{boardName}</S.BoardName>
       {lastModifiedAt !== 'Invalid Date' && modifiedBy ? (
         <S.Info>
-          <p>Last modified: {lastModifiedAt}</p>
-          <p>By: {modifiedBy}</p>
+          <p>
+            Modified by: {modifiedBy}
+            <br />
+            {lastModifiedAt}
+          </p>
         </S.Info>
       ) : null}
     </S.Card>
