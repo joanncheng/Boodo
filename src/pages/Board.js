@@ -165,27 +165,49 @@ const Board = props => {
     if (!drawData) return;
 
     const handleKeydown = e => {
+      if ((action === 'writing' && e.key !== 'Escape') || action === 'renaming')
+        return;
       if ((e.metaKey || e.ctrlKey) && e.key === 'z') {
         e.shiftKey ? handleRedoUndo('redo') : handleRedoUndo('undo');
+        return;
       }
-
-      if (e.key === 'Delete' || (e.key === 'Backspace' && action === 'none')) {
-        if (action === 'writing' || action === 'renaming') return;
-        if (selectedElement) {
+      switch (e.key) {
+        case 'Delete':
+        case 'Backspace':
+          if (action !== 'none' || !selectedElement) break;
           deleteElement(selectedElement.id);
           setSelectedElement(null);
-        }
-      }
-
-      if (e.key === 'Escape') {
-        action !== 'renaming' && setAction('none');
-        setImageUpload(null);
-        dispatch(selectTool('selection'));
-        dispatch(selectOpacity(1));
-      }
-
-      if (e.key === ' ') {
-        setSpacePressing(true);
+          break;
+        case 'Escape':
+          setAction('none');
+          setImageUpload(null);
+          dispatch(selectTool('selection'));
+          dispatch(selectOpacity(1));
+          break;
+        case '1':
+          dispatch(selectTool('selection'));
+          break;
+        case '2':
+          dispatch(selectTool('rectangle'));
+          break;
+        case '3':
+          dispatch(selectTool('ellipse'));
+          break;
+        case '4':
+          dispatch(selectTool('diamond'));
+          break;
+        case '5':
+          dispatch(selectTool('line'));
+          break;
+        case '6':
+          dispatch(selectTool('pencil'));
+          break;
+        case '7':
+          dispatch(selectTool('text'));
+          break;
+        case ' ':
+          setSpacePressing(true);
+          break;
       }
     };
 

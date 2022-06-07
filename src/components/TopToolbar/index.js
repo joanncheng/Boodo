@@ -68,6 +68,7 @@ const TopToolbar = ({
           />
           <S.ToolIcon>
             <SelectionIcon />
+            <span>1</span>
           </S.ToolIcon>
         </S.ToolLabel>
         <S.ToolLabel title="Rectangle">
@@ -79,6 +80,7 @@ const TopToolbar = ({
           />
           <S.ToolIcon>
             <RectangleIcon />
+            <span>2</span>
           </S.ToolIcon>
         </S.ToolLabel>
         <S.ToolLabel title="Ellipse">
@@ -90,6 +92,7 @@ const TopToolbar = ({
           />
           <S.ToolIcon>
             <EllipseIcon />
+            <span>3</span>
           </S.ToolIcon>
         </S.ToolLabel>
         <S.ToolLabel title="Diamond">
@@ -101,6 +104,7 @@ const TopToolbar = ({
           />
           <S.ToolIcon>
             <DiamondIcon />
+            <span>4</span>
           </S.ToolIcon>
         </S.ToolLabel>
         <S.ToolLabel title="Line">
@@ -114,6 +118,7 @@ const TopToolbar = ({
             <svg viewBox="0 0 6 6">
               <line x1="0" y1="3" x2="6" y2="3" strokeLinecap="round"></line>
             </svg>
+            <span>5</span>
           </S.ToolIcon>
         </S.ToolLabel>
         <S.ToolLabel title="Draw">
@@ -125,6 +130,7 @@ const TopToolbar = ({
           />
           <S.ToolIcon>
             <PencilIcon />
+            <span>6</span>
           </S.ToolIcon>
         </S.ToolLabel>
         <S.ToolLabel title="Text">
@@ -136,6 +142,7 @@ const TopToolbar = ({
           />
           <S.ToolIcon>
             <TextIcon />
+            <span>7</span>
           </S.ToolIcon>
         </S.ToolLabel>
         <S.ToolLabel title="Insert image">

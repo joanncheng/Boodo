@@ -81,10 +81,23 @@ export const ToolIcon = styled.div`
     stroke: black;
   }
 
-  &:hover svg {
-    color: ${({ theme }) => theme.colors.primary};
-    fill: ${({ theme }) => theme.colors.primary};
-    stroke: ${({ theme }) => theme.colors.primary};
+  span {
+    position: absolute;
+    bottom: 3px;
+    right: 3px;
+    font-size: 10px;
+    color: ${({ theme }) => theme.colors.textLight};
+  }
+
+  &:hover {
+    svg {
+      color: ${({ theme }) => theme.colors.primary};
+      fill: ${({ theme }) => theme.colors.primary};
+      stroke: ${({ theme }) => theme.colors.primary};
+    }
+    span {
+      color: ${({ theme }) => theme.colors.primary};
+    }
   }
 
   &:active {
@@ -92,6 +105,10 @@ export const ToolIcon = styled.div`
 
     svg {
       fill: black;
+    }
+
+    span {
+      color: #000;
     }
   }
 
@@ -112,6 +129,10 @@ export const ToolTypeRadio = styled.input`
     svg {
       stroke: #fff;
       fill: #fff;
+    }
+
+    span {
+      color: #fff;
     }
 
     &:active {
