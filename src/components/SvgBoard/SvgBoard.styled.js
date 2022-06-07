@@ -7,7 +7,7 @@ export const SVGCanvas = styled.svg`
 `;
 
 export const TextArea = styled.textarea`
-  font-family: 'Gochi Hand', 'Virgil', 'Noto Sans TC', Arial, sans-serif;
+  font-family: 'Gochi Hand', 'Noto Sans TC', Arial, sans-serif;
   letter-spacing: 1.5px;
   margin: 0;
   padding: 5px 0;

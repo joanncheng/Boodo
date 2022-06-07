@@ -21,22 +21,7 @@ export const theme = {
 };
 
 export default createGlobalStyle`
-
-  @font-face {
-    font-family: 'virgil';
-    src: url('/fonts/Virgil.woff2') format('woff2');
-    font-weight: normal;
-    font-style: normal;
-  }
   
-  @font-face {
-    font-family: "Gochi Hand";
-    src: url("../fonts/GochiHand.ttf") format("truetype");
-    src: url("../fonts/GochiHand.woff2") format("woff2");
-    src: url("../fonts/GochiHand.woff") format("woff");
-    font-weight: normal;
-    font-style: normal;
-  }
   
   * {
     box-sizing: border-box;
@@ -50,7 +35,7 @@ export default createGlobalStyle`
   }
   
   tspan {
-    font-family: 'Gochi Hand','Virgil', 'Noto Sans TC', Arial, sans-serif;
+    font-family: 'Gochi Hand', 'Noto Sans TC', Arial, sans-serif;
     letter-spacing: 1.5px;
     stroke-width: 0;
   }

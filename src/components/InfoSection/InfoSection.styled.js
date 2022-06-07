@@ -51,7 +51,7 @@ export const TopLine = styled.div`
 `;
 
 export const Heading = styled.h1`
-  font-family: 'Gochi Hand', 'Virgil';
+  font-family: 'Gochi Hand';
   margin-bottom: 24px;
   font-size: 60px;
   line-height: 1.1;

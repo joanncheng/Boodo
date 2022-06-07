@@ -116,6 +116,11 @@ const SvgBoard = forwardRef((props, svgRef) => {
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
       >
+        <defs>
+          <style type="text/css">
+            {`@font-face {font-family: Gochi Hand;src: url('https://fonts.gstatic.com/s/gochihand/v16/hES06XlsOjtJsgCkx1Pkfon_-18kTWE.woff2');}`}
+          </style>
+        </defs>
         {elements &&
           elements.map(element => {
             if (action === 'writing' && element.id === selectedElement.id)
