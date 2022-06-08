@@ -269,6 +269,9 @@ export const drawElement = element => {
               key={index}
               x={element.x1}
               y={element.y1 + index * element.options.fontSize * 1.3}
+              fontFamily="Gochi Hand"
+              letterSpacing="1.5px"
+              lineheight="1.3"
               style={{
                 whiteSpace: 'pre',
                 userSelect: 'none',
@@ -415,19 +418,17 @@ export const imageSaver = {
   },
 
   parseImage() {
-    const options = {
-      excludeUnusedCss: true,
-      backgroundColor: '#fff',
-    };
-
     if (this.format === 'png') {
-      saveSvgAsPng(
-        this.svg,
-        `Boodo_${new Date().toLocaleDateString()}.png`,
-        options
-      );
+      saveSvgAsPng(this.svg, `Boodo_${new Date().toLocaleDateString()}.png`, {
+        excludeUnusedCss: true,
+        backgroundColor: '#fff',
+      });
     } else if (this.format === 'svg') {
-      svgAsDataUri(this.svg, options).then(uri => this.downloadImage(uri));
+      const svgBlob = new Blob([this.svg.outerHTML], {
+        type: 'image/svg+xml',
+      });
+      const svgURL = URL.createObjectURL(svgBlob);
+      this.downloadImage(svgURL);
     }
   },
 
