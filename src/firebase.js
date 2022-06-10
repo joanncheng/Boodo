@@ -8,10 +8,10 @@ import {
 } from 'firebase/auth';
 import { getDatabase, connectDatabaseEmulator } from 'firebase/database';
 
-export const firebaseConfig = {
+const firebaseConfig = {
   apiKey: 'AIzaSyCZAHyOh-0-YR9kcXM2rOsRBfbX6NhRtbI',
   authDomain: 'online-whiteboard-boodo.firebaseapp.com',
-  databaseURL: 'https://online-whiteboard-boodo-default-rtdb.firebaseio.com/',
+  databaseURL: 'https://online-whiteboard-boodo-default-rtdb.firebaseio.com',
   projectId: 'online-whiteboard-boodo',
   storageBucket: 'online-whiteboard-boodo.appspot.com',
   messagingSenderId: '374912129921',

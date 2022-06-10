@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   onValue,
   ref,
@@ -9,16 +9,10 @@ import {
   orderByChild,
 } from 'firebase/database';
 import { useHistory } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { signOut, onAuthStateChanged } from 'firebase/auth';
+import { useDispatch, useSelector } from 'react-redux';
+import { signOut } from 'firebase/auth';
 import { auth, db } from '../firebase';
-import AuthContext from '../contexts/AuthContext';
-import { selectTool } from '../redux/activeTool';
-import {
-  selectBrushColor,
-  selectBrushSize,
-  selectFontSize,
-} from '../redux/toolOptions';
+import { logOut } from '../redux/auth';
 import ScrollToTop from '../components/ScrollToTop';
 import BoardList from '../components/BoardList';
 import BoardsNav from '../components/BoardsNav';
@@ -26,19 +20,12 @@ import Loader from '../components/Loader';
 import Modal from '../components/Modal';
 
 const MyBoards = () => {
-  const user = useContext(AuthContext);
+  const user = useSelector(state => state.user);
   const history = useHistory();
   const [boards, setBoards] = useState(undefined);
   const [boardToBeDeleted, setBoardToBeDeleted] = useState(false);
 
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(selectTool('selection'));
-    dispatch(selectBrushColor('#4740A5'));
-    dispatch(selectBrushSize(1));
-    dispatch(selectFontSize(24));
-  }, []);
 
   useEffect(() => {
     if (user) {
@@ -58,12 +45,13 @@ const MyBoards = () => {
     }
   }, []);
 
-  const handleSignOut = async () => {
+  const handleSignOut = () => {
     try {
-      await signOut(auth);
+      signOut(auth);
+      dispatch(logOut());
       history.push('/');
     } catch (err) {
-      console.log('sign out error: ' + err.message);
+      console.error(err.message);
     }
   };
 

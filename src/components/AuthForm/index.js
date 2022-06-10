@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import {
   signInWithEmailAndPassword,
@@ -6,7 +6,7 @@ import {
   createUserWithEmailAndPassword,
 } from 'firebase/auth';
 import { useForm } from 'react-hook-form';
-import AuthContext from '../../contexts/AuthContext';
+import { useSelector } from 'react-redux';
 import { auth, googleAuthProvider, facebookAuthProvider } from '../../firebase';
 import * as S from './AuthForm.styled';
 
@@ -14,7 +14,7 @@ const AuthForm = ({ boardId, signin }) => {
   const [error, setError] = useState({ type: '', message: '' });
   const [loadingType, setLoadingType] = useState('none');
   const history = useHistory();
-  const user = useContext(AuthContext);
+  const user = useSelector(state => state.user);
 
   const {
     register,
@@ -52,7 +52,7 @@ const AuthForm = ({ boardId, signin }) => {
       } else {
         setError({
           type,
-          message: err.code,
+          message: 'Sorry, something went wrong, please try again later.',
         });
       }
     }
@@ -79,7 +79,11 @@ const AuthForm = ({ boardId, signin }) => {
           type,
           message: 'Sorry, wrong email or password.',
         });
-      } else setError({ type, message: err.code.split('/')[1] });
+      } else
+        setError({
+          type,
+          message: 'Sorry, something went wrong, please try again later.',
+        });
     }
   };
 
@@ -182,12 +186,16 @@ const AuthForm = ({ boardId, signin }) => {
           {signin ? (
             <S.Text>
               Don't have an account?&nbsp;
-              <S.TextLink to="signup">Sign up</S.TextLink>
+              <S.TextLink to={boardId ? `/signup/${boardId}` : '/signup'}>
+                Sign up
+              </S.TextLink>
             </S.Text>
           ) : (
             <S.Text>
               Already have an account?&nbsp;
-              <S.TextLink to="signin">Just sign in</S.TextLink>
+              <S.TextLink to={boardId ? `/signin/${boardId}` : '/signin'}>
+                Just sign in
+              </S.TextLink>
             </S.Text>
           )}
         </S.FormContent>

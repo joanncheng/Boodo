@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { CgDropOpacity } from 'react-icons/cg';
 import * as S from './TopToolbar.styled';
-import { selectTool } from '../../redux/activeTool';
 import { selectOpacity } from '../../redux/toolOptions';
 import PencilIcon from '../../../public/images/icons/pencil.svg';
 import SelectionIcon from '../../../public/images/icons/selection.svg';
@@ -23,6 +22,7 @@ const TopToolbar = ({
   brushSize,
   opacity,
   tool,
+  setTool,
   action,
   setAction,
   setImageUpload,
@@ -51,7 +51,7 @@ const TopToolbar = ({
         originalImageURL: img.src,
         resizedImageURL,
       });
-      dispatch(selectTool('image'));
+      setTool('image');
     };
     img.src = URL.createObjectURL(file);
   };
@@ -63,7 +63,7 @@ const TopToolbar = ({
           <S.ToolTypeRadio
             type="radio"
             name="editor-current-shape"
-            onChange={() => dispatch(selectTool('selection'))}
+            onChange={() => setTool('selection')}
             checked={tool === 'selection' ? true : false}
           />
           <S.ToolIcon>
@@ -75,7 +75,7 @@ const TopToolbar = ({
           <S.ToolTypeRadio
             type="radio"
             name="editor-current-shape"
-            onChange={() => dispatch(selectTool('rectangle'))}
+            onChange={() => setTool('rectangle')}
             checked={tool === 'rectangle' ? true : false}
           />
           <S.ToolIcon>
@@ -87,7 +87,7 @@ const TopToolbar = ({
           <S.ToolTypeRadio
             type="radio"
             name="editor-current-shape"
-            onChange={() => dispatch(selectTool('ellipse'))}
+            onChange={() => setTool('ellipse')}
             checked={tool === 'ellipse' ? true : false}
           />
           <S.ToolIcon>
@@ -99,7 +99,7 @@ const TopToolbar = ({
           <S.ToolTypeRadio
             type="radio"
             name="editor-current-shape"
-            onChange={() => dispatch(selectTool('diamond'))}
+            onChange={() => setTool('diamond')}
             checked={tool === 'diamond' ? true : false}
           />
           <S.ToolIcon>
@@ -111,7 +111,7 @@ const TopToolbar = ({
           <S.ToolTypeRadio
             type="radio"
             name="editor-current-shape"
-            onChange={() => dispatch(selectTool('line'))}
+            onChange={() => setTool('line')}
             checked={tool === 'line' ? true : false}
           />
           <S.ToolIcon>
@@ -125,7 +125,7 @@ const TopToolbar = ({
           <S.ToolTypeRadio
             type="radio"
             name="editor-current-shape"
-            onChange={() => dispatch(selectTool('pencil'))}
+            onChange={() => setTool('pencil')}
             checked={tool === 'pencil' ? true : false}
           />
           <S.ToolIcon>
@@ -137,7 +137,7 @@ const TopToolbar = ({
           <S.ToolTypeRadio
             type="radio"
             name="editor-current-shape"
-            onChange={() => dispatch(selectTool('text'))}
+            onChange={() => setTool('text')}
             checked={tool === 'text' ? true : false}
           />
           <S.ToolIcon>

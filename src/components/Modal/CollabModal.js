@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import * as S from './Modal.styled';
 import CrossIcon from '../../../public/images/icons/cross.svg';
 import { useDispatch, useSelector } from 'react-redux';
-import { displayName } from '../../redux/username';
+import { displayName } from '../../redux/displayName';
 
 const CollabModalActions = ({ onDismiss }) => {
   const username = useSelector(state => state.username);

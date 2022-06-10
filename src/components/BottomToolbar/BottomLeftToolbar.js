@@ -1,6 +1,4 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
-import { selectTool } from '../../redux/activeTool';
 import Tooltip from '../Tooltip';
 import * as S from './BottomToolbar.styled';
 import ZoomOutIcon from '../../../public/images/icons/zoomOut.svg';
@@ -12,17 +10,16 @@ import EraserIcon from '../../../public/images/icons/eraser.svg';
 const BottomToolbar = ({
   handleRedoUndo,
   tool,
+  setTool,
   viewBoxSizeRatio,
   setViewBoxSizeRatio,
   resizeCanvas,
 }) => {
-  const dispatch = useDispatch();
-
   const toggleEraser = () => {
     if (tool !== 'eraser') {
-      dispatch(selectTool('eraser'));
+      setTool('eraser');
     } else {
-      dispatch(selectTool('selection'));
+      setTool('selection');
     }
   };
 

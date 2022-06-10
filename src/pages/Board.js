@@ -1,10 +1,4 @@
-import React, {
-  useState,
-  useRef,
-  useEffect,
-  useLayoutEffect,
-  useContext,
-} from 'react';
+import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { ref as storageRef, uploadBytes, getBlob } from 'firebase/storage';
@@ -19,7 +13,6 @@ import {
 import { onAuthStateChanged } from 'firebase/auth';
 import { v4 as uuid } from 'uuid';
 import { storage, db, auth } from '../firebase';
-import AuthContext from '../contexts/AuthContext';
 import useDrawingHistory from '../hooks/useDrawingHistory';
 import SvgBoard from '../components/SvgBoard';
 import TopToolbar from '../components/TopToolbar';
@@ -30,7 +23,6 @@ import Modal from '../components/Modal';
 import CollabModal from '../components/Modal/CollabModal';
 import Loader from '../components/Loader';
 import BoardNotFound from '../components/BoardNotFound';
-import { selectTool } from '../redux/activeTool';
 import { selectOpacity } from '../redux/toolOptions';
 import {
   getElementAtPosition,
@@ -58,13 +50,13 @@ const Board = props => {
   const currentBoard = props.match.params.id;
   const dispatch = useDispatch();
   const history = useHistory();
-  const tool = useSelector(state => state.activeTool);
   const brushColor = useSelector(state => state.toolOptions.brushColor);
   const brushSize = useSelector(state => state.toolOptions.brushSize);
   const fontSize = useSelector(state => state.toolOptions.fontSize);
   const opacity = useSelector(state => state.toolOptions.opacity);
-  const user = useContext(AuthContext);
+  const user = useSelector(state => state.user);
 
+  const [tool, setTool] = useState('selection');
   const [elements, setElements, undo, redo] = useDrawingHistory([]);
   const [action, setAction] = useState('none');
   const [selectedElement, setSelectedElement] = useState(null);
@@ -181,29 +173,29 @@ const Board = props => {
         case 'Escape':
           setAction('none');
           setImageUpload(null);
-          dispatch(selectTool('selection'));
+          setTool('selection');
           dispatch(selectOpacity(1));
           break;
         case '1':
-          dispatch(selectTool('selection'));
+          setTool('selection');
           break;
         case '2':
-          dispatch(selectTool('rectangle'));
+          setTool('rectangle');
           break;
         case '3':
-          dispatch(selectTool('ellipse'));
+          setTool('ellipse');
           break;
         case '4':
-          dispatch(selectTool('diamond'));
+          setTool('diamond');
           break;
         case '5':
-          dispatch(selectTool('line'));
+          setTool('line');
           break;
         case '6':
-          dispatch(selectTool('pencil'));
+          setTool('pencil');
           break;
         case '7':
-          dispatch(selectTool('text'));
+          setTool('text');
           break;
         case ' ':
           setSpacePressing(true);
@@ -441,7 +433,7 @@ const Board = props => {
 
     if (action === 'writing') {
       setAction('none');
-      dispatch(selectTool('selection'));
+      setTool('selection');
       return;
     }
 
@@ -730,7 +722,7 @@ const Board = props => {
 
     if (action === 'writing') return;
     setAction('none');
-    if (tool !== 'pencil') dispatch(selectTool('selection'));
+    if (tool !== 'pencil') setTool('selection');
   };
 
   // Props of Modal component
@@ -800,6 +792,7 @@ const Board = props => {
         brushSize={brushSize}
         opacity={opacity}
         tool={tool}
+        setTool={setTool}
         action={action}
         setAction={setAction}
         setImageUpload={setImageUpload}
@@ -819,6 +812,7 @@ const Board = props => {
       <BottomLeftToolbar
         handleRedoUndo={handleRedoUndo}
         tool={tool}
+        setTool={setTool}
         resizeCanvas={resizeCanvas}
         viewBoxSizeRatio={viewBoxSizeRatio}
         setViewBoxSizeRatio={setViewBoxSizeRatio}

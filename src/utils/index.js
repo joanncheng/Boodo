@@ -270,6 +270,7 @@ export const drawElement = element => {
               x={element.x1}
               y={element.y1 + index * element.options.fontSize * 1.3}
               fontFamily="Gochi Hand"
+              fontWeight="normal"
               letterSpacing="1.5px"
               lineheight="1.3"
               style={{

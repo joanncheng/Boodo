@@ -1,12 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
-import usernameReducer from './username';
-import activeToolReducer from './activeTool';
+import authReducer from './auth';
+import displayNameReducer from './displayName';
 import toolOptionsReducer from './toolOptions';
 
 export default configureStore({
   reducer: {
-    username: usernameReducer,
-    activeTool: activeToolReducer,
+    user: authReducer,
+    displayName: displayNameReducer,
     toolOptions: toolOptionsReducer,
   },
 });

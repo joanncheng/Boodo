@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { ThemeProvider } from 'styled-components';
 import { onAuthStateChanged } from 'firebase/auth';
 import GlobalStyles, { theme } from './components/GlobalStyles';
@@ -9,26 +10,32 @@ import SignupPage from './pages/Signup';
 import SigninPage from './pages/Signin';
 import MyBoards from './pages/MyBoards';
 import { auth } from './firebase';
-import AuthContext from './contexts/AuthContext';
+import { logIn } from './redux/auth';
 
 const App = () => {
-  const [user, setUser] = useState(null);
-  onAuthStateChanged(auth, user => setUser(user));
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    onAuthStateChanged(auth, user => {
+      if (!user) return;
+      const { uid, email } = user;
+      dispatch(logIn({ uid, email }));
+    });
+  }, []);
 
   return (
     <ThemeProvider theme={theme}>
       <BrowserRouter>
-        <AuthContext.Provider value={user}>
-          <GlobalStyles />
-          <Switch>
-            <Route path="/" exact component={Home} />
-            <Route path="/signup" exact component={SignupPage} />
-            <Route path="/signin" exact component={SigninPage} />
-            <Route path="/signin/:id" exact component={SigninPage} />
-            <Route path="/board/:id" exact component={Board} />
-            <Route path="/myBoards" exact component={MyBoards} />
-          </Switch>
-        </AuthContext.Provider>
+        <GlobalStyles />
+        <Switch>
+          <Route path="/" exact component={Home} />
+          <Route path="/signup" exact component={SignupPage} />
+          <Route path="/signup/:id" exact component={SignupPage} />
+          <Route path="/signin" exact component={SigninPage} />
+          <Route path="/signin/:id" exact component={SigninPage} />
+          <Route path="/board/:id" exact component={Board} />
+          <Route path="/myBoards" exact component={MyBoards} />
+        </Switch>
       </BrowserRouter>
     </ThemeProvider>
   );
