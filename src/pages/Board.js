@@ -19,8 +19,6 @@ import TopToolbar from '../components/TopToolbar';
 import BottomLeftToolbar from '../components/BottomToolbar/BottomLeftToolbar';
 import BottomRightToolbar from '../components/BottomToolbar/BottomRightToolbar';
 import EditorCursors from '../components/EditorCursors';
-import Modal from '../components/Modal';
-import CollabModal from '../components/Modal/CollabModal';
 import Loader from '../components/Loader';
 import BoardNotFound from '../components/BoardNotFound';
 import { selectOpacity } from '../redux/toolOptions';
@@ -56,7 +54,6 @@ const Board = props => {
   const [elements, setElements, undo, redo] = useDrawingHistory([]);
   const [touchEvents, setTouchEvents, zoom] = useZoomGesture([]);
 
-  // Local state
   const [tool, setTool] = useState('selection');
   const [action, setAction] = useState('none');
   const [selectedElement, setSelectedElement] = useState(null);
@@ -78,7 +75,6 @@ const Board = props => {
     x: window.innerWidth / 2,
     y: window.innerHeight / 2,
   });
-  const [spacePressing, setSpacePressing] = useState(false);
 
   const svgRef = useRef(null);
 
@@ -194,14 +190,14 @@ const Board = props => {
           setTool('text');
           break;
         case ' ':
-          setSpacePressing(true);
+          setAction('movingCanvas');
           break;
       }
     };
 
     const handleKeyup = e => {
       if (e.key === ' ' || e.code === 'Space') {
-        setSpacePressing(false);
+        setAction('none');
       }
     };
 
@@ -384,7 +380,6 @@ const Board = props => {
       width: window.innerWidth,
       height: window.innerHeight,
     });
-    // setClearCanvasModalOpen(false);
     writeDataToDatabase('', 'deleteAll');
   };
 
@@ -425,15 +420,13 @@ const Board = props => {
   };
 
   const handlePointerDown = e => {
-    if (!drawData) return;
+    if (!drawData || action === 'movingCanvas') return;
 
     if (action === 'writing') {
       setAction('none');
       setTool('selection');
       return;
     }
-
-    if (spacePressing) return setAction('movingCanvas');
 
     if (e.pointerType === 'touch') {
       setTouchEvents(prevState => [...prevState, e]);
