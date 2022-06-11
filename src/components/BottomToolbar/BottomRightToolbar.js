@@ -1,8 +1,8 @@
 import React from 'react';
 import * as S from './BottomToolbar.styled';
-import ResetCanvasBtn from './ResetCanvasBtn';
-import CollabBtn from './CollabBtn';
-import SaveAsImageBtn from './SaveAsImageBtn';
+import ResetCanvasBtn from '../ResetCanvasBtn';
+import CollabBtn from '../CollabBtn';
+import SaveAsImageBtn from '../SaveAsImageBtn';
 
 const BottomToolbar = ({
   svgRef,

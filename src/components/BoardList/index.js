@@ -4,12 +4,7 @@ import { Container as GSContainer } from '../GlobalStyles';
 import BoardCard from '../BoardCard';
 import Loader from '../Loader';
 
-const BoardList = ({
-  user,
-  boards,
-  handleCreateBoard,
-  setBoardToBeDeleted,
-}) => {
+const BoardList = ({ user, boards, createBoard, deleteBoard }) => {
   const renderedBoardCards = () => {
     if (!boards) return null;
 
@@ -28,7 +23,7 @@ const BoardList = ({
           key={boardId}
           boardId={boardId}
           boardName={boards[boardId].boardName}
-          setBoardToBeDeleted={setBoardToBeDeleted}
+          deleteBoard={deleteBoard}
           lastModifiedAt={lastModifiedAt}
           modifiedBy={modifiedBy}
         />
@@ -44,7 +39,7 @@ const BoardList = ({
             <S.HeaderIcon />
             <S.BoardsHeader>My Boards</S.BoardsHeader>
           </S.HeaderWrapper>
-          <S.CreateBtn onClick={handleCreateBoard}>
+          <S.CreateBtn onClick={createBoard}>
             &#43;&nbsp; Create New Board
           </S.CreateBtn>
         </S.HeaderContainer>

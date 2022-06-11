@@ -15,6 +15,7 @@ import OutsideClicker from '../OutsideClicker';
 import FontSizeSelector from '../FontSizeSelector';
 import ColorPicker from '../ColorPicker';
 import Tooltip from '../Tooltip';
+import ShapeBtn from '../ShapeBtn';
 import { getResizedImageURL } from '../../utils';
 
 const TopToolbar = ({
@@ -60,90 +61,84 @@ const TopToolbar = ({
     <S.TopStack>
       <S.ToolContainer main>
         <S.ToolLabel title="Selection">
-          <S.ToolTypeRadio
+          <ShapeBtn
             type="radio"
             name="editor-current-shape"
-            onChange={() => setTool('selection')}
+            handler={() => setTool('selection')}
             checked={tool === 'selection' ? true : false}
-          />
-          <S.ToolIcon>
+            number="1"
+          >
             <SelectionIcon />
-            <span>1</span>
-          </S.ToolIcon>
+          </ShapeBtn>
         </S.ToolLabel>
+
         <S.ToolLabel title="Rectangle">
-          <S.ToolTypeRadio
+          <ShapeBtn
             type="radio"
             name="editor-current-shape"
-            onChange={() => setTool('rectangle')}
+            handler={() => setTool('rectangle')}
             checked={tool === 'rectangle' ? true : false}
-          />
-          <S.ToolIcon>
+            number="2"
+          >
             <RectangleIcon />
-            <span>2</span>
-          </S.ToolIcon>
+          </ShapeBtn>
         </S.ToolLabel>
         <S.ToolLabel title="Ellipse">
-          <S.ToolTypeRadio
+          <ShapeBtn
             type="radio"
             name="editor-current-shape"
-            onChange={() => setTool('ellipse')}
+            handler={() => setTool('ellipse')}
             checked={tool === 'ellipse' ? true : false}
-          />
-          <S.ToolIcon>
+            number="3"
+          >
             <EllipseIcon />
-            <span>3</span>
-          </S.ToolIcon>
+          </ShapeBtn>
         </S.ToolLabel>
         <S.ToolLabel title="Diamond">
-          <S.ToolTypeRadio
+          <ShapeBtn
             type="radio"
             name="editor-current-shape"
-            onChange={() => setTool('diamond')}
+            handler={() => setTool('diamond')}
             checked={tool === 'diamond' ? true : false}
-          />
-          <S.ToolIcon>
+            number="4"
+          >
             <DiamondIcon />
-            <span>4</span>
-          </S.ToolIcon>
+          </ShapeBtn>
         </S.ToolLabel>
         <S.ToolLabel title="Line">
-          <S.ToolTypeRadio
+          <ShapeBtn
             type="radio"
             name="editor-current-shape"
-            onChange={() => setTool('line')}
+            handler={() => setTool('line')}
             checked={tool === 'line' ? true : false}
-          />
-          <S.ToolIcon>
+            number="5"
+          >
             <svg viewBox="0 0 6 6">
               <line x1="0" y1="3" x2="6" y2="3" strokeLinecap="round"></line>
             </svg>
-            <span>5</span>
-          </S.ToolIcon>
+          </ShapeBtn>
         </S.ToolLabel>
         <S.ToolLabel title="Draw">
-          <S.ToolTypeRadio
+          <ShapeBtn
             type="radio"
             name="editor-current-shape"
-            onChange={() => setTool('pencil')}
+            handler={() => setTool('pencil')}
             checked={tool === 'pencil' ? true : false}
-          />
-          <S.ToolIcon>
+            number="6"
+          >
             <PencilIcon />
-            <span>6</span>
-          </S.ToolIcon>
+          </ShapeBtn>
         </S.ToolLabel>
         <S.ToolLabel title="Text">
-          <S.ToolTypeRadio
+          <ShapeBtn
             type="radio"
             name="editor-current-shape"
-            onChange={() => setTool('text')}
+            handler={() => setTool('text')}
             checked={tool === 'text' ? true : false}
-          />
-          <S.ToolIcon>
+            number="7"
+          >
             <TextIcon />
-            <span>7</span>
-          </S.ToolIcon>
+          </ShapeBtn>
         </S.ToolLabel>
         <S.ToolLabel title="Insert image">
           <S.ToolTypeFile

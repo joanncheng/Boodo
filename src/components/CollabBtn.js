@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { ref, onValue } from 'firebase/database';
-import { db } from '../../firebase';
-import * as S from './BottomToolbar.styled';
-import CollabModal from '../Modal/CollabModal';
-
-import CollaborationIcon from '../../../public/images/icons/collaboration.svg';
+import { db } from '../firebase';
+import CollabModal from './Modal/CollabModal';
+import CollaborationIcon from '../../public/images/icons/collaboration.svg';
+import BottomToolbarBtn from './BottomToolbarBtn';
 
 const CollabBtn = ({ currentBoard }) => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -24,18 +23,13 @@ const CollabBtn = ({ currentBoard }) => {
   return (
     <>
       {modalOpen ? <CollabModal onDismiss={() => setModalOpen(false)} /> : null}
-      <S.ToolTypeButton
+      <BottomToolbarBtn
         title="Live collaboration"
-        onClick={() => setModalOpen(true)}
-        collab={collaborators.length > 1 ? true : false}
+        handler={() => setModalOpen(true)}
+        collab={collaborators.length > 1 ? collaborators.length : false}
       >
-        <S.ToolIcon>
-          <CollaborationIcon />
-        </S.ToolIcon>
-        {collaborators.length > 1 && (
-          <S.Number>{collaborators.length}</S.Number>
-        )}
-      </S.ToolTypeButton>
+        <CollaborationIcon />
+      </BottomToolbarBtn>
     </>
   );
 };

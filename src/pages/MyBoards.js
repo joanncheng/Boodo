@@ -13,21 +13,20 @@ import { useDispatch, useSelector } from 'react-redux';
 import { signOut } from 'firebase/auth';
 import { auth, db } from '../firebase';
 import { logOut } from '../redux/auth';
-import ScrollToTop from '../components/ScrollToTop';
 import BoardList from '../components/BoardList';
 import BoardsNav from '../components/BoardsNav';
 import Loader from '../components/Loader';
-import Modal from '../components/Modal';
+import ErrorMessage from '../components/ErrorMessage';
 
 const MyBoards = () => {
   const user = useSelector(state => state.user);
   const history = useHistory();
-  const [boards, setBoards] = useState(undefined);
-  const [boardToBeDeleted, setBoardToBeDeleted] = useState(false);
-
   const dispatch = useDispatch();
+  const [boards, setBoards] = useState(undefined);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+
     if (user) {
       try {
         onValue(
@@ -38,7 +37,7 @@ const MyBoards = () => {
           }
         );
       } catch (err) {
-        console.error(err);
+        setBoards('error');
       }
     } else {
       history.push(`/signin`);
@@ -55,7 +54,7 @@ const MyBoards = () => {
     }
   };
 
-  const handleCreateBoard = () => {
+  const createBoard = () => {
     const newBoardKey = push(ref(db, `boards`)).key;
     const newBoard = {
       owner: user.uid,
@@ -70,17 +69,13 @@ const MyBoards = () => {
     const removes = {};
     removes[`boards/${boardId}`] = null;
     update(ref(db), removes);
-    setBoardToBeDeleted(null);
   };
 
-  const deleteBoardModalActions = (
-    <>
-      <button onClick={() => setBoardToBeDeleted(null)}>Cancel</button>
-      <button className="redBtn" onClick={() => deleteBoard(boardToBeDeleted)}>
-        Confirm
-      </button>
-    </>
-  );
+  if (boards === 'error') {
+    return (
+      <ErrorMessage message={'Something went wrong, please try again later.'} />
+    );
+  }
 
   return (
     <>
@@ -88,29 +83,13 @@ const MyBoards = () => {
         <Loader />
       ) : (
         <>
-          <ScrollToTop />
           <BoardsNav user={user} handleSignOut={handleSignOut} />
           <BoardList
             user={user}
             boards={boards}
-            handleCreateBoard={handleCreateBoard}
-            setBoardToBeDeleted={setBoardToBeDeleted}
+            createBoard={createBoard}
+            deleteBoard={deleteBoard}
           />
-          {boardToBeDeleted ? (
-            <Modal
-              title="Delete board"
-              content={
-                <>
-                  Delete board &nbsp;
-                  <b>{boards[boardToBeDeleted].boardName}</b>
-                  &nbsp; permanently?
-                  <br /> This cannot be undone!
-                </>
-              }
-              modalActions={deleteBoardModalActions}
-              onDismiss={() => setBoardToBeDeleted(null)}
-            />
-          ) : null}
         </>
       )}
     </>

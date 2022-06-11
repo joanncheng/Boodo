@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import * as S from './BottomToolbar.styled';
-import SaveFileIcon from '../../../public/images/icons/saveFile.svg';
-import Modal from '../Modal';
-import { imageSaver } from '../../utils';
+import SaveFileIcon from '../../public/images/icons/saveFile.svg';
+import Modal from './Modal';
+import { imageSaver } from '../utils';
+import BottomToolbarBtn from './BottomToolbarBtn';
 
 const SaveAsImageBtn = ({ svgRef, setSelectedElement }) => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -45,17 +45,16 @@ const SaveAsImageBtn = ({ svgRef, setSelectedElement }) => {
           onDismiss={() => setModalOpen(false)}
         />
       ) : null}
-      <S.ToolTypeButton
+
+      <BottomToolbarBtn
         title="Save as image"
-        onClick={() => {
+        handler={() => {
           setSelectedElement(null);
           setModalOpen(true);
         }}
       >
-        <S.ToolIcon>
-          <SaveFileIcon />
-        </S.ToolIcon>
-      </S.ToolTypeButton>
+        <SaveFileIcon />
+      </BottomToolbarBtn>
     </>
   );
 };

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { ToolTypeRadio } from '../TopToolbar/TopToolbar.styled';
+import { ToolInput } from '../ShapeBtn/ShapeBtn.styled';
 
 export const ActionsWrapper = styled.div`
   position: absolute;
@@ -35,7 +35,7 @@ export const ActionIcon = styled.div`
   cursor: pointer;
 `;
 
-export const ShapeTypeRadio = styled(ToolTypeRadio)`
+export const ShapeTypeRadio = styled(ToolInput)`
   &:checked + ${ActionIcon} {
     background-color: ${({ theme }) => theme.colors.bgGrey};
   }

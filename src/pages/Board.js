@@ -20,7 +20,7 @@ import BottomLeftToolbar from '../components/BottomToolbar/BottomLeftToolbar';
 import BottomRightToolbar from '../components/BottomToolbar/BottomRightToolbar';
 import EditorCursors from '../components/EditorCursors';
 import Loader from '../components/Loader';
-import BoardNotFound from '../components/BoardNotFound';
+import ErrorMessage from '../components/ErrorMessage';
 import { selectOpacity } from '../redux/toolOptions';
 import {
   getElementAtPosition,
@@ -57,7 +57,7 @@ const Board = props => {
   const [tool, setTool] = useState('selection');
   const [action, setAction] = useState('none');
   const [selectedElement, setSelectedElement] = useState(null);
-  const [drawData, setDrawData] = useState(null);
+  const [drawingData, setDrawingData] = useState(null);
 
   // Upload Image to firebase storage
   const [imageUpload, setImageUpload] = useState(null);
@@ -93,9 +93,9 @@ const Board = props => {
                 );
                 data.elements = elements;
               }
-              setDrawData(data);
+              setDrawingData(data);
             } else {
-              setDrawData(undefined);
+              setDrawingData(undefined);
             }
           });
 
@@ -107,7 +107,7 @@ const Board = props => {
           });
           onDisconnect(ownStatusRef).remove();
         } catch (err) {
-          console.error(err);
+          setDrawingData(undefined);
         }
       } else {
         // Redirect to signin page
@@ -117,15 +117,15 @@ const Board = props => {
   }, []);
 
   useEffect(() => {
-    if (!drawData) return;
-    if (!drawData.elements) {
+    if (!drawingData) return;
+    if (!drawingData.elements) {
       setElements([], 'overwrite');
-    } else if (drawData.uploader === user.uid) {
-      setElements(drawData.elements, 'overwrite');
+    } else if (drawingData.uploader === user.uid) {
+      setElements(drawingData.elements, 'overwrite');
     } else {
-      setElements(drawData.elements, 'reset');
+      setElements(drawingData.elements, 'reset');
     }
-  }, [drawData]);
+  }, [drawingData]);
 
   // Update image's url after image is uploaded to storage
   useEffect(() => {
@@ -146,7 +146,7 @@ const Board = props => {
 
   // Keydown & wheel event
   useEffect(() => {
-    if (!drawData) return;
+    if (!drawingData) return;
 
     const handleKeydown = e => {
       if ((action === 'writing' && e.key !== 'Escape') || action === 'renaming')
@@ -420,7 +420,7 @@ const Board = props => {
   };
 
   const handlePointerDown = e => {
-    if (!drawData || action === 'movingCanvas') return;
+    if (!drawingData || action === 'movingCanvas') return;
 
     if (action === 'writing') {
       setAction('none');
@@ -522,7 +522,7 @@ const Board = props => {
   };
 
   const handlePointerMove = e => {
-    if (!drawData) return;
+    if (!drawingData) return;
 
     const x = e.clientX;
     const y = e.clientY;
@@ -634,14 +634,11 @@ const Board = props => {
   };
 
   const handlePointerUp = e => {
-    if (!drawData) return;
+    if (!drawingData) return;
 
     // Remove the pointer from the touchEvents
     if (e.pointerType === 'touch') {
       setTouchEvents(touchEvents.filter(ev => ev.pointerId !== e.pointerId));
-
-      // Reset diff tracker
-      // if (touchEvents.length < 2) setPrevDiff(-1);
     }
 
     if (action === 'movingCanvas') return setAction('none');
@@ -699,10 +696,10 @@ const Board = props => {
     setViewBox,
   };
 
-  if (drawData === undefined) {
+  if (drawingData === undefined) {
     return (
       <>
-        <BoardNotFound />
+        <ErrorMessage message={'Page is not found.'} />
       </>
     );
   }
@@ -719,10 +716,10 @@ const Board = props => {
         setAction={setAction}
         setImageUpload={setImageUpload}
         user={user}
-        boardName={drawData ? drawData.boardName : ''}
+        boardName={drawingData ? drawingData.boardName : ''}
         renameBoard={renameBoard}
       />
-      {!drawData && <Loader fontColor="#343a40" />}
+      {!drawingData && <Loader fontColor="#343a40" />}
       <SvgBoard ref={svgRef} {...svgBoardProps}></SvgBoard>
       {user && (
         <EditorCursors

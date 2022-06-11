@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import * as S from './BottomToolbar.styled';
-import TrashCanIcon from '../../../public/images/icons/trashCan.svg';
-import Modal from '../Modal';
+import TrashCanIcon from '../../public/images/icons/trashCan.svg';
+import Modal from './Modal';
+import BottomToolbarBtn from './BottomToolbarBtn';
 
 const ResetCanvasBtn = ({ resetElements }) => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -34,14 +34,12 @@ const ResetCanvasBtn = ({ resetElements }) => {
           onDismiss={() => setModalOpen(false)}
         />
       ) : null}
-      <S.ToolTypeButton
+      <BottomToolbarBtn
         title="Reset the canvas"
-        onClick={() => setModalOpen(true)}
+        handler={() => setModalOpen(true)}
       >
-        <S.ToolIcon>
-          <TrashCanIcon />
-        </S.ToolIcon>
-      </S.ToolTypeButton>
+        <TrashCanIcon />
+      </BottomToolbarBtn>
     </>
   );
 };
