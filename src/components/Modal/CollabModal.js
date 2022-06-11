@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { displayName } from '../../redux/displayName';
 
 const CollabModalActions = ({ onDismiss }) => {
-  const username = useSelector(state => state.username);
+  const username = useSelector(state => state.cursorDisplayName);
   const inputRef = useRef();
   const dispatch = useDispatch();
 

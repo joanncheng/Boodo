@@ -23,7 +23,7 @@ const colors = [
 ];
 
 const EditorCursors = ({ user, currentBoard, svgRef }) => {
-  const displayName = useSelector(state => state.displayName);
+  const cursorDisplayName = useSelector(state => state.cursorDisplayName);
   const [cursorState, setCursorState] = useState([]);
 
   useEffect(() => {
@@ -37,7 +37,7 @@ const EditorCursors = ({ user, currentBoard, svgRef }) => {
       );
       set(ownCursorRef, {
         userId: user.uid,
-        name: displayName,
+        name: cursorDisplayName,
         board: currentBoard,
         mouseX: SVGPoint.x,
         mouseY: SVGPoint.y,

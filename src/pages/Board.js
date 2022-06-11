@@ -33,7 +33,6 @@ import {
   resizeCoordinates,
   convertToSVGCoords,
   getSVGMovement,
-  imageSaver,
 } from '../utils';
 import {
   IMAGE_MIN_WIDTH,
@@ -41,10 +40,7 @@ import {
   ERASER_CURSOR,
   ADD_IMAGE_CURSOR,
 } from '../config';
-
-// Global variables to cache touch events and track diff between two fingers
-let eventsCache = [];
-let prevDiff = -1;
+import useZoomGesture from '../hooks/useZoomGesture';
 
 const Board = props => {
   const currentBoard = props.match.params.id;
@@ -56,16 +52,15 @@ const Board = props => {
   const opacity = useSelector(state => state.toolOptions.opacity);
   const user = useSelector(state => state.user);
 
-  const [tool, setTool] = useState('selection');
+  // Custom Hook
   const [elements, setElements, undo, redo] = useDrawingHistory([]);
+  const [touchEvents, setTouchEvents, zoom] = useZoomGesture([]);
+
+  // Local state
+  const [tool, setTool] = useState('selection');
   const [action, setAction] = useState('none');
   const [selectedElement, setSelectedElement] = useState(null);
   const [drawData, setDrawData] = useState(null);
-
-  // Control modal
-  const [clearCanvasModalOpen, setClearCanvasModalOpen] = useState(false);
-  const [saveImageModalOpen, setSaveImageModalOpen] = useState(false);
-  const [collabModalOpen, setCollabModalOpen] = useState(false);
 
   // Upload Image to firebase storage
   const [imageUpload, setImageUpload] = useState(null);
@@ -84,6 +79,7 @@ const Board = props => {
     y: window.innerHeight / 2,
   });
   const [spacePressing, setSpacePressing] = useState(false);
+
   const svgRef = useRef(null);
 
   // Check user logged in or not
@@ -388,7 +384,7 @@ const Board = props => {
       width: window.innerWidth,
       height: window.innerHeight,
     });
-    setClearCanvasModalOpen(false);
+    // setClearCanvasModalOpen(false);
     writeDataToDatabase('', 'deleteAll');
   };
 
@@ -439,7 +435,9 @@ const Board = props => {
 
     if (spacePressing) return setAction('movingCanvas');
 
-    if (e.pointerType === 'touch') eventsCache.push(e);
+    if (e.pointerType === 'touch') {
+      setTouchEvents(prevState => [...prevState, e]);
+    }
     if (e.pointerType === 'touch' && !e.isPrimary) return;
 
     const x = e.clientX;
@@ -539,46 +537,20 @@ const Board = props => {
 
     //// Touch interaction ////
     if (e.pointerType === 'touch' && tool === 'selection') {
-      const touchDownEvent = eventsCache.find(ev => ev.isPrimary);
+      const touchDownEvent = touchEvents.find(ev => ev.isPrimary);
       if (touchDownEvent) {
         e.movementX = x - touchDownEvent.clientX;
         e.movementY = y - touchDownEvent.clientY;
       }
-
-      for (let i = 0; i < eventsCache.length; i++) {
-        if (e.pointerId == eventsCache[i].pointerId) {
-          eventsCache[i] = e;
-          break;
-        }
-      }
-
-      // Moving canvas
-      if (eventsCache.length === 1 && !selectedElement) {
-        const svgMovement = getSVGMovement(
-          x,
-          y,
-          e.movementX,
-          e.movementY,
-          svgRef.current
-        );
-        setViewBox({
-          ...viewBox,
-          x: viewBox.x + svgMovement.dx,
-          y: viewBox.y + svgMovement.dy,
-        });
-        return;
-      }
+      const updatedTouchEvent = touchEvents.map(ev =>
+        ev.pointerId === e.pointerId ? e : ev
+      );
+      setTouchEvents(updatedTouchEvent);
 
       // Zooming in/out canvas
-      if (eventsCache.length === 2) {
-        const curDiff = Math.abs(
-          eventsCache[0].clientX - eventsCache[1].clientX
-        );
-        if (prevDiff > 0) {
-          if (curDiff > prevDiff) resizeCanvas(0.05);
-          if (curDiff < prevDiff) resizeCanvas(-0.05);
-        }
-        prevDiff = curDiff;
+      if (touchEvents.length === 2) {
+        if (zoom === 'in') resizeCanvas(0.05);
+        if (zoom === 'out') resizeCanvas(-0.05);
         return;
       }
     }
@@ -671,16 +643,12 @@ const Board = props => {
   const handlePointerUp = e => {
     if (!drawData) return;
 
-    // Remove the pointer from the eventsCache
+    // Remove the pointer from the touchEvents
     if (e.pointerType === 'touch') {
-      for (let i = 0; i < eventsCache.length; i++) {
-        if (eventsCache[i].pointerId == e.pointerId) {
-          eventsCache.splice(i, 1);
-          break;
-        }
-      }
+      setTouchEvents(touchEvents.filter(ev => ev.pointerId !== e.pointerId));
+
       // Reset diff tracker
-      if (eventsCache.length < 2) prevDiff = -1;
+      // if (touchEvents.length < 2) setPrevDiff(-1);
     }
 
     if (action === 'movingCanvas') return setAction('none');
@@ -724,45 +692,6 @@ const Board = props => {
     setAction('none');
     if (tool !== 'pencil') setTool('selection');
   };
-
-  // Props of Modal component
-  const clearCanvasModalActions = (
-    <>
-      <button onClick={() => setClearCanvasModalOpen(false)}>Cancel</button>
-      <button className="redBtn" onClick={resetElements}>
-        Confirm
-      </button>
-    </>
-  );
-
-  const saveImageModalActions = (
-    <div
-      className="buttons"
-      onClick={e => {
-        const { format } = e.target.dataset;
-        svgRef.current.childNodes.forEach(node => {
-          node.childNodes.forEach(node => (node.style.cursor = 'default'));
-        });
-        format && imageSaver.save(format, svgRef.current);
-        setSaveImageModalOpen(false);
-      }}
-    >
-      <button
-        className="primaryBtn squareBtn"
-        title="Export to PNG"
-        data-format="png"
-      >
-        PNG
-      </button>
-      <button
-        className="redBtn squareBtn"
-        title="Export to SVG"
-        data-format="svg"
-      >
-        SVG
-      </button>
-    </div>
-  );
 
   const svgBoardProps = {
     action,
@@ -818,35 +747,11 @@ const Board = props => {
         setViewBoxSizeRatio={setViewBoxSizeRatio}
       />
       <BottomRightToolbar
-        setClearCanvasModalOpen={setClearCanvasModalOpen}
-        setSaveImageModalOpen={setSaveImageModalOpen}
-        setCollabModalOpen={setCollabModalOpen}
         setSelectedElement={setSelectedElement}
         currentBoard={currentBoard}
+        resetElements={resetElements}
+        svgRef={svgRef}
       />
-      {saveImageModalOpen ? (
-        <Modal
-          title="Save as image"
-          modalActions={saveImageModalActions}
-          onDismiss={() => setSaveImageModalOpen(false)}
-        />
-      ) : null}
-      {collabModalOpen ? (
-        <CollabModal onDismiss={() => setCollabModalOpen(false)} />
-      ) : null}
-      {clearCanvasModalOpen ? (
-        <Modal
-          title="Clear Canvas"
-          content={
-            <>
-              This will clear the whole canvas.
-              <br /> Are you sure?
-            </>
-          }
-          modalActions={clearCanvasModalActions}
-          onDismiss={() => setClearCanvasModalOpen(false)}
-        />
-      ) : null}
     </>
   );
 };

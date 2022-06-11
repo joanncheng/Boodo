@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const displayNameSlice = createSlice({
-  name: 'displayName',
+  name: 'cursorDisplayName',
   initialState: '',
   reducers: {
     displayName: (_, action) => action.payload,

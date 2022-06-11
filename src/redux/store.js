@@ -6,7 +6,7 @@ import toolOptionsReducer from './toolOptions';
 export default configureStore({
   reducer: {
     user: authReducer,
-    displayName: displayNameReducer,
+    cursorDisplayName: displayNameReducer,
     toolOptions: toolOptionsReducer,
   },
 });
