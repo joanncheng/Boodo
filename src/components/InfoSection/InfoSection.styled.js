@@ -2,9 +2,9 @@ import styled from 'styled-components';
 
 export const InfoSec = styled.div`
   color: #fff;
-  padding: 160px 0;
+  padding: 120px 0 80px 0;
   background-color: ${({ lightBg, theme }) =>
-    lightBg ? theme.colors.bgGrey : theme.colors.bgDark};
+    lightBg ? '#fff' : theme.colors.bgDark};
 `;
 
 export const InfoRow = styled.div`
@@ -77,7 +77,7 @@ export const Subtitle = styled.p`
 export const ImgWrapper = styled.div`
   background-color: ${({ imgShadow }) => (imgShadow ? '#fff' : '')};
   box-shadow: ${({ imgShadow }) =>
-    imgShadow ? '0 2px 8px 4px rgba(0, 0, 0, 0.04)' : ''};
+    imgShadow ? '0 2px 10px 5px rgba(0, 0, 0, 0.05)' : ''};
   border-radius: 5px;
   display: flex;
 `;

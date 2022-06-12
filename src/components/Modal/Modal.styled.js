@@ -134,9 +134,18 @@ export const ModalActions = styled.div`
 
 export const ActionContainer = styled.div`
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: auto 300px;
   align-items: center;
   gap: 1rem;
+  width: 100%;
+
+  label {
+    text-align: center;
+  }
+
+  @media screen and (max-width: 768px) {
+    grid-template-columns: auto 200px;
+  }
 `;
 
 export const CopyIcon = styled(ClipboardIcon)`

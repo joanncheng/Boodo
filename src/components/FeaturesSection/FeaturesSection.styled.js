@@ -1,19 +1,24 @@
 import styled from 'styled-components';
 
 export const FeaturesContainer = styled.div`
-  height: 800px;
+  margin-top: -100px;
+  height: 500px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   background-color: ${({ theme }) => theme.colors.bgDark};
 
-  @media screen and (max-width: 768px) {
+  @media screen and (max-width: 1000px) {
     height: 1100px;
+  }
+  @media screen and (max-width: 768px) {
+    height: 1300px;
+    margin-top: -60px;
   }
 
   @media screen and (max-width: 480px) {
-    height: 1300px;
+    margin-top: -40px;
   }
 `;
 
