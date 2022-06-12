@@ -8,7 +8,7 @@ import CollaborationIcon from '../../public/images/icons/collaboration.svg';
 import BottomToolbarBtn from './BottomToolbarBtn';
 import { displayName } from '../redux/displayName';
 
-const CollabBtn = ({ currentBoard }) => {
+const CollabBtn = ({ currentBoard, setSelectedElement }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [collaborators, setCollaborators] = useState([]);
   const username = useSelector(state => state.cursorDisplayName);
@@ -66,7 +66,10 @@ const CollabBtn = ({ currentBoard }) => {
       ) : null}
       <BottomToolbarBtn
         title="Live collaboration"
-        handler={() => setModalOpen(true)}
+        handler={() => {
+          setModalOpen(true);
+          setSelectedElement(null);
+        }}
         collab={collaborators.length > 1 ? collaborators.length : false}
       >
         <CollaborationIcon />

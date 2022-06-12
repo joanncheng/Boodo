@@ -17,7 +17,10 @@ const BottomToolbar = ({
           svgRef={svgRef}
           setSelectedElement={setSelectedElement}
         />
-        <CollabBtn currentBoard={currentBoard} />
+        <CollabBtn
+          currentBoard={currentBoard}
+          setSelectedElement={setSelectedElement}
+        />
         <ResetCanvasBtn resetElements={resetElements} />
       </S.ToolContainer>
     </S.BottomRightStack>

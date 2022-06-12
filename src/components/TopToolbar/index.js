@@ -159,7 +159,12 @@ const TopToolbar = ({
           </S.ToolLabel>
           <S.ToolLabel title="Stroke width">
             <OutsideClicker onDismiss={() => setBrushSelectorOpen(false)}>
-              <S.ToolIcon onClick={() => setBrushSelectorOpen(prev => !prev)}>
+              <S.ToolIcon
+                onClick={e => {
+                  e.preventDefault();
+                  setBrushSelectorOpen(prev => !prev);
+                }}
+              >
                 <svg viewBox="0 0 100 100">
                   <line x1="0" y1="15" x2="100" y2="15" strokeWidth="5"></line>
                   <line x1="0" y1="45" x2="100" y2="45" strokeWidth="10"></line>

@@ -7,6 +7,7 @@ import { TEXTAREA_Y_OFFSET_RATIO } from '../../config';
 const SvgBoard = forwardRef((props, svgRef) => {
   const {
     action,
+    setAction,
     selectedElement,
     handlePointerDown,
     handlePointerMove,
@@ -61,7 +62,9 @@ const SvgBoard = forwardRef((props, svgRef) => {
   const handleTextareaBlur = e => {
     if (!e.target.value && textareaRef.current) {
       textareaRef.current.focus();
+      return;
     }
+    setAction('none');
   };
 
   const handleTextareaChange = e => {

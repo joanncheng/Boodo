@@ -196,6 +196,7 @@ const Board = props => {
     };
 
     const handleKeyup = e => {
+      if (action === 'writing') return;
       if (e.key === ' ' || e.code === 'Space') {
         setAction('none');
       }
@@ -420,7 +421,7 @@ const Board = props => {
   };
 
   const handlePointerDown = e => {
-    if (!drawingData || action === 'movingCanvas') return;
+    if (!drawingData) return;
 
     if (action === 'writing') {
       setAction('none');
@@ -523,7 +524,6 @@ const Board = props => {
 
   const handlePointerMove = e => {
     if (!drawingData) return;
-
     const x = e.clientX;
     const y = e.clientY;
     const SVGPoint = convertToSVGCoords({ x, y }, svgRef.current);
@@ -685,6 +685,7 @@ const Board = props => {
 
   const svgBoardProps = {
     action,
+    setAction,
     selectedElement,
     handlePointerDown,
     handlePointerMove,
