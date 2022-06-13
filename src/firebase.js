@@ -7,9 +7,10 @@ import {
   FacebookAuthProvider,
 } from 'firebase/auth';
 import { getDatabase, connectDatabaseEmulator } from 'firebase/database';
+import { API_KEY } from '../apiKey';
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyCZAHyOh-0-YR9kcXM2rOsRBfbX6NhRtbI',
+  apiKey: API_KEY,
   authDomain: 'online-whiteboard-boodo.firebaseapp.com',
   databaseURL: 'https://online-whiteboard-boodo-default-rtdb.firebaseio.com',
   projectId: 'online-whiteboard-boodo',
