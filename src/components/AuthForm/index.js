@@ -11,6 +11,8 @@ import { auth, googleAuthProvider, facebookAuthProvider } from '../../firebase';
 import * as S from './AuthForm.styled';
 
 const AuthForm = ({ boardId, signin }) => {
+  const [signinEmail, setSigninEmail] = useState('test@test.com');
+  const [signinPassword, setSigninPassword] = useState('test123');
   const [error, setError] = useState({ type: '', message: '' });
   const [loadingType, setLoadingType] = useState('none');
   const history = useHistory();
@@ -58,8 +60,12 @@ const AuthForm = ({ boardId, signin }) => {
     }
   };
 
-  const onSubmit = async ({ email, password }) => {
+  const onSubmit = async props => {
+    const email = props[email] ? props.email : signinEmail;
+    const password = props[password] ? props.password : signinPassword;
+
     if (!email || !password) return;
+
     const type = 'emailPassword';
     setLoadingType(type);
     try {
@@ -97,6 +103,65 @@ const AuthForm = ({ boardId, signin }) => {
     } else if (type === 'required') {
       return <span>{`${field} is required`}</span>;
     }
+  };
+
+  const renderSigninFormField = () => {
+    return (
+      <>
+        <S.FormField>
+          <S.FormLabel>Email</S.FormLabel>
+          <S.FormInput
+            type="email"
+            value={signinEmail}
+            onChange={e => setSigninEmail(e.target.value)}
+            placeholder="test@test.com"
+            required
+          />
+        </S.FormField>
+        <S.FormField>
+          <S.FormLabel>Password</S.FormLabel>
+          <S.FormInput
+            type="password"
+            value={signinPassword}
+            onChange={e => setSigninPassword(e.target.value)}
+            placeholder="test123"
+            required
+          />
+        </S.FormField>
+      </>
+    );
+  };
+
+  const renderSignupFormField = () => {
+    return (
+      <>
+        <S.FormField>
+          <S.FormLabel>Email</S.FormLabel>
+          <S.FormInput
+            type="email"
+            placeholder="name@example.com"
+            {...register('email', {
+              required: true,
+              pattern: /^\S+@\S+$/i,
+            })}
+          />
+          {errors.email && renderInputError('email', errors.email.type)}
+        </S.FormField>
+        <S.FormField>
+          <S.FormLabel>Password</S.FormLabel>
+          <S.FormInput
+            type="password"
+            placeholder="at least 6 characters"
+            {...register('password', {
+              required: true,
+              minLength: 6,
+            })}
+          />
+          {errors.password &&
+            renderInputError('password', errors.password.type)}
+        </S.FormField>
+      </>
+    );
   };
 
   const btnContent = signin ? 'Sign in' : 'Sign up';
@@ -142,32 +207,7 @@ const AuthForm = ({ boardId, signin }) => {
           <S.Logo to="/">
             <S.LogoIcon />
           </S.Logo>
-          <S.FormField>
-            <S.FormLabel>Email</S.FormLabel>
-            <S.FormInput
-              type="email"
-              placeholder={signin ? 'test@test.com' : 'name@example.com'}
-              {...register('email', {
-                required: true,
-                pattern: /^\S+@\S+$/i,
-              })}
-            />
-            {errors.email && renderInputError('email', errors.email.type)}
-          </S.FormField>
-          <S.FormField>
-            <S.FormLabel>Password</S.FormLabel>
-            <S.FormInput
-              type="password"
-              placeholder={signin ? 'test123' : 'at least 6 characters'}
-              {...register('password', {
-                required: true,
-                minLength: 6,
-              })}
-            />
-            {errors.password &&
-              renderInputError('password', errors.password.type)}
-          </S.FormField>
-
+          {signin ? renderSigninFormField() : renderSignupFormField()}
           <S.FormBtn type="submit">
             {loadingType === 'emailPassword' ? (
               <S.Loader
