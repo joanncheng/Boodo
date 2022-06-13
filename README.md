@@ -4,9 +4,9 @@
   <a href="https://online-whiteboard-boodo.web.app/">
     <img width="300" src="https://i.imgur.com/C14NHOF.png" alt="boodo logo" />
   </a>
-  <h3>A simple online whiteboard tool that helps you express your thoughts in drawing</br> and collaborate with others in real-time from anywhere.
+  <h3>A simple online whiteboard tool that helps you express your thoughts in drawing</br> and collaborate with others in real-time from anywhere.</h3>
+  <img width="800" src="https://i.imgur.com/4YJk5CT.gif" alt="cover" />
 </div>
-
 <p align="center">
   <b>
   Live Demo: https://online-whiteboard-boodo.web.app/
@@ -24,6 +24,7 @@
 <p align="center">
   Password: test123
 </p>
+
 
 ## Technique
 
@@ -64,7 +65,6 @@
 - Resize shapes and images
 - Undo & Redo supported
 - Zoom or move the canvas
-- Keyboard shortcuts to work faster
 - Collaborate in real-time by simply sharing the whiteboard's URL
 - Every user's cursor is shown with different colors on the whiteboard while collaborating
 - Users can type the name they want to display on other collaborators' screens
@@ -72,3 +72,22 @@
 - Clear the whole canvas
 - Create/ delete boards in the console
 - Mobile devices supported
+- Keyboard shortcuts to work faster
+  - | action | keyboard shortcut |
+    | -------- | -------- |
+    | Change tool | 1 ~ 7    |
+    | Undo | Ctrl+Z   |
+    | Redo | Ctrl + Shift + Z    |
+    | Delete selected element |Backspace or Delete    |
+    | Zoom canvas | press Ctrl key and scroll the mouse wheel    |
+    | Move canvas | Hold spacebar while dragging or if the active tool is selection, press on the empty space then drag it   |
+    
+
+## Demo Videos
+
+https://user-images.githubusercontent.com/87297350/173233123-557d82cd-bf41-48a0-a979-5dbe9db2b345.mov
+
+https://user-images.githubusercontent.com/87297350/173233136-239d729a-0a7f-4600-89ef-708fde4200cc.mov
+
+## Inspiration
+The UI of whiteboard was inspired by [Excalidraw](https://excalidraw.com/).
