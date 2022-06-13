@@ -4,6 +4,8 @@ export const IMAGE_DEFAULT_WIDTH = 300;
 
 export const TEXTAREA_Y_OFFSET_RATIO = 4.8;
 
+export const FONT_FACE = `@font-face {font-family: Gochi Hand;src: url('https://fonts.gstatic.com/s/gochihand/v16/hES06XlsOjtJsgCkx1Pkfon_-18kTWE.woff2');}`;
+
 export const ERASER_CURSOR =
   "url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABmJLR0QA/wD/AP+gvaeTAAAArklEQVQ4jaXTPQ6BQRDG8R/u4OscDoRSlCqJSqehcR2NC2jkpZVI1A6AZleQfV82nmSSzcz+n9nJZPlTjR/utLFAE7vcBi3scQ8x+wfOMimDfzLpoKiAY/ShnoA3qGH15ZW9ss6HcIZ5SfcijPlUKySLFzjq0yR1xxrnVCFoWQXDADeMErVOGKsUjpoEk/FLLq7ziG4VnDLJhqOmweTsfSNJpT7TFidcMcQlp3u2Ht7nQaPZqVymAAAAAElFTkSuQmCC'), crosshair";
 

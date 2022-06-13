@@ -1,7 +1,7 @@
 import React from 'react';
 import rough from 'roughjs/bundled/rough.esm';
 import { getStroke } from 'perfect-freehand';
-import { saveSvgAsPng, svgAsDataUri } from 'save-svg-as-png';
+import { saveSvgAsPng } from 'save-svg-as-png';
 
 const generator = rough.generator();
 

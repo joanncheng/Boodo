@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useEffect, useState } from 'react';
 import * as S from './SvgBoard.styled';
 import { drawElement, convertToCanvasCoords } from '../../utils';
 import SelectedBox from '../SelectedBox';
-import { TEXTAREA_Y_OFFSET_RATIO } from '../../config';
+import { FONT_FACE, TEXTAREA_Y_OFFSET_RATIO } from '../../config';
 
 const SvgBoard = forwardRef((props, svgRef) => {
   const {
@@ -120,9 +120,7 @@ const SvgBoard = forwardRef((props, svgRef) => {
         onPointerUp={handlePointerUp}
       >
         <defs>
-          <style type="text/css">
-            {`@font-face {font-family: Gochi Hand;src: url('https://fonts.gstatic.com/s/gochihand/v16/hES06XlsOjtJsgCkx1Pkfon_-18kTWE.woff2');}`}
-          </style>
+          <style type="text/css">{FONT_FACE}</style>
         </defs>
         {elements &&
           elements.map(element => {

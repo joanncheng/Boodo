@@ -4,7 +4,7 @@ import { adjustElementCoordinates } from '../utils';
 const SelectedBox = ({ element }) => {
   const { type } = element;
   const { x1, y1, x2, y2 } = adjustElementCoordinates(element);
-  const width = x2 - x1 + 5; // FIXME: there are lots of magic numbers
+  const width = x2 - x1 + 5;
   const height = y2 - y1 + 5;
 
   const drawSelector = () => {
