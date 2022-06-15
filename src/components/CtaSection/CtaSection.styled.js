@@ -21,6 +21,7 @@ export const CtaWrapper = styled.div`
 export const CtaH2 = styled.h2`
   font-size: 48px;
   font-family: 'Gochi Hand';
+  color: ${({ theme }) => theme.colors.textDarkest};
   margin-bottom: 48px;
   line-height: 1.1;
 

@@ -40,10 +40,8 @@ export const TextWrapper = styled.div`
 `;
 
 export const TopLine = styled.div`
-  color: ${({ lightTopLine }) =>
-    lightTopLine
-      ? ({ theme }) => theme.colors.primaryLightest
-      : ({ theme }) => theme.colors.primary};
+  color: ${({ lightTopLine, theme }) =>
+    lightTopLine ? theme.colors.primaryLightest : theme.colors.primary};
   font-size: 18px;
   line-height: 16px;
   letter-spacing: 1.4px;

@@ -10,20 +10,21 @@ export const FooterWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 2rem;
-  padding: 0.5rem 0;
+  gap: 1rem;
+  padding: 0.8rem 0;
+  color: ${({ theme }) => theme.colors.bgDark};
 `;
 
 export const GithubLink = styled.a`
-  width: 2rem;
-  height: 2rem;
+  width: 1.8rem;
+  height: 1.8rem;
   display: grid;
   place-items: center;
   cursor: pointer;
 `;
 
 export const GithubIcon = styled(AiFillGithub)`
-  width: 2rem;
-  height: 2rem;
-  color: #000;
+  width: 1.8rem;
+  height: 1.8rem;
+  color: ${({ theme }) => theme.colors.bgDark};
 `;
