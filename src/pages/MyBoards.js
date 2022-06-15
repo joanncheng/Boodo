@@ -45,13 +45,9 @@ const MyBoards = () => {
   }, []);
 
   const handleSignOut = () => {
-    try {
-      signOut(auth);
-      dispatch(logOut());
-      history.push('/');
-    } catch (err) {
-      console.error(err.message);
-    }
+    signOut(auth);
+    dispatch(logOut());
+    history.push('/');
   };
 
   const createBoard = () => {

@@ -54,16 +54,13 @@ const Board = props => {
   const [elements, setElements, undo, redo] = useDrawingHistory([]);
   const [touchEvents, setTouchEvents, zoom] = useZoomGesture([]);
 
+  // Local states
   const [tool, setTool] = useState('selection');
   const [action, setAction] = useState('none');
   const [selectedElement, setSelectedElement] = useState(null);
   const [drawingData, setDrawingData] = useState(null);
-
-  // Upload Image to firebase storage
   const [imageUpload, setImageUpload] = useState(null);
   const [uploadedImageData, setUploadedImageData] = useState(null);
-
-  // Resize canvas
   const [viewBox, setViewBox] = useState({
     x: 0,
     y: 0,
@@ -149,8 +146,9 @@ const Board = props => {
     if (!drawingData) return;
 
     const handleKeydown = e => {
-      if ((action === 'writing' && e.key !== 'Escape') || action === 'renaming')
-        return;
+      if (action === 'writing' && e.key === 'Escape') return setAction('none');
+      if (action !== 'none') return;
+
       if ((e.metaKey || e.ctrlKey) && e.key === 'z') {
         e.shiftKey ? handleRedoUndo('redo') : handleRedoUndo('undo');
         return;
@@ -196,10 +194,8 @@ const Board = props => {
     };
 
     const handleKeyup = e => {
-      if (action === 'writing') return;
-      if (e.key === ' ' || e.code === 'Space') {
+      if ((e.key === ' ' || e.code === 'Space') && action === 'movingCanvas')
         setAction('none');
-      }
     };
 
     const handleWheel = e => {
@@ -421,7 +417,7 @@ const Board = props => {
   };
 
   const handlePointerDown = e => {
-    if (!drawingData) return;
+    if (!drawingData || action === 'movingCanvas') return;
 
     if (action === 'writing') {
       setAction('none');
@@ -674,7 +670,7 @@ const Board = props => {
         updateElement(id, x1, y1, x2, y2, type, options);
       }
 
-      if (action === 'drawing' || tool === 'image')
+      if (tool === 'pencil' || tool === 'image')
         writeDataToDatabase(elements[index]);
     }
 
