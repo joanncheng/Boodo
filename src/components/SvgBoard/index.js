@@ -29,6 +29,7 @@ const SvgBoard = forwardRef((props, svgRef) => {
         ...viewBox,
         width: window.innerWidth,
         height: window.innerHeight,
+        centerPoint: { x: window.innerWidth / 2, y: window.innerHeight / 2 },
       });
     };
     window.addEventListener('resize', handleResize);

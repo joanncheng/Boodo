@@ -66,12 +66,9 @@ const Board = props => {
     y: 0,
     width: window.innerWidth,
     height: window.innerHeight,
+    centerPoint: { x: window.innerWidth / 2, y: window.innerHeight / 2 },
   });
   const [viewBoxSizeRatio, setViewBoxSizeRatio] = useState(1);
-  const [centerPoint, setCenterPoint] = useState({
-    x: window.innerWidth / 2,
-    y: window.innerHeight / 2,
-  });
 
   const svgRef = useRef(null);
 
@@ -107,7 +104,7 @@ const Board = props => {
           setDrawingData(undefined);
         }
       } else {
-        // Redirect to signin page
+        // If not logged in, redirect to signin page
         history.push(`/signin/${currentBoard}`);
       }
     });
@@ -141,7 +138,7 @@ const Board = props => {
     }
   }, [uploadedImageData]);
 
-  // Keydown & wheel event
+  // Keyboard shortcut
   useEffect(() => {
     if (!drawingData) return;
 
@@ -220,11 +217,13 @@ const Board = props => {
     };
   });
 
-  // Change selectedElement opacity
   useEffect(() => {
-    if (!selectedElement) return;
+    if (tool !== 'selection') setSelectedElement(null);
+  }, [tool]);
 
-    if (selectedElement.options.opacity !== opacity) {
+  // Change the opacity of the selectedElement
+  useEffect(() => {
+    if (selectedElement && selectedElement.options.opacity !== opacity) {
       if (selectedElement.type === 'pencil') {
         const elementsCopy = [...elements];
         const index = elements.findIndex(el => el.id === selectedElement.id);
@@ -264,6 +263,7 @@ const Board = props => {
       },
       svgRef.current
     );
+    const { centerPoint } = viewBox;
     const delta = {
       dx: centerPoint.x - newCenterPoint.x,
       dy: centerPoint.y - newCenterPoint.y,
@@ -272,6 +272,7 @@ const Board = props => {
       ...viewBox,
       x: viewBox.x + delta.dx,
       y: viewBox.y + delta.dy,
+      centerPoint: newCenterPoint,
     });
   }, [viewBoxSizeRatio]);
 
@@ -376,6 +377,7 @@ const Board = props => {
       y: 0,
       width: window.innerWidth,
       height: window.innerHeight,
+      centerPoint: { x: window.innerWidth / 2, y: window.innerHeight / 2 },
     });
     writeDataToDatabase('', 'deleteAll');
   };
@@ -413,7 +415,7 @@ const Board = props => {
       },
       svgRef.current
     );
-    setCenterPoint(newCenterPoint);
+    setViewBox({ ...viewBox, centerPoint: newCenterPoint });
   };
 
   const handlePointerDown = e => {
@@ -621,10 +623,18 @@ const Board = props => {
         e.movementY,
         svgRef.current
       );
+      const newCenterPoint = convertToSVGCoords(
+        {
+          x: window.innerWidth / 2,
+          y: window.innerHeight / 2,
+        },
+        svgRef.current
+      );
       setViewBox({
         ...viewBox,
         x: viewBox.x + svgMovement.dx,
         y: viewBox.y + svgMovement.dy,
+        centerPoint: newCenterPoint,
       });
     }
   };
