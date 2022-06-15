@@ -47,7 +47,7 @@
 1. Shared React components design
 2. Use Redux to manage global states
 3. Use Portals to render the modal outside the DOM hierarchy of its parent component
-   ![image](https://i.imgur.com/MSa9Wqq.png)
+   ![image](https://i.imgur.com/8q7ZOEw.png)
 
 ### Custom Hook
 
@@ -85,9 +85,17 @@
 
 ## Demo Videos
 
-https://user-images.githubusercontent.com/87297350/173233123-557d82cd-bf41-48a0-a979-5dbe9db2b345.mov
 
-https://user-images.githubusercontent.com/87297350/173233136-239d729a-0a7f-4600-89ef-708fde4200cc.mov
+
+https://user-images.githubusercontent.com/87297350/173868255-ca7d17c6-8791-4fa9-bf8f-26640cf26b91.mov
+
+
+
+https://user-images.githubusercontent.com/87297350/173868282-0c6839af-8de0-43c0-bc69-a3959f63faf4.mov
+
+
+
+
 
 ## Inspiration
 The UI of whiteboard was inspired by [Excalidraw](https://excalidraw.com/).
