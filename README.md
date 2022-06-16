@@ -5,7 +5,7 @@
     <img width="300" src="https://i.imgur.com/C14NHOF.png" alt="boodo logo" />
   </a>
   <h3>A simple online whiteboard tool that helps you express your thoughts in drawing</br> and collaborate with others in real-time from anywhere.</h3>
-  <img width="800" src="https://i.imgur.com/4YJk5CT.gif" alt="cover" />
+  <img width="800" src="https://i.imgur.com/ec8vkwH.gif" alt="cover" />
 </div>
 <p align="center">
   <b>
@@ -25,7 +25,6 @@
   Password: test123
 </p>
 
-
 ## Technique
 
 | Technique           | Description                                           |
@@ -35,7 +34,7 @@
 | Redux Toolkit       | manage global states                                  |
 | Firebase            | Realtime Database, Storage, Authentication, Hosting   |
 | SVG                 | draw vector-based graphics in XML format              |
-| Third-Party Modules | roughjs, perferct-freehand, save-svg-as-png           |
+| Third-Party Modules | roughjs, perfect-freehand, save-svg-as-png            |
 | styled-components   | CSS-In-JS                                             |
 | Prettier            | keep the coding style consistent and better formatted |
 | ESLint              | help to check syntax, enhance development efficiency  |
@@ -73,29 +72,21 @@
 - Create/ delete boards in the console
 - Mobile devices supported
 - Keyboard shortcuts to work faster
-  - | action | keyboard shortcut |
-    | -------- | -------- |
-    | Change tool | 1 ~ 7    |
-    | Undo | Ctrl+Z   |
-    | Redo | Ctrl + Shift + Z    |
-    | Delete selected element |Backspace or Delete    |
-    | Zoom canvas | press Ctrl key and scroll the mouse wheel    |
-    | Move canvas | Hold spacebar while dragging or if the active tool is selection, press on the empty space then drag it   |
-    
+  - | action                  | keyboard shortcut                                                                                      |
+    | ----------------------- | ------------------------------------------------------------------------------------------------------ |
+    | Change tool             | 1 ~ 7                                                                                                  |
+    | Undo                    | Ctrl+Z                                                                                                 |
+    | Redo                    | Ctrl + Shift + Z                                                                                       |
+    | Delete selected element | Backspace or Delete                                                                                    |
+    | Zoom canvas             | press Ctrl key and scroll the mouse wheel                                                              |
+    | Move canvas             | Hold spacebar while dragging or if the active tool is selection, press on the empty space then drag it |
 
 ## Demo Videos
 
-
-
 https://user-images.githubusercontent.com/87297350/173868255-ca7d17c6-8791-4fa9-bf8f-26640cf26b91.mov
-
-
 
 https://user-images.githubusercontent.com/87297350/173868282-0c6839af-8de0-43c0-bc69-a3959f63faf4.mov
 
-
-
-
-
 ## Inspiration
+
 The UI of whiteboard was inspired by [Excalidraw](https://excalidraw.com/).
