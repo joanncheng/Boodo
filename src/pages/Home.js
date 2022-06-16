@@ -21,7 +21,11 @@ const Home = () => {
       <Sidebar isOpen={isOpen} toggle={toggle} user={user} />
       <NavBar toggle={toggle} user={user} />
       <InfoSection {...homeObj1st} />
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 240">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 1440 240"
+        style={{ marginTop: '-5px' }}
+      >
         <path
           fill="#121033"
           fillOpacity="1"
@@ -29,7 +33,11 @@ const Home = () => {
         ></path>
       </svg>
       <InfoSection class="about" {...homeObj2nd} />
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 50 1440 320">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 50 1440 320"
+        style={{ marginTop: '-5px' }}
+      >
         <path
           fill="#121033"
           fillOpacity="1"
@@ -37,7 +45,11 @@ const Home = () => {
         ></path>
       </svg>
       <FeaturesSection />
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 1440 320"
+        style={{ marginTop: '-5px' }}
+      >
         <path
           fill="#121033"
           fillOpacity="1"

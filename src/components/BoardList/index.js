@@ -1,10 +1,13 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import * as S from './BoardList.styled';
 import { Container as GSContainer } from '../GlobalStyles';
 import BoardCard from '../BoardCard';
 import Loader from '../Loader';
 
-const BoardList = ({ user, boards, createBoard, deleteBoard }) => {
+const BoardList = ({ boards, createBoard, deleteBoard }) => {
+  const user = useSelector(state => state.user);
+
   const renderedBoardCards = () => {
     if (!boards) return null;
 

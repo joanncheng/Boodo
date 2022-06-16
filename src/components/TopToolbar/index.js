@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { CgDropOpacity } from 'react-icons/cg';
 import * as S from './TopToolbar.styled';
 import { selectOpacity } from '../../redux/toolOptions';
@@ -19,9 +19,6 @@ import ShapeBtn from '../ShapeBtn';
 import { getResizedImageURL } from '../../utils';
 
 const TopToolbar = ({
-  brushColor,
-  brushSize,
-  opacity,
   tool,
   setTool,
   action,
@@ -31,6 +28,10 @@ const TopToolbar = ({
   renameBoard,
 }) => {
   const dispatch = useDispatch();
+  const brushColor = useSelector(state => state.toolOptions.brushColor);
+  const brushSize = useSelector(state => state.toolOptions.brushSize);
+  const opacity = useSelector(state => state.toolOptions.opacity);
+
   const [brushSelectorOpen, setBrushSelectorOpen] = useState(false);
   const [opacitySelectorOpen, setOpacitySelectorOpen] = useState(false);
 

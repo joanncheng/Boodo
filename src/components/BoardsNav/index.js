@@ -1,8 +1,11 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import AvatarIcon from '../../../public/images/icons/avatar.svg';
 import * as S from './BoardsNav.styled';
 
-const BoardsNav = ({ user, handleSignOut }) => {
+const BoardsNav = ({ handleSignOut }) => {
+  const user = useSelector(state => state.user);
+
   return (
     <S.Nav>
       <S.NavbarContainer>

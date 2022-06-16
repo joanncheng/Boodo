@@ -79,9 +79,8 @@ const MyBoards = () => {
         <Loader />
       ) : (
         <>
-          <BoardsNav user={user} handleSignOut={handleSignOut} />
+          <BoardsNav handleSignOut={handleSignOut} />
           <BoardList
-            user={user}
             boards={boards}
             createBoard={createBoard}
             deleteBoard={deleteBoard}

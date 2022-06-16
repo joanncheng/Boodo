@@ -689,6 +689,14 @@ const Board = props => {
     if (tool !== 'pencil') setTool('selection');
   };
 
+  if (drawingData === undefined) {
+    return (
+      <>
+        <ErrorMessage message={'Page is not found.'} />
+      </>
+    );
+  }
+
   const svgBoardProps = {
     action,
     setAction,
@@ -703,38 +711,20 @@ const Board = props => {
     setViewBox,
   };
 
-  if (drawingData === undefined) {
-    return (
-      <>
-        <ErrorMessage message={'Page is not found.'} />
-      </>
-    );
-  }
-
   return (
     <>
       <TopToolbar
-        brushColor={brushColor}
-        brushSize={brushSize}
-        opacity={opacity}
         tool={tool}
         setTool={setTool}
         action={action}
         setAction={setAction}
         setImageUpload={setImageUpload}
-        user={user}
         boardName={drawingData ? drawingData.boardName : ''}
         renameBoard={renameBoard}
       />
       {!drawingData && <Loader fontColor="#343a40" />}
       <SvgBoard ref={svgRef} {...svgBoardProps}></SvgBoard>
-      {user && (
-        <EditorCursors
-          user={user}
-          currentBoard={currentBoard}
-          svgRef={svgRef}
-        />
-      )}
+      {user && <EditorCursors currentBoard={currentBoard} svgRef={svgRef} />}
       <BottomLeftToolbar
         handleRedoUndo={handleRedoUndo}
         tool={tool}

@@ -22,8 +22,9 @@ const colors = [
   '#607d8b',
 ];
 
-const EditorCursors = ({ user, currentBoard, svgRef }) => {
+const EditorCursors = ({ currentBoard, svgRef }) => {
   const cursorDisplayName = useSelector(state => state.cursorDisplayName);
+  const user = useSelector(state => state.user);
   const [cursorState, setCursorState] = useState([]);
 
   useEffect(() => {
