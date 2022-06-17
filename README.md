@@ -5,7 +5,7 @@
     <img width="300" src="https://i.imgur.com/C14NHOF.png" alt="boodo logo" />
   </a>
   <h3>A simple online whiteboard tool that helps you express your thoughts in drawing</br> and collaborate with others in real-time from anywhere.</h3>
-  <img width="800" src="https://i.imgur.com/ec8vkwH.gif" alt="cover" />
+  <img width="800" src="https://i.imgur.com/WtnkCUV.gif" alt="cover" />
 </div>
 <p align="center">
   <b>

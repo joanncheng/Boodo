@@ -38,7 +38,7 @@ module.exports = {
         test: /\.(jpe?g|png|gif)$/i,
         loader: 'file-loader',
         options: {
-          name: '/public/images/[name].[ext]',
+          name: 'public/images/[name].[ext]',
         },
       },
       {

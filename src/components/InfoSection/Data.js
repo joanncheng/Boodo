@@ -1,5 +1,5 @@
 import heroImg from '../../../public/images/heroImg.svg?url';
-import aboutSecImg from '../../../public/images/aboutSecImg.svg?url';
+import aboutSecImg from '/public/images/aboutSec.gif';
 
 export const homeObj1st = {
   id: 'hero',

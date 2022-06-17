@@ -78,6 +78,7 @@ export const ImgWrapper = styled.div`
     imgShadow ? '0 2px 10px 5px rgba(0, 0, 0, 0.05)' : ''};
   border-radius: 5px;
   display: flex;
+  overflow: hidden;
 `;
 
 export const Img = styled.img`
