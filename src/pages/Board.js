@@ -10,9 +10,8 @@ import {
   update,
   serverTimestamp,
 } from 'firebase/database';
-import { onAuthStateChanged } from 'firebase/auth';
 import { v4 as uuid } from 'uuid';
-import { storage, db, auth } from '../firebase';
+import { storage, db } from '../firebase';
 import useDrawingHistory from '../hooks/useDrawingHistory';
 import SvgBoard from '../components/SvgBoard';
 import TopToolbar from '../components/TopToolbar';
@@ -74,40 +73,38 @@ const Board = props => {
 
   // Check user logged in or not
   useEffect(() => {
-    onAuthStateChanged(auth, user => {
-      if (user) {
-        try {
-          // Listen data changes from db
-          onValue(ref(db, `boards/${currentBoard}`), snapshot => {
-            if (snapshot.exists()) {
-              const data = snapshot.val();
-              if (data.elements) {
-                const elements = Object.keys(data.elements).map(
-                  id => data.elements[`${id}`]
-                );
-                data.elements = elements;
-              }
-              setDrawingData(data);
-            } else {
-              setDrawingData(undefined);
+    if (user) {
+      try {
+        // Listen data changes from db
+        onValue(ref(db, `boards/${currentBoard}`), snapshot => {
+          if (snapshot.exists()) {
+            const data = snapshot.val();
+            if (data.elements) {
+              const elements = Object.keys(data.elements).map(
+                id => data.elements[`${id}`]
+              );
+              data.elements = elements;
             }
-          });
+            setDrawingData(data);
+          } else {
+            setDrawingData(undefined);
+          }
+        });
 
-          // track user connection
-          const ownStatusRef = ref(db, `status/${user.uid}`);
-          set(ownStatusRef, {
-            email: user.email,
-            board: currentBoard,
-          });
-          onDisconnect(ownStatusRef).remove();
-        } catch (err) {
-          setDrawingData(undefined);
-        }
-      } else {
-        // If not logged in, redirect to signin page
-        history.push(`/signin/${currentBoard}`);
+        // track user connection
+        const ownStatusRef = ref(db, `status/${user.uid}`);
+        set(ownStatusRef, {
+          email: user.email,
+          board: currentBoard,
+        });
+        onDisconnect(ownStatusRef).remove();
+      } catch (err) {
+        setDrawingData(undefined);
       }
-    });
+    } else {
+      // If not logged in, redirect to signin page
+      history.push(`/signin/${currentBoard}`);
+    }
   }, []);
 
   useEffect(() => {
