@@ -62,7 +62,7 @@ export const DropdownItem = styled.div`
   width: 1.2rem;
   height: 1.2rem;
   background-color: ${({ color }) => color};
-  border-radius: 5px;
+  border-radius: ${({ active }) => (active ? '50%' : '5px')};
   cursor: pointer;
   border: ${({ active }) => (active ? '0.3px solid #fff' : 'none')};
   box-shadow: ${({ active, color }) =>

@@ -28,11 +28,7 @@ const TopToolbar = ({
   renameBoard,
 }) => {
   const dispatch = useDispatch();
-  const brushColor = useSelector(state => state.toolOptions.brushColor);
-  const brushSize = useSelector(state => state.toolOptions.brushSize);
   const opacity = useSelector(state => state.toolOptions.opacity);
-
-  const [brushSelectorOpen, setBrushSelectorOpen] = useState(false);
   const [opacitySelectorOpen, setOpacitySelectorOpen] = useState(false);
 
   const handleImageUpload = e => {
@@ -159,26 +155,7 @@ const TopToolbar = ({
             <ColorPicker />
           </S.ToolLabel>
           <S.ToolLabel title="Stroke width">
-            <OutsideClicker onDismiss={() => setBrushSelectorOpen(false)}>
-              <S.ToolIcon
-                onClick={e => {
-                  e.preventDefault();
-                  setBrushSelectorOpen(prev => !prev);
-                }}
-              >
-                <svg viewBox="0 0 100 100">
-                  <line x1="0" y1="15" x2="100" y2="15" strokeWidth="5"></line>
-                  <line x1="0" y1="45" x2="100" y2="45" strokeWidth="10"></line>
-                  <line x1="0" y1="80" x2="100" y2="80" strokeWidth="20"></line>
-                </svg>
-              </S.ToolIcon>
-              {brushSelectorOpen && (
-                <BrushWidthSelector
-                  brushColor={brushColor}
-                  brushSize={brushSize}
-                />
-              )}
-            </OutsideClicker>
+            <BrushWidthSelector />
           </S.ToolLabel>
           <S.ToolLabel title="Opacity">
             <OutsideClicker onDismiss={() => setOpacitySelectorOpen(false)}>
