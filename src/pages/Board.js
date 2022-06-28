@@ -416,7 +416,7 @@ const Board = props => {
   };
 
   const handlePointerDown = e => {
-    if (!drawingData || action === 'movingCanvas') return;
+    if (!drawingData) return;
 
     if (action === 'writing') {
       setAction('none');
