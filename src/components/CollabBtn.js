@@ -25,9 +25,9 @@ const CollabBtn = ({ currentBoard, setSelectedElement }) => {
     onValue(ref(db, `status/`), snapshot => {
       const allStatus = snapshot.val();
       if (!allStatus) return;
-      const editors = Object.keys(allStatus)
-        .map(key => allStatus[key])
-        .filter(({ board }) => board === currentBoard);
+      const editors = Object.values(allStatus).filter(
+        ({ board }) => board === currentBoard
+      );
       setCollaborators(editors);
     });
   }, []);

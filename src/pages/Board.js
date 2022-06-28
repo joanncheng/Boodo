@@ -80,9 +80,7 @@ const Board = props => {
           if (snapshot.exists()) {
             const data = snapshot.val();
             if (data.elements) {
-              const elements = Object.keys(data.elements).map(
-                id => data.elements[`${id}`]
-              );
+              const elements = Object.values(data.elements);
               data.elements = elements;
             }
             setDrawingData(data);

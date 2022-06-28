@@ -53,12 +53,10 @@ const EditorCursors = ({ currentBoard, svgRef }) => {
     onValue(ref(db, `userCursors/`), snapshot => {
       const cursors = snapshot.val();
       if (!cursors) return;
-      const editorCursors = Object.keys(cursors)
-        .map(key => cursors[key])
-        .filter(cursor => {
-          const { board, userId } = cursor;
-          return board === currentBoard && userId !== user.uid;
-        });
+      const editorCursors = Object.values(cursors).filter(cursor => {
+        const { board, userId } = cursor;
+        return board === currentBoard && userId !== user.uid;
+      });
       setCursorState(editorCursors);
     });
   }, []);
