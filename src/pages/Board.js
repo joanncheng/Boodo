@@ -323,6 +323,7 @@ const Board = props => {
       case 'ellipse':
       case 'diamond':
       case 'image':
+      case 'text':
         elementsCopy[index] = createSVGElement(
           id,
           x1,
@@ -338,17 +339,6 @@ const Board = props => {
           ...elementsCopy[index].points,
           { x: x2, y: y2 },
         ];
-        break;
-      case 'text':
-        elementsCopy[index] = createSVGElement(
-          id,
-          x1,
-          y1,
-          x2,
-          y2,
-          type,
-          options
-        );
         break;
       default:
         throw new Error(`Type not recognized: ${type}`);

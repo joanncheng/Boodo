@@ -8,7 +8,7 @@ const SelectedBox = ({ element }) => {
   const height = y2 - y1 + 5;
 
   const drawSelector = () => {
-    if (type === 'text' && !element.options.text) return;
+    if (type === 'text' && !element.options.text) return null;
     switch (type) {
       case 'pencil':
         return (
