@@ -30,7 +30,7 @@
 | Technique           | Description                                           |
 | ------------------- | ----------------------------------------------------- |
 | React Hooks         | functional components, custom hook                    |
-| React Router        | implements routing in SPA                             |
+| React Router        | implement routing in SPA                             |
 | Redux Toolkit       | manage global states                                  |
 | Firebase            | Realtime Database, Storage, Authentication, Hosting   |
 | SVG                 | draw vector-based graphics in XML format              |
