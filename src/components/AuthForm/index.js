@@ -85,6 +85,11 @@ const AuthForm = ({ boardId, signin }) => {
           type,
           message: 'Sorry, wrong email or password.',
         });
+      } else if (err.code === 'auth/email-already-in-use') {
+        setError({
+          type,
+          message: 'Sorry, email already in use.',
+        });
       } else
         setError({
           type,

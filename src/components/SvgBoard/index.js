@@ -123,12 +123,10 @@ const SvgBoard = forwardRef((props, svgRef) => {
         <defs>
           <style type="text/css">{FONT_FACE}</style>
         </defs>
-        {elements &&
-          elements.map(element => {
-            if (action === 'writing' && element.id === selectedElement.id)
-              return;
-            return drawElement(element);
-          })}
+        {elements?.map(element => {
+          if (action === 'writing' && element.id === selectedElement.id) return;
+          return drawElement(element);
+        })}
         {selectedElement &&
           action !== 'drawing' &&
           action !== 'writing' &&
