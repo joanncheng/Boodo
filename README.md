@@ -12,25 +12,13 @@
   Live Demo: https://online-whiteboard-boodo.web.app/
   </b>
 </p>
-<br/>
-<p align="center">
-  <b>
-  Test Account
-  </b>
-</p>
-<p align="center">
-  Email: test@test.com
-</p>
-<p align="center">
-  Password: test123
-</p>
 
 ## Technique
 
 | Technique           | Description                                           |
 | ------------------- | ----------------------------------------------------- |
 | React Hooks         | functional components, custom hook                    |
-| React Router        | implement routing in SPA                             |
+| React Router        | implement routing in SPA                              |
 | Redux Toolkit       | manage global states                                  |
 | Firebase            | Realtime Database, Storage, Authentication, Hosting   |
 | SVG                 | draw vector-based graphics in XML format              |

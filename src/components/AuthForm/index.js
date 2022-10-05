@@ -11,8 +11,8 @@ import { auth, googleAuthProvider, facebookAuthProvider } from '../../firebase';
 import * as S from './AuthForm.styled';
 
 const AuthForm = ({ boardId, signin }) => {
-  const [signinEmail, setSigninEmail] = useState('test@test.com');
-  const [signinPassword, setSigninPassword] = useState('test123');
+  const [signinEmail, setSigninEmail] = useState('');
+  const [signinPassword, setSigninPassword] = useState('');
   const [error, setError] = useState({ type: '', message: '' });
   const [loadingType, setLoadingType] = useState('none');
   const history = useHistory();
@@ -119,7 +119,6 @@ const AuthForm = ({ boardId, signin }) => {
             type="email"
             value={signinEmail}
             onChange={e => setSigninEmail(e.target.value)}
-            placeholder="test@test.com"
             required
           />
         </S.FormField>
@@ -129,7 +128,6 @@ const AuthForm = ({ boardId, signin }) => {
             type="password"
             value={signinPassword}
             onChange={e => setSigninPassword(e.target.value)}
-            placeholder="test123"
             required
           />
         </S.FormField>
